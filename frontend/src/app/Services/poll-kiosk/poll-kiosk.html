@@ -1,0 +1,84 @@
+<div class="container mt-4">
+  <!-- Header + Add New Button -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>🎈 Balloons</h3>
+
+    <!-- 🔍 Search Bar -->
+  <input type="text" class="form-control w-25 me-3"
+    placeholder="🔍 Search screens..."
+    [(ngModel)]="searchTerm"
+    (input)="filterBallons()" />
+
+    <button
+      class="btn btn-primary"
+      routerLink="/dashboard/poll-Kisok-Form/0"
+    >
+      <i class="bi bi-plus-circle"></i> Add New
+    </button>
+  </div>
+
+  <!-- 📋 Balloons List -->
+  <div class="card shadow-lg">
+    <div class="card-header bg-white text-dark"><h5>All Balloons</h5></div>
+    <div class="card-body p-0">
+      <table class="table  table-striped mb-0">
+        <thead class="table-primary">
+          <tr>
+            <th>ID</th>
+            <th>Location</th>
+            <th>City</th>
+            <th>Type</th>
+            <th>Cost</th>
+            <th>Payment</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (b of filteredList; track b.b_id) {
+          <tr>
+            <td>{{ b.b_id }}</td>
+            <td>{{ b.b_location_name }}</td>
+            <td><i class="bi bi-geo-alt"></i> {{ b.b_city }}</td>
+            <td>{{ b.b_type }}</td>
+            <td>{{ b.b_cost }}</td>
+            <td>
+              <span
+                class="badge"
+                [ngClass]="{
+                  'bg-success': b.payment_status === 'Paid',
+                  'bg-warning text-dark': b.payment_status === 'Pending',
+                  'bg-danger': b.payment_status === 'Overdue'
+                }"
+              >
+                {{ b.payment_status }}
+              </span>
+            </td>
+            <td class="text-center">
+              <button
+                class="btn btn-sm btn-outline-primary me-2"
+            
+                
+                (click)="edit(b.b_id)"
+              >
+                <i class="bi bi-pencil-square"></i> Edit
+              </button>
+              <button
+                class="btn btn-sm btn-outline-danger"
+                (click)="delete(b.b_id)"
+              >
+                <i class="bi bi-trash"></i> Delete
+              </button>
+            </td>
+          </tr>
+          }
+          @if (balloons.length === 0) {
+          <tr>
+            <td colspan="7" class="text-center text-muted">No records found</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+

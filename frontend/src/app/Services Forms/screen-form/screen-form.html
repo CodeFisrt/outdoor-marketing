@@ -1,0 +1,136 @@
+<div class="container mt-4">
+
+  <!-- Form Card -->
+  <div class="card shadow-lg border-0 rounded-3">
+
+    <!-- Header with Back Btn -->
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">
+        <i class="bi bi-tv me-2"></i>
+        {{ selectedScreenId === 0 ? '➕ Add Digital Screen' : '✏️ Edit Digital Screen' }}
+      </h5>
+      <button class="btn btn-light btn-sm d-flex align-items-center" routerLink="/dashboard/digitalscreen">
+        <i class="bi bi-arrow-left me-1"></i> Back
+      </button>
+    </div>
+
+    <div class="card-body">
+      <form [formGroup]="screenForm" (ngSubmit)="addOrUpdateScreen()">
+
+        <!-- Basic Info -->
+        <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3">
+          <i class="bi bi-info-circle me-1"></i> Basic Information
+        </h6>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Screen Name</label>
+            <input type="text" class="form-control" formControlName="ScreenName">
+            <div *ngIf="screenForm.get('ScreenName')?.touched && screenForm.get('ScreenName')?.invalid" class="text-danger mt-1">
+              Screen Name is required.
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Location</label>
+            <input type="text" class="form-control" formControlName="Location">
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">City</label>
+            <input type="text" class="form-control" formControlName="City">
+          </div>
+        </div>
+
+        <!-- Technical Details -->
+        <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3 mt-4">
+          <i class="bi bi-cpu me-1"></i> Technical Details
+        </h6>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Latitude</label>
+            <input type="number" class="form-control" formControlName="Latitude">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Longitude</label>
+            <input type="number" class="form-control" formControlName="Longitude">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Resolution</label>
+            <input type="text" class="form-control" formControlName="Resolution">
+          </div>
+        </div>
+
+        <!-- Ownership -->
+        <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3 mt-4">
+          <i class="bi bi-person-badge me-1"></i> Ownership & Contact
+        </h6>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Owner Name</label>
+            <input type="text" class="form-control" formControlName="OwnerName">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Contact Person</label>
+            <input type="text" class="form-control" formControlName="ContactPerson">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Contact Number</label>
+            <input type="text" class="form-control" formControlName="ContactNumber">
+          </div>
+        </div>
+
+        <!-- Contract & Cost -->
+        <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3 mt-4">
+          <i class="bi bi-file-earmark-text me-1"></i> Contract & Cost
+        </h6>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Onboarding Date</label>
+            <input type="date" class="form-control" formControlName="OnboardingDate">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Rental Cost (₹)</label>
+            <input type="number" class="form-control" formControlName="RentalCost">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" formControlName="Status">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Extra -->
+        <div class="row mt-4">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Internet Connectivity</label>
+            <input type="text" class="form-control" formControlName="InternetConnectivity">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" rows="2" formControlName="Notes"></textarea>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="mt-4 d-flex gap-2">
+          <button type="submit"
+            [ngClass]="selectedScreenId === 0 ? 'btn btn-success' : 'btn btn-warning'"
+            [disabled]="screenForm.invalid">
+            <i class="bi" [ngClass]="selectedScreenId === 0 ? 'bi-save' : 'bi-pencil-square'"></i>
+            {{ selectedScreenId === 0 ? ' Save Screen' : ' Update Screen' }}
+          </button>
+
+          <button type="button" class="btn btn-secondary" (click)="resetForm()">
+            <i class="bi bi-arrow-repeat"></i> Reset
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+</div>

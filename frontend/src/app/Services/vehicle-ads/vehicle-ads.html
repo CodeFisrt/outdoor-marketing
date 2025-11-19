@@ -1,0 +1,75 @@
+<div class="container mt-4">
+
+  <!-- Header + Add New Btn -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="fw-bold">
+      <i class="bi bi-truck-front"></i> Vehicle Management
+    </h3>
+
+     <!-- 🔍 Search Bar -->
+  <input type="text" class="form-control w-25 me-3"
+    placeholder="🔍 Search screens..."
+    [(ngModel)]="searchTerm"
+    (input)="filterVechile()" />
+
+
+    <a class="btn btn-primary d-flex align-items-center gap-2" routerLink="/dashboard/vehicle-Ads-Form/0">
+      <i class="bi bi-plus-circle"></i> Add New Vehicle
+    </a>
+  </div>
+
+  <!-- 📋 Vehicle List -->
+  <div class="card shadow-lg rounded-3 mt-4 border-0">
+    <div class="card-header bg-white text-dark d-flex align-items-center">
+      <i class="bi bi-list-check me-2"></i>
+      <h5 class="mb-0">Vehicle List</h5>
+    </div>
+    <div class="card-body p-0">
+      <table class="table table-hover table-striped align-middle mb-0">
+        <thead class="table-primary">
+          <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Number</th>
+            <th>City</th>
+            <th>Cost (₹)</th>
+            <th>Payment</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(v of vehicleList; track v.v_id) {
+          <tr>
+            <td>{{ v.v_id }}</td>
+            <td><i class="bi bi-truck"></i> {{ v.v_type }}</td>
+            <td>{{ v.v_number }}</td>
+            <td><i class="bi bi-geo-alt"></i> {{ v.v_city }}</td>
+            <td>₹ {{ v.v_cost }}</td>
+            <td>
+              <span class="badge px-3 py-2 fs-6"
+                [ngClass]="{'bg-success': v.payment_status==='Paid', 'bg-warning text-dark': v.payment_status==='Pending'}">
+                {{ v.payment_status }}
+              </span>
+            </td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-outline-primary me-2" (click)="editVehicle(v.v_id)">
+                <i class="bi bi-pencil-square"></i> Edit
+              </button>
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteVehicle(v.v_id)">
+                <i class="bi bi-trash"></i> Delete
+              </button>
+            </td>
+          </tr>
+          }
+          @if(vehicleList.length === 0) {
+          <tr>
+            <td colspan="7" class="text-center text-muted py-3">
+              <i class="bi bi-info-circle"></i> No vehicles available
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

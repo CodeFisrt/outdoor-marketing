@@ -1,0 +1,118 @@
+import { NgClass, NgIf } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Route, Router, RouterLink } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+
+
+@Component({
+  selector: 'app-screen-form',
+  imports: [NgClass, ReactiveFormsModule, NgIf,RouterLink],
+  templateUrl: './screen-form.html',
+  styleUrl: './screen-form.css'
+})
+export class ScreenForm {
+  screenForm!: FormGroup;
+  selectedScreenId: number = 0; // 0 = new screen, otherwise edit
+  ;
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private http: HttpClient,
+    private toaster: ToastrService,
+    private fb: FormBuilder
+  ) { }
+
+  ngOnInit(): void {
+    this.initForm();
+    //to react activated route id
+    this.route.paramMap.subscribe(params => {
+      const idParam = params.get('id');
+      if (idParam) {
+        this.selectedScreenId = +idParam;
+        if (this.selectedScreenId !== 0) {
+          this.loadScreenData(this.selectedScreenId);
+        }
+      }
+    });
+  }
+
+
+  // Initialize the form
+  initForm() {
+    this.screenForm = this.fb.group({
+      ScreenName: ['', Validators.required],
+      Location: ['', Validators.required],
+      City: ['', Validators.required],
+      State: ['', Validators.required],
+      Latitude: [null, Validators.required],
+      Longitude: [null, Validators.required],
+      ScreenType: ['', Validators.required],
+      Size: ['', Validators.required],
+      Resolution: ['', Validators.required],
+      OwnerName: ['', Validators.required],
+      ContactPerson: ['', Validators.required],
+      ContactNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      OnboardingDate: ['', Validators.required],
+      Status: ['Active', Validators.required],
+      RentalCost: [0, Validators.required],
+      ContractStartDate: ['', Validators.required],
+      ContractEndDate: ['', Validators.required],
+      PowerBackup: [false],
+      InternetConnectivity: ['', Validators.required],
+      Notes: ['']
+    });
+  }
+  //load Edit
+  loadScreenData(id: number) {
+    this.http.get<any>(`http://localhost:8080/screens/${id}`).subscribe({
+      next: (data) => {
+        this.screenForm.patchValue(data);
+      },
+      error: () => {
+        this.toaster.error("Failed to load vehicle details");
+      }
+    });
+  }
+  // Save new screen or update existing
+  addOrUpdateScreen() {
+    const payload = this.screenForm.value;
+
+    if (this.selectedScreenId === 0) {
+      // Create new screen
+      this.http.post("http://localhost:8080/screens/", payload).subscribe({
+        next: (res: any) => {
+          this.toaster.success("New Screen Added Successfully");
+          this.router.navigateByUrl("/dashboard/digitalscreen")
+          this.screenForm.reset();
+        },
+        error: (err) => {
+          console.error(err);
+          this.toaster.error("Error Creating Screen");
+        }
+      });
+    } else {
+      // Update existing screen
+      this.http.put(`http://localhost:8080/screens/${this.selectedScreenId}`, payload).subscribe({
+        next: (res: any) => {
+          this.toaster.success("Screen Updated Successfully");
+          this.router.navigateByUrl("/dashboard/digitalscreen")
+          this.screenForm.reset();
+          this.selectedScreenId = 0; // reset to create mode
+        },
+        error: (err) => {
+          console.error(err);
+          this.toaster.error("Error Updating Screen");
+        }
+      });
+    }
+  }
+
+  resetForm() {
+    this.screenForm.reset();
+    this.selectedScreenId = 0;
+  }
+
+
+}

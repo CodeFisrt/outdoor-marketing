@@ -1,0 +1,151 @@
+<div class="container mt-4">
+  <div class="card shadow-lg">
+    <div class="card-header bg-primary text-white d-flex justify-content-between">
+      <h5 class="mb-0">{{ hoardingId ? '✏️ Edit Hoarding' : '➕ Add Hoarding' }}</h5>
+      <!-- Back to List -->
+          <button type="button" class="btn text-dark btn-outline-secondary" routerLink="/dashboard/hoarding">
+            ⬅️ Back to List
+          </button>
+    </div>
+
+    <div class="card-body">
+      <form [formGroup]="hoardingForm" (ngSubmit)="save()">
+        <div class="row">
+          <!-- Hoarding Name -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Hoarding Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" formControlName="h_name" placeholder="Enter hoarding name" />
+            <div class="text-danger small mt-1" *ngIf="hoardingForm.get('h_name')?.touched && hoardingForm.get('h_name')?.hasError('required')">
+              Hoarding name is required
+            </div>
+          </div>
+
+          <!-- Address -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Address <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" formControlName="address" placeholder="Enter address" />
+            <div class="text-danger small mt-1" *ngIf="hoardingForm.get('address')?.touched && hoardingForm.get('address')?.hasError('required')">
+              Address is required
+            </div>
+          </div>
+
+          <!-- City -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label">City <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" formControlName="city" placeholder="Enter city" />
+            <div class="text-danger small mt-1" *ngIf="hoardingForm.get('city')?.touched && hoardingForm.get('city')?.hasError('required')">
+              City is required
+            </div>
+          </div>
+
+          <!-- State -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label">State <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" formControlName="state" placeholder="Enter state" />
+            <div class="text-danger small mt-1" *ngIf="hoardingForm.get('state')?.touched && hoardingForm.get('state')?.hasError('required')">
+              State is required
+            </div>
+          </div>
+
+          <!-- Contact Number -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Contact Number <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" formControlName="contact_number" placeholder="Enter 10-digit number" />
+            <div class="text-danger small mt-1" *ngIf="hoardingForm.get('contact_number')?.touched && hoardingForm.get('contact_number')?.hasError('required')">
+              Contact number is required
+            </div>
+            <div class="text-danger small mt-1" *ngIf="hoardingForm.get('contact_number')?.touched && hoardingForm.get('contact_number')?.hasError('pattern')">
+              Must be a valid 10-digit number
+            </div>
+          </div>
+
+          <!-- Rental Cost -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Rental Cost (₹) <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" formControlName="rental_cost" placeholder="Enter rental cost" />
+            <div class="text-danger small mt-1" *ngIf="hoardingForm.get('rental_cost')?.touched && hoardingForm.get('rental_cost')?.hasError('required')">
+              Rental cost is required
+            </div>
+            <div class="text-danger small mt-1" *ngIf="hoardingForm.get('rental_cost')?.touched && hoardingForm.get('rental_cost')?.hasError('min')">
+              Must be greater than or equal to 0
+            </div>
+          </div>
+
+          <!-- Other Fields (latitude, longitude, notes, etc.) -->
+          <!-- Keeping from your previous version, no validation needed -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Latitude</label>
+            <input type="text" class="form-control" formControlName="latitude" />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Longitude</label>
+            <input type="text" class="form-control" formControlName="longitude" />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Size</label>
+            <input type="text" class="form-control" formControlName="size" placeholder="e.g. 20x10 ft" />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Owner Name</label>
+            <input type="text" class="form-control" formControlName="owner_name" />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Contact Person</label>
+            <input type="text" class="form-control" formControlName="contact_person" />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" formControlName="status">
+              <option value="Available">Available</option>
+              <option value="Occupied">Occupied</option>
+              <option value="Under Maintenance">Under Maintenance</option>
+            </select>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Ad Start Date</label>
+            <input type="date" class="form-control" formControlName="ad_start_date" />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Ad End Date</label>
+            <input type="date" class="form-control" formControlName="ad_end_date" />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Contract Start Date</label>
+            <input type="date" class="form-control" formControlName="contract_start_date" />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Contract End Date</label>
+            <input type="date" class="form-control" formControlName="contract_end_date" />
+          </div>
+
+          <div class="col-12 mb-3">
+            <label class="form-label">Notes</label>
+            <textarea rows="3" class="form-control" formControlName="notes" placeholder="Additional details"></textarea>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-between mt-4">
+                <button class="btn btn-light btn-sm" (click)="resetForm()">Reset</button>
+
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+            <!-- Save / Update with different colors -->
+            <button type="submit" [ngClass]="hoardingId ? 'btn btn-warning' : 'btn btn-success'" [disabled]="hoardingForm.invalid">
+              {{ hoardingId ? 'Update ✏️' : 'Save ✅' }}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

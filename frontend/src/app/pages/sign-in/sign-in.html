@@ -1,0 +1,53 @@
+<!-- Sign in -->
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
+  <div class="row shadow-lg rounded-4 overflow-hidden w-50">
+    <!-- Left Panel -->
+    <div
+      class="col-md-6 bg-primary text-white p-3 position-relative rounded-start signin-left align-items-center d-flex justify-content-center">
+      <div class="text-center my-auto">
+        <h2 class="fw-bold">Welcome Back !</h2>
+        <p>Welcome back! Let’s take your brand further.</p>
+        <a class="btn btn-light text-primary fw-bold px-4 text-decoration-none" href="signup" role="button">Sign
+          Up</a>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="col-md-6 bg-light p-5">
+      <h3 class="text-center text-primary mb-4 fw-semibold">Sign In</h3>
+
+      <!-- ✅ Bind form -->
+      <form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input formControlName="emailId" type="email" id="emailId" class="form-control rounded-2 shadow-sm" />
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input formControlName="password" type="password" id="password" class="form-control rounded-2 shadow-sm" />
+        </div>
+
+        <!-- Error message -->
+        <div *ngIf="errorMessage" class="text-danger text-center mb-3">
+          {{ errorMessage }}
+        </div>
+
+        <div class="d-flex align-items-center justify-content-center my-3">
+          <hr class="w-25 me-2" /><span>OR</span>
+          <hr class="w-25 ms-2" />
+        </div>
+
+        <div class="d-flex justify-content-center gap-3 mb-4 signin-option">
+          <img src="assets/gmail-new.png" alt="Gmail" width="32" />
+          <img src="assets/twitterx--v1.png" alt="X" width="32" />
+          <img src="assets/facebook-new.png" alt="Facebook" width="32" />
+        </div>
+
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary px-4">Sign In</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
