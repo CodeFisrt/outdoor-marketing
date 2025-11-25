@@ -12,6 +12,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
   styleUrl: './sign-in.css'
 })
 export class SignIn {
+
   signInForm: FormGroup;
   errorMessage: string = '';
   loading = false;
@@ -36,16 +37,20 @@ export class SignIn {
     this.loading = true;
     const { emailId, password } = this.signInForm.value;
 
-    this.http.post<{ token: string }>('http://localhost:8080/Users/login', {
-      emailId,
-      password
-    }).subscribe({
+   
+    this.http.get<{ token: string }>(
+      `http://localhost:8080/Users`,
+      {
+        params: {
+          emailId: emailId,
+          password: password
+        }
+      }
+    ).subscribe({
       next: (res) => {
-        // ✅ store token in localStorage
         localStorage.setItem('token', res.token);
-        console.log(res.token);
+        console.log('Token:', res.token);
 
-        // ✅ redirect
         this.router.navigateByUrl('/dashboard');
       },
       error: (err) => {
