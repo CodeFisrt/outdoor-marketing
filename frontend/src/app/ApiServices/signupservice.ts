@@ -5,11 +5,16 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class Signupservice {
- private apiUrl = "http://localhost:8080/signup";
+  private apiUrl = "http://localhost:8080/signup";
+  private signInUrl = "http://localhost:8080/Users";
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  post(data: any) {
+  SignUp(data: any) {
     return this.http.post(this.apiUrl, data);
+  }
+
+  signIn() {
+    return this.http.get(this.signInUrl);
   }
 }

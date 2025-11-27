@@ -19,12 +19,12 @@ user = {
 constructor(private data: Signupservice) {}
 
 register() {
-  this.data.post(this.user).subscribe({
-    next: (res) => {
+  (this.data as any).post(this.user).subscribe({
+    next: (res:any) => {
       console.log("User registered:", res);
       alert("Signup Successful!");
     },
-    error: (err) => {
+    error: (err: any) => {
       console.error("Signup error:", err);
       alert("Signup Failed!");
     }
