@@ -1598,24 +1598,34 @@ app.delete("/Users/:id", (req, res) => {
 app.post("/Users/login", (req, res) => {
   const { emailId, password } = req.body;
 
-  db.query("SELECT * FROM users WHERE emailId = ?", [emailId], async (err, results) => {
-    if (err) return res.status(500).send(err);
-    if (results.length === 0) return res.status(400).send({ message: "User not found" });
+  db.query(
+    "SELECT * FROM users WHERE userEmail = ?",
+    [emailId],
+    async (err, results) => {
+      if (err) return res.status(500).send(err);
+      if (results.length === 0)
+        return res.status(400).send({ message: "User not found" });
 
-    const user = results[0];
-    const isMatch = await bcrypt.compare(password, user.password);
+      const user = results[0];
 
-    if (!isMatch) return res.status(400).send({ message: "Invalid credentials" });
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch)
+        return res.status(400).send({ message: "Invalid credentials" });
 
-    const token = jwt.sign(
-      { id: user.id, role: user.role },
-      JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-//  const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "1h" });
+      const token = jwt.sign(
+        { id: user.id, role: user.role },
+        JWT_SECRET,
+        { expiresIn: "1h" }
+      );
 
-    res.send({ satus:200,message: "Login successful",data:results, token });
-  });
+      res.send({
+        status: 200,
+        message: "Login successful",
+        data: user,
+        token,
+      });
+    }
+  );
 });
 //search api for services
 //service_type,state,district,taluka,village->api to get data from respective tables
@@ -1783,6 +1793,52 @@ app.get('/search-services', (req, res) => {
 
 
 
+
+// ==================User Signup Api ====================
+
+
+
+/**
+ * @openapi
+ * /signup:
+ *   post:
+ *     summary: User Signup
+ *     description: Inserts a new user into the database.
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userName:
+ *                 type: string
+ *                 example: John Doe
+ *               userEmail:
+ *                 type: string
+ *                 example: john@gmail.com
+ *               password:
+ *                 type: string
+ *                 example: 123456
+ *     responses:
+ *       200:
+ *         description: User Registered Successfully
+ *       500:
+ *         description: Server Error
+ */
+app.post("/signup", (req, res) => {
+  const { userName, userEmail, password } = req.body;
+
+  const sql = "INSERT INTO users (userName, userEmail, password) VALUES (?,?,?)";
+
+  db.query(sql, [userName, userEmail, password], (err, result) => {
+    if (err) return res.status(500).json({ message: "Error", err });
+
+    return res.json({ message: "User registered successfully" });
+  });
+});
 // ---------------- Start Server ----------------
 app.listen(8080, () => {
     console.log(`Server running at http://localhost:${8080}`);
