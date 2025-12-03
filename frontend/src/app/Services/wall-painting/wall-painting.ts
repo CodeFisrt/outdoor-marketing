@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -8,23 +8,26 @@ import { CommonModule, NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-wall-painting',
-  imports: [NgClass, ReactiveFormsModule, RouterLink,FormsModule,CommonModule],
+  imports: [NgClass, ReactiveFormsModule, RouterLink, FormsModule, CommonModule],
   templateUrl: './wall-painting.html',
   styleUrl: './wall-painting.css'
 })
 export class WallPainting {
   societyList: Society[] = [];
-  societyForm: FormGroup;   // ✅ declare first
-  filteredList: any[] = [];   // 👈 for search results
+  societyForm: FormGroup;
+  filteredList: any[] = [];
   searchTerm: string = "";
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
     private toaster: ToastrService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef   // ✅ added ChangeDetectorRef
   ) {
-    // ✅ now initialize safely here
+
+    // Form initialized safely here
     this.societyForm = this.fb.group({
       s_id: [0],
       s_name: ['', Validators.required],
@@ -54,35 +57,46 @@ export class WallPainting {
     this.getAll();
   }
 
-  // ✅ Get All
+  // ✅ Get All (with detectChanges)
   getAll() {
-    this.http.get<Society[]>('http://localhost:8080/societies').subscribe((res:any)=>{
-      if(res){
-        this.societyList=res;
-        this.filteredList=res;
-      }else{
-        this.toaster.error("Error to fech data");
+    this.http.get<Society[]>('http://localhost:8080/societies').subscribe((res: any) => {
+      if (res) {
+        this.societyList = res;
+        this.filteredList = res;
+
+        this.cdr.detectChanges();   // ✅ FIXES view update issues
+      } else {
+        this.toaster.error("Error fetching data");
       }
-    })
+    });
   }
+
   // 🔍 Filter logic
   filterSocities() {
     const term = this.searchTerm.toLowerCase();
+
     this.filteredList = this.societyList.filter(s =>
       s.s_name.toLowerCase().includes(term) ||
       s.s_city.toLowerCase().includes(term) ||
       s.s_no_flats.toString().includes(term) ||
       s.expected_cost.toString().includes(term)
     );
+
+    this.cdr.detectChanges();   // ✅ after filtering refresh UI
   }
+
   // ✅ Add
   add() {
     if (this.societyForm.invalid) return;
+
     this.http.post('http://localhost:8080/societies/', this.societyForm.value).subscribe({
       next: () => {
         this.toaster.success('Society Added');
+
         this.societyForm.reset({ approval_status: 'Pending', event_status: 'Scheduled' });
         this.getAll();
+
+        this.cdr.detectChanges();   // ⬅ refresh UI
       },
       error: () => this.toaster.error('Add failed')
     });
@@ -92,11 +106,14 @@ export class WallPainting {
   update() {
     const id = this.societyForm.value.s_id;
     if (!id) return;
+
     this.http.put(`http://localhost:8080/societies/${id}`, this.societyForm.value).subscribe({
       next: () => {
         this.toaster.success('Society Updated');
         this.societyForm.reset({ approval_status: 'Pending', event_status: 'Scheduled' });
         this.getAll();
+
+        this.cdr.detectChanges();
       },
       error: () => this.toaster.error('Update failed')
     });
@@ -105,10 +122,13 @@ export class WallPainting {
   // ✅ Delete
   delete(id: number) {
     if (!confirm('Delete this society?')) return;
+
     this.http.delete(`http://localhost:8080/societies/${id}`).subscribe({
       next: () => {
         this.toaster.success('Society Deleted');
         this.getAll();
+
+        this.cdr.detectChanges();
       },
       error: () => this.toaster.error('Delete failed')
     });
@@ -116,7 +136,9 @@ export class WallPainting {
 
   // ✅ Edit
   edit(s_Id: number) {
-    this.router.navigateByUrl("/dashboard/wall-Paints-Form/" + s_Id)
+    this.router.navigateByUrl("/dashboard/wall-Paints-Form/" + s_Id);
     this.toaster.info("Edit Wall data loaded into form");
+
+    this.cdr.detectChanges();
   }
 }

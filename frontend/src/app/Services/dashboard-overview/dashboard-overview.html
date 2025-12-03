@@ -1,91 +1,179 @@
 <!-- Welcome Header -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <div>
-    <h3 class="fw-bold mb-1">📊 Dashboard Overview</h3>
-    <p class="text-muted mb-0">Here’s what’s happening with your campaigns today.</p>
-  </div>
-  <div class="d-flex align-items-center gap-3">
-    <img src="assets/m2.png" alt="Admin Avatar" width="48" height="48"
-      class="rounded-circle shadow-sm border border-2 border-white" />
+<div *ngIf="(role ?? '') === 'admin'" class="d-flex flex-column vh-100 p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h6 class="mb-0 fw-semibold">Welcome back,</h6>
-      <span class="fw-bold text-primary">👨‍💼 Admin</span>
+      <h3 class="fw-bold mb-1">📊 Dashboard Overview</h3>
+      <p class="text-muted mb-0">Here’s what’s happening with your campaigns today.</p>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <img src="assets/m2.png" alt="Admin Avatar" width="48" height="48"
+        class="rounded-circle shadow-sm border border-2 border-white" />
+      <div>
+        <h6 class="mb-0 fw-semibold">Welcome back,</h6>
+        <span class="fw-bold text-primary">👨‍💼 Admin</span>
+      </div>
     </div>
   </div>
+
+  <!-- Stats Cards -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-3">
+      <div class="stat-card card shadow-sm border-0 p-3 text-center">
+        <h6 class="text-muted">Total Campaigns</h6>
+        <h3 class="fw-bold text-primary">120</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card card shadow-sm border-0 p-3 text-center">
+        <h6 class="text-muted">Active Screens</h6>
+        <h3 class="fw-bold text-success">45</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card card shadow-sm border-0 p-3 text-center">
+        <h6 class="text-muted">Monthly Revenue</h6>
+        <h3 class="fw-bold text-info">₹3.5L</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card card shadow-sm border-0 p-3 text-center">
+        <h6 class="text-muted">Pending Payments</h6>
+        <h3 class="fw-bold text-danger">₹75K</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts + Table -->
+  <div class="row g-4 flex-grow-1">
+    <!-- Chart -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 p-3 h-100">
+        <h6 class="fw-semibold mb-3">📈 Campaign Reach</h6>
+        <img src="assets/demo-chart.png" alt="Chart" class="img-fluid rounded" />
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 p-3 h-100">
+        <h6 class="fw-semibold mb-3">📝 Recent Campaigns</h6>
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Campaign</th>
+              <th>Status</th>
+              <th>Budget</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Ganesh Festival Ads</td>
+              <td><span class="badge bg-success">Active</span></td>
+              <td>₹50,000</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Diwali Hoardings</td>
+              <td><span class="badge bg-warning text-dark">Pending</span></td>
+              <td>₹80,000</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>LED Van Branding</td>
+              <td><span class="badge bg-danger">Closed</span></td>
+              <td>₹30,000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </div>
 
-<!-- Stats Cards -->
-<div class="row g-4 mb-4">
-  <div class="col-md-3">
-    <div class="stat-card card shadow-sm border-0 p-3 text-center">
-      <h6 class="text-muted">Total Campaigns</h6>
-      <h3 class="fw-bold text-primary">120</h3>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="stat-card card shadow-sm border-0 p-3 text-center">
-      <h6 class="text-muted">Active Screens</h6>
-      <h3 class="fw-bold text-success">45</h3>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="stat-card card shadow-sm border-0 p-3 text-center">
-      <h6 class="text-muted">Monthly Revenue</h6>
-      <h3 class="fw-bold text-info">₹3.5L</h3>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="stat-card card shadow-sm border-0 p-3 text-center">
-      <h6 class="text-muted">Pending Payments</h6>
-      <h3 class="fw-bold text-danger">₹75K</h3>
-    </div>
-  </div>
+
+
+<div *ngIf="role === 'agency'">
+  <h3 class="fw-bold mb-3">Agency Dashboard</h3>
+ <div>
+        <h6 class="mb-0 fw-semibold">Welcome back,</h6>
+        <span class="fw-bold text-primary">👨‍💼 Agency</span>
+      </div>
+  <table class="table table-hover align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>#</th>
+        <th>Client</th>
+        <th>Project</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Tata Motors</td>
+        <td>Digital Billboards</td>
+        <td><span class="badge bg-success">Running</span></td>
+      </tr>
+
+      <tr>
+        <td>2</td>
+        <td>HDFC Bank</td>
+        <td>LED Screen Ads</td>
+        <td><span class="badge bg-info">Scheduled</span></td>
+      </tr>
+
+      <tr>
+        <td>3</td>
+        <td>Local Shop</td>
+        <td>Print Hoardings</td>
+        <td><span class="badge bg-warning text-dark">Pending</span></td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
-<!-- Charts + Table -->
-<div class="row g-4 flex-grow-1">
-  <!-- Chart -->
-  <div class="col-md-6">
-    <div class="card shadow-sm border-0 p-3 h-100">
-      <h6 class="fw-semibold mb-3">📈 Campaign Reach</h6>
-      <img src="assets/demo-chart.png" alt="Chart" class="img-fluid rounded" />
-    </div>
-  </div>
 
-  <!-- Table -->
-  <div class="col-md-6">
-    <div class="card shadow-sm border-0 p-3 h-100">
-      <h6 class="fw-semibold mb-3">📝 Recent Campaigns</h6>
-      <table class="table table-hover align-middle">
-        <thead class="table-light">
-          <tr>
-            <th>#</th>
-            <th>Campaign</th>
-            <th>Status</th>
-            <th>Budget</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>Ganesh Festival Ads</td>
-            <td><span class="badge bg-success">Active</span></td>
-            <td>₹50,000</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Diwali Hoardings</td>
-            <td><span class="badge bg-warning text-dark">Pending</span></td>
-            <td>₹80,000</td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>LED Van Branding</td>
-            <td><span class="badge bg-danger">Closed</span></td>
-            <td>₹30,000</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+<div *ngIf="role === 'user'">
+  <h3 class="fw-bold mb-3">User Dashboard</h3>
+ <div>
+        <h6 class="mb-0 fw-semibold">Welcome back,</h6>
+        <span class="fw-bold text-primary">👨‍💼 User</span>
+      </div>
+  <table class="table table-hover align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>#</th>
+        <th>My Orders</th>
+        <th>Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Screen Booking - Pune</td>
+        <td>25 Nov 2024</td>
+        <td><span class="badge bg-success">Approved</span></td>
+      </tr>
+
+      <tr>
+        <td>2</td>
+        <td>LED van booking</td>
+        <td>12 Oct 2024</td>
+        <td><span class="badge bg-warning text-dark">Pending</span></td>
+      </tr>
+
+      <tr>
+        <td>3</td>
+        <td>Poster Printing</td>
+        <td>10 Sep 2024</td>
+        <td><span class="badge bg-danger">Rejected</span></td>
+      </tr>
+    </tbody>
+  </table>
 </div>

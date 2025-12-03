@@ -1,23 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Screen } from '../../Model/model';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // 👈 add this
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-digital-screen',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, FormsModule], // 👈 add FormsModule
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, FormsModule],
   templateUrl: './digital-screen.html',
   styleUrls: ['./digital-screen.css']
 })
 export class DigitalScreen implements OnInit {
   screenList: Screen[] = [];
-  filteredList: Screen[] = [];   // 👈 for search results
-  searchTerm: string = "";       // 👈 bound to input
+  filteredList: Screen[] = [];
+  searchTerm: string = "";
   screenForm!: FormGroup;
   selectedScreenId: number = 0;
 
@@ -25,7 +25,8 @@ export class DigitalScreen implements OnInit {
     private router: Router,
     private http: HttpClient,
     private toaster: ToastrService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef   // ✔️ CDR added
   ) {}
 
   ngOnInit(): void {
@@ -33,7 +34,7 @@ export class DigitalScreen implements OnInit {
     this.getAllScreen();
   }
 
-  // Initialize the form
+  // Initialize form
   initForm() {
     this.screenForm = this.fb.group({
       ScreenName: ['', Validators.required],
@@ -62,9 +63,10 @@ export class DigitalScreen implements OnInit {
   // Load all screens
   getAllScreen() {
     this.http.get("http://localhost:8080/screens").subscribe({
-      next: (res:any) => {
+      next: (res: any) => {
         this.screenList = res.data;
-        this.filteredList = res.data; // 👈 initialize filtered list
+        this.filteredList = res.data;
+        this.cdr.detectChanges();  // ✔️ UI update
         this.toaster.success("Screens Loaded Successfully");
       },
       error: (err) => {
@@ -74,7 +76,7 @@ export class DigitalScreen implements OnInit {
     });
   }
 
-  // 🔍 Filter logic
+  // Search filter
   filterScreens() {
     const term = this.searchTerm.toLowerCase();
     this.filteredList = this.screenList.filter(s =>
@@ -83,9 +85,11 @@ export class DigitalScreen implements OnInit {
       s.City.toLowerCase().includes(term) ||
       s.Status.toLowerCase().includes(term)
     );
+
+    this.cdr.detectChanges(); // ✔️ Fix ExpressionChangedAfterItHasBeenCheckedError
   }
 
-  // Save new screen or update existing
+  // Add or Update Screen
   addOrUpdateScreen() {
     const payload = this.screenForm.value;
 
@@ -95,6 +99,7 @@ export class DigitalScreen implements OnInit {
           this.toaster.success("New Screen Added Successfully");
           this.getAllScreen();
           this.screenForm.reset();
+          this.cdr.detectChanges(); // ✔️ UI refresh
         },
         error: (err) => {
           console.error(err);
@@ -108,6 +113,7 @@ export class DigitalScreen implements OnInit {
           this.getAllScreen();
           this.screenForm.reset();
           this.selectedScreenId = 0;
+          this.cdr.detectChanges();  // ✔️ Fix change detection
         },
         error: (err) => {
           console.error(err);
@@ -117,15 +123,15 @@ export class DigitalScreen implements OnInit {
     }
   }
 
-  // Delete a screen
+  // Delete screen
   deleteScreen(id: number) {
-    const isDelete = window.confirm("Are you sure you want to delete this screen?");
-    if (!isDelete) return;
+    if (!window.confirm("Are you sure you want to delete this screen?")) return;
 
     this.http.delete(`http://localhost:8080/screens/${id}`).subscribe({
       next: () => {
         this.toaster.success("Screen Deleted Successfully");
         this.getAllScreen();
+        this.cdr.detectChanges();   // ✔️ Update view
       },
       error: (err) => {
         console.error(err);
@@ -134,7 +140,7 @@ export class DigitalScreen implements OnInit {
     });
   }
 
-  // Load screen data into form for editing
+  // Edit screen
   editScreen(screenId: number) {
     this.router.navigateByUrl("/dashboard/screen-Form/" + screenId);
     this.toaster.info("Edit screen data loaded into form");
@@ -143,5 +149,6 @@ export class DigitalScreen implements OnInit {
   resetForm() {
     this.screenForm.reset();
     this.selectedScreenId = 0;
+    this.cdr.detectChanges(); // ✔️ Force UI update
   }
 }

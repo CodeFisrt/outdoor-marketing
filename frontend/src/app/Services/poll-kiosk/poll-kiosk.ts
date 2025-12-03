@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -8,33 +8,37 @@ import { Router, RouterLink } from '@angular/router';
 @Component({
   selector: 'app-poll-kiosk',
   standalone: true,
-  imports: [CommonModule,FormsModule, ReactiveFormsModule,RouterLink],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './poll-kiosk.html',
   styleUrls: ['./poll-kiosk.css']
 })
 export class PollKiosk implements OnInit {
+
   balloons: any[] = [];
+  filteredList: any[] = [];
   balloonForm!: FormGroup;
+  searchTerm: string = "";
   editingId: number | null = null;
+
   apiUrl = 'http://localhost:8080/balloons';
-   filteredList: any[] = [];   // 👈 for search results
-  searchTerm: string = "";       // 👈 bound to input
 
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private toastr: ToastrService,
-    private router:Router
-  ) {}
+    private router: Router,
+    private cd: ChangeDetectorRef   // 👈 FIX change detection
+  ) { }
 
   ngOnInit(): void {
-    this.loadBalloons();
     this.initForm();
+    this.loadBalloons();
   }
 
+  // ✅ Initialize form
   initForm() {
     this.balloonForm = this.fb.group({
-      b_id:[0],
+      b_id: [0],
       b_location_name: ['', Validators.required],
       b_area: ['', Validators.required],
       b_city: ['', Validators.required],
@@ -56,44 +60,82 @@ export class PollKiosk implements OnInit {
     });
   }
 
-   // 🔍 Filter logic
+  // 🔍 Filter Search
   filterBallons() {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredList = this.balloons.filter(s =>
-      s.b_location_name.toLowerCase().includes(term) ||
-      s.b_city.toLowerCase().includes(term) ||
-      s.b_type.toLowerCase().includes(term) ||
-      s.b_cost.toLowerCase().includes(term)
+    const t = this.searchTerm.toLowerCase();
+    this.filteredList = this.balloons.filter(b =>
+      b.b_location_name.toLowerCase().includes(t) ||
+      b.b_city.toLowerCase().includes(t) ||
+      b.b_type.toLowerCase().includes(t) ||
+      String(b.b_cost).toLowerCase().includes(t)
     );
   }
-  // ✅ Get all balloons
+
+  // ✅ Load all records
   loadBalloons() {
     this.http.get<any[]>(this.apiUrl).subscribe({
-      next: (data) => (this.balloons = data,this.filteredList=data),
-      error: () => this.toastr.error('Failed to load balloons ❌')
+      next: (data) => {
+        this.balloons = data;
+        this.filteredList = data;
+        this.cd.detectChanges();  // 👈 FIX ExpressionChanged error
+        this.toastr.success("Data loaded successfully");
+      },
+      error: () => this.toastr.error("Failed to load balloons")
     });
   }
 
-  
+  // ✅ Save / Update data
+  saveBalloon() {
+    const payload = this.balloonForm.value;
 
-  // ✅ Edit mode
-  edit(balloonId: number) {
-     this.router.navigateByUrl("/dashboard/poll-Kisok-Form/"+balloonId)
-    this.toastr.info('Editing balloon record ✏️');
-  }
-
-  // ✅ Delete
-  delete(id: number) {
-    if (confirm('Are you sure you want to delete this record?')) {
-      this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+    // ➤ Add New
+    if (this.editingId === null) {
+      this.http.post(this.apiUrl, payload).subscribe({
         next: () => {
+          this.toastr.success("Balloon added successfully");
           this.loadBalloons();
-          this.toastr.warning('Balloon deleted 🗑️');
+          this.resetForm();
         },
-        error: () => this.toastr.error('Delete failed ❌')
+        error: () => this.toastr.error("Failed to add balloon")
+      });
+    }
+    // ➤ Update Existing
+    else {
+      this.http.put(`${this.apiUrl}/${this.editingId}`, payload).subscribe({
+        next: () => {
+          this.toastr.success("Balloon updated successfully");
+          this.loadBalloons();
+          this.resetForm();
+          this.editingId = null;
+        },
+        error: () => this.toastr.error("Failed to update record")
       });
     }
   }
 
-  
+  // ✅ Load data for edit
+  edit(balloonId: number) {
+    this.editingId = balloonId;
+    this.router.navigateByUrl("/dashboard/poll-Kisok-Form/" + balloonId);
+    this.toastr.info("Editing balloon data");
+  }
+
+  // ✅ Delete record
+  delete(id: number) {
+    if (!confirm("Are you sure you want to delete?")) return;
+
+    this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+      next: () => {
+        this.toastr.warning("Balloon deleted");
+        this.loadBalloons();
+      },
+      error: () => this.toastr.error("Delete failed")
+    });
+  }
+
+  // ✅ Reset form
+  resetForm() {
+    this.balloonForm.reset();
+    this.editingId = null;
+  }
 }
