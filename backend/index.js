@@ -11,6 +11,10 @@ const bcrypt = require("bcryptjs");
 
 const JWT_SECRET = "mySuperSecretKey";
 const auth = require("./middleware/auth"); 
+const path = require('path');     // at top (if not present)
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 const db = require("./db");
 // app.get("/", (req, res) => {
@@ -1613,6 +1617,171 @@ app.post("/Users/login", (req, res) => {
     res.send({ satus:200,message: "Login successful",data:results, token });
   });
 });
+//search api for services
+//service_type,state,district,taluka,village->api to get data from respective tables
+//================ Get Services API ==================
+//service_type=balloon_marketing/society_marketing/vehicle_marketing
+//if(service_type=='balloon_marketing'){ select image,id,desc from {balloon_marketing} where state='' and district='' and taluka='' and village=''}
+//else if(service_type=='society_marketing'){ select image,id,desc from society_marketing where state='' and district='' and taluka='' and village=''}
+//else if(service_type=='vehicle_marketing'){ select image,id,desc from vehicle_marketing where state='' and district='' and taluka='' and village=''}
+
+
+//service_type=balloon_marketing/society_marketing/vehicle_marketing and service_id=1
+//if(service_type=='balloon_marketing' && service_id){ select * from balloon_marketing where b_id=service_id}
+//else if(service_type=='society_marketing' && service_id){ select * from society_marketing where s_id=service_id}
+//else if(service_type=='vehicle_marketing' && service_id){ select * from vehicle_marketing where v_id=service_id}  
+
+
+//optional
+////search api for services
+//service_type,state,district,taluka,village->api to get data from respective tables
+//================ Get Services API ==================
+//service_type=balloon_marketing/society_marketing/vehicle_marketing--tbl_names
+//select image,id,desc from {tbl_name} where state='' and district='' and taluka='' and village='
+//json output'
+
+/**
+ * @swagger
+ * /search-services:
+ *   get:
+ *     summary: Get a specific marketing service by type
+ *     description: |
+ *       Fetch marketing services from a single service type (balloon, society, vehicle, hoardings, outdoor screens) with all fields included.
+ *       Optional filters can be applied based on State, District, Tehsil, and Village.
+ *
+ *     parameters:
+ *       - in: query
+ *         name: service_type
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - balloon_marketing
+ *             - society_marketing
+ *             - vehicle_marketing
+ *             - hoardings
+ *             - outdoormarketingscreens
+ *         description: Type of marketing service to fetch
+ *
+ *       - in: query
+ *         name: State
+ *         schema:
+ *           type: string
+ *         description: Filter services by state
+ *         example: Maharashtra
+ *
+ *       - in: query
+ *         name: District
+ *         schema:
+ *           type: string
+ *         description: Filter services by district
+ *         example: Pune
+ *
+ *       - in: query
+ *         name: Tehsil
+ *         schema:
+ *           type: string
+ *         description: Filter services by tehsil
+ *         example: Haveli
+ *
+ *       - in: query
+ *         name: Village
+ *         schema:
+ *           type: string
+ *         description: Filter services by village
+ *         example: Shivajinagar
+ *
+ *     responses:
+ *       200:
+ *         description: List of services for the selected service type
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 description: Fields depend on the selected service type
+ *                 properties:
+ *                   service_type:
+ *                     type: string
+ *                     description: The type of marketing service
+ *                     example: balloon_marketing
+ *                   image:
+ *                     type: string
+ *                     description: Image or media URL associated with the service
+ *                     example: "uploads/img.jpg"
+ *                   description:
+ *                     type: string
+ *                     description: Description of the service
+ *                     example: "Description for service"
+ *                   State:
+ *                     type: string
+ *                     example: "Maharashtra"
+ *                   District:
+ *                     type: string
+ *                     example: "Pune"
+ *                   Tehsil:
+ *                     type: string
+ *                     example: "Haveli"
+ *                   Village:
+ *                     type: string
+ *                     example: "Shivajinagar"
+ *                   additionalFields:
+ *                     type: object
+ *                     description: Other fields specific to the selected service type (e.g., b_id, v_id, s_id, ScreenID, h_id, etc.)
+ *
+ *       400:
+ *         description: Missing or invalid service_type
+ *
+ *       500:
+ *         description: Server or SQL error
+ */
+
+
+
+
+
+
+app.get('/search-services', (req, res) => {
+  const { service_type, State, District, Tehsil, Village } = req.query;
+
+  if (!service_type) {
+    return res.status(400).json({ message: 'service_type is required' });
+  }
+
+  const serviceTables = {
+    balloon_marketing: 'balloon_marketing',
+    society_marketing: 'society_marketing',
+    vehicle_marketing: 'vehicle_marketing',
+    hoardings: 'hoardings',
+    outdoormarketingscreens: 'outdoormarketingscreens'
+  };
+
+  const tableName = serviceTables[service_type];
+  if (!tableName) {
+    return res.status(400).json({ message: 'Invalid service type' });
+  }
+
+  // Build query for selected service only
+  let query = `SELECT *, '${service_type}' AS service_type FROM ${tableName} WHERE 1=1`;
+  const params = [];
+
+  if (State)   { query += ' AND State = ?';   params.push(State); }
+  if (District){ query += ' AND District = ?';params.push(District); }
+  if (Tehsil)  { query += ' AND Tehsil = ?';  params.push(Tehsil); }
+  if (Village) { query += ' AND Village = ?'; params.push(Village); }
+
+  db.query(query, params, (err, results) => {
+    if (err) {
+      console.error("SQL ERROR:", err.sqlMessage || err);
+      return res.status(500).json({ message: err.sqlMessage || err.message });
+    }
+    res.json(results);
+  });
+});
+
+
+
 
 // ---------------- Start Server ----------------
 app.listen(8080, () => {
