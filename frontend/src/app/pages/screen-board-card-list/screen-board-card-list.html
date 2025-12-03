@@ -1,0 +1,48 @@
+<!-- LIST OF CARDS -->
+<div *ngIf="!selectedBoard" class="row">
+    <div class="col-md-4" *ngFor="let b of boards">
+
+        <div class="custom-card">
+
+            <!-- Availability Dot -->
+            <span class="status-dot" [ngClass]="b.availability === 'Available' ? 'green' : 'red'">
+            </span>
+
+            <img [src]="b.image" class="card-img">
+
+            <div class="card-content">
+                <h4 class="card-title">{{ b.hoardingType }}</h4>
+
+                <p class="location-text">
+                    {{ b.state }}, {{ b.district }}, {{ b.taluka }}, {{ b.village }}
+                </p>
+
+                <p class="exact-location">📍 {{ b.location }}</p>
+
+                <div class="price-size">
+                    <span>📐 {{ b.size }}</span>
+                    <span class="price">₹{{ b.price }}</span>
+                </div>
+
+                <button class="view-btn" (click)="viewMore(b.id)">View More</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- VIEW MORE DETAILS -->
+<!-- 
+
+<div *ngIf="selectedBoard" class="details-box mt-4">
+    <button class="btn btn-secondary mb-3" (click)="goBack()">⬅ Back</button>
+    <h3>{{ selectedBoard.hoardingType }}</h3>
+    <img [src]="selectedBoard.image" width="100%" class="mb-3">
+    <p><strong>State:</strong> {{ selectedBoard.state }}</p>
+    <p><strong>District:</strong> {{ selectedBoard.district }}</p>
+    <p><strong>Taluka:</strong> {{ selectedBoard.taluka }}</p>
+    <p><strong>Village:</strong> {{ selectedBoard.village }}</p>
+
+    <p><strong>Description:</strong> {{ selectedBoard.description }}</p>
+</div> -->

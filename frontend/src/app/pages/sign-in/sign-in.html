@@ -39,9 +39,12 @@
         </div>
 
         <div class="d-flex justify-content-center gap-3 mb-4 signin-option">
-          <img src="assets/gmail-new.png" alt="Gmail" width="32" />
-          <img src="assets/twitterx--v1.png" alt="X" width="32" />
-          <img src="assets/facebook-new.png" alt="Facebook" width="32" />
+          <img src="assets/google.png" alt="Gmail" width="32" (click)="openGmailLogin()" />
+          <img src="assets/twitterx--v1.png" alt="X" width="32" (click)="loginWithTwitter()" />
+          <img src="assets/facebook-new.png" alt="Facebook" width="32" (click)="loginWithFacebook()" />
+
+          <!-- <img src="assets/facebook.png" width="40"
+          (click)="openFbModal()" style="cursor:pointer;"> -->
         </div>
 
         <div class="text-center">

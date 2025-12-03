@@ -56,4 +56,48 @@ export class SignIn {
       }
     });
   }
+
+  openGmailLogin() {
+    const googleAuthUrl =
+      "https://accounts.google.com/o/oauth2/v2/auth" +
+      "?client_id=544963429516-l4eaq3j4snbj6tbsbolhm2pncr3qdqu8.apps.googleusercontent.com" +
+      "&redirect_uri=http://localhost:4200/auth/callback" +
+      "&response_type=token" +
+      "&scope=email%20profile";
+
+    window.open(
+      googleAuthUrl,
+      "googleLogin",
+      "width=500,height=600,left=200,top=100"
+    );
+  }
+  
+  
+
+
+  loginWithFacebook() {
+    const fbAuthUrl =
+      'https://www.facebook.com/v18.0/dialog/oauth?' +
+      'client_id=YOUR_FACEBOOK_APP_ID' +
+      '&redirect_uri=http://localhost:4200/auth/callback' +
+      '&scope=email,public_profile';
+
+    window.open(fbAuthUrl, 'facebookLogin', 'width=500,height=600,left=200,top=100');
+  };
+  
+
+
+  loginWithTwitter() {
+    const twitterAuthUrl =
+      'https://twitter.com/i/oauth2/authorize?' +
+      'response_type=code' +
+      '&client_id=YOUR_TWITTER_CLIENT_ID' +
+      '&redirect_uri=http://localhost:4200/auth/callback' +
+      '&scope=tweet.read users.read offline.access' +
+      '&state=twitter-login' +
+      '&code_challenge=challenge' +
+      '&code_challenge_method=plain';
+
+    window.open(twitterAuthUrl, 'twitterLogin', 'width=500,height=600');
+  }
 }

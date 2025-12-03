@@ -15,6 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
     provideHttpClient(withInterceptors([authInterceptor])),
+     provideHttpClient(withFetch()),
 
     // ✅ Import NgModules using importProvidersFrom
     importProvidersFrom(

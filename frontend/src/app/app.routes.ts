@@ -18,6 +18,9 @@ import { WallpaintsFrom } from './Services Forms/wallpaints-from/wallpaints-from
 import { HoardingFrom } from './Services Forms/hoarding-from/hoarding-from';
 import { Services } from './pages/services/services';
 import { DashboardOverview } from './Services/dashboard-overview/dashboard-overview';
+import { AuthCallback } from './pages/auth-callback/auth-callback';
+import { ScreenBoardDescript } from './pages/screen-board-descript/screen-board-descript';
+import { ScreenBoardCardList } from './pages/screen-board-card-list/screen-board-card-list';
 
 // 👇 New DashboardOverview component for default dashboard page
 
@@ -35,6 +38,10 @@ export const routes: Routes = [
   { path: 'Blog', component: Blog },
   { path: 'contactUs', component: ContactUs },
   { path: 'Services', component: Services },
+  {path:"auth/callback",component:AuthCallback},
+  {path:"screenBoardCardList",component:ScreenBoardCardList},
+  {path:"screenBoardDescrpt/:id",component:ScreenBoardDescript},
+ 
 
   // ✅ Dashboard Layout with children
   {

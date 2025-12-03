@@ -10,10 +10,15 @@ import { Footer } from '../../shared/footer/footer';
   styleUrl: './dashboard.css'
 })
 export class Dashboard {
+
+  userEmail: string | null = '';
+
+
  constructor(private router: Router) {}
 
   logout() {
     localStorage.removeItem('token');
+    this.userEmail = localStorage.getItem('userEmail');
     this.router.navigateByUrl('/signin');
   }
   

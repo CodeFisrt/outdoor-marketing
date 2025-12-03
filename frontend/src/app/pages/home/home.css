@@ -50,3 +50,114 @@
     margin-left: 8px;
     font-size: 16px;
   }
+
+  /* dashboard dropdown, state dropdown,district dropdown,
+/* MAIN CARD */
+/* MAIN CARD */
+.filter-card {
+  max-width: 1150px;
+  margin: 40px auto;
+  padding: 30px 35px;
+  background: #ffffff;
+  border-radius: 18px;
+  /* box-shadow: 0px 10px 35px rgba(0, 0, 0, 0.1); */
+ box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+}
+
+/* TITLE */
+/* .filter-title {
+  font-size: 22px;
+  margin-bottom: 22px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #333;
+}
+
+.filter-icon {
+  font-size: 24px;
+} */
+ .filter-title {
+  font-size: 35px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+   justify-content: center; 
+  gap: 12px;
+  /* color: #1e1e1e; */
+  color: #161444;
+
+  /* premium smooth visuals */
+  letter-spacing: 0.2px;
+  text-transform: capitalize;
+}
+
+
+
+/* DROPDOWN ROW */
+.filter-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  /* padding: 25px; */
+}
+
+/* SINGLE SELECT BOX */
+.filter-item {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  font-size: 15px;
+  background: #fafafa;
+  cursor: pointer;
+  transition: 0.3s ease;
+  
+  /* ADDED SHADOW */
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.filter-item:focus {
+  border-color: #ff7a00;
+  box-shadow: 0px 3px 10px rgba(255, 122, 0, 0.3);
+  outline: none;
+}
+
+/* SEARCH BUTTON */
+.filter-btn {
+  background: #ff8200;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+  white-space: nowrap;
+
+  /* ADDED SHADOW */
+  box-shadow: 0px 4px 10px rgba(255, 130, 0, 0.3);
+}
+
+.filter-btn:hover {
+  background: #e67300;
+  box-shadow: 0px 5px 14px rgba(255, 130, 0, 0.35);
+}
+
+/***********************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
