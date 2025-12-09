@@ -1,4 +1,3 @@
-<!-- <app-header/> -->
 <section class="home-sec">
   <div class="container-fluid px-0 main-container">
     <div id="home-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
@@ -7,13 +6,13 @@
           <img src="assets/billboardimg.jpg" class="d-block w-100" alt="..." />
         </div>
         <div class="carousel-item">
-          <img src="assets/digitalscreen.jpg" class="d-block w-100" alt="..."loading="lazy" />
+          <img src="assets/digitalscreen.jpg" class="d-block w-100" alt="..." loading="lazy" />
         </div>
         <div class="carousel-item">
-          <img src="assets/digitalscreen.jpg" class="d-block w-100" alt="..."loading="lazy" />
+          <img src="assets/digitalscreen.jpg" class="d-block w-100" alt="..." loading="lazy" />
         </div>
         <div class="carousel-item">
-          <img src="assets/vehicleimg.jpg" class="d-block w-100" alt="..."loading="lazy" />
+          <img src="assets/vehicleimg.jpg" class="d-block w-100" alt="..." loading="lazy" />
         </div>
         <div class="carousel-item">
           <img src="assets/streetimg.jpg" class="d-block w-100" alt="..." />
@@ -30,55 +29,70 @@
     </div>
   </div>
 </section>
-<section>
 
-  <section>
-    <div class="filter-card">
-      <h3 class="filter-title">Find Outdoor Advertising</h3>
+<section class="filter-section">
+  <div class="filter-card">
+    <h3 class="filter-title">Find Outdoor Advertising</h3>
 
-      <div class="filter-row">
+    <div class="filter-row">
 
-        <!-- CATEGORY -->
-        <select class="filter-item" [(ngModel)]="selectedCategory">
-          <option value="">Select Type</option>
-          <option *ngFor="let c of categories">{{ c }}</option>
-        </select>
+      <!-- CATEGORY -->
+      <select class="filter-item"
+              [(ngModel)]="selectedServiceType"
+              (change)="onServiceTypeChange()">
+        <option value="">Select Type</option>
+        <option *ngFor="let type of categoryList" [value]="type">
+          {{ type }}
+        </option>
+      </select>
 
-        <!-- STATE -->
-        <select class="filter-item" [(ngModel)]="selectedState" (change)="onStateChange()">
-          <option value="">State</option>
-          <option *ngFor="let s of states" [value]="s">{{ s }}</option>
-        </select>
+      <!-- STATE -->
+      <select class="filter-item"
+              [(ngModel)]="selectedState"
+              (change)="onStateChange()">
+        <option value="">State</option>
+        <option *ngFor="let s of states" [value]="s">
+          {{ s }}
+        </option>
+      </select>
 
-        <!-- DISTRICT -->
-        <select class="filter-item" [(ngModel)]="selectedDistrict" (change)="onDistrictChange()">
-          <option value="">District</option>
-          <option *ngFor="let d of districts" [value]="d">{{ d }}</option>
-        </select>
+      <!-- DISTRICT -->
+      <select class="filter-item"
+              [(ngModel)]="selectedDistrict"
+              (change)="onDistrictChange()">
+        <option value="">District</option>
+        <option *ngFor="let d of districts" [value]="d">
+          {{ d }}
+        </option>
+      </select>
 
-        <!-- TALUKA -->
-        <select class="filter-item" [(ngModel)]="selectedTaluka" (change)="onTalukaChange()">
-          <option value="">Taluka</option>
-          <option *ngFor="let t of talukas" [value]="t">{{ t }}</option>
-        </select>
+      <!-- TEHSIL -->
+      <select class="filter-item"
+              [(ngModel)]="selectedTehsil"
+              (change)="onTehsilChange()">
+        <option value="">Tehsil</option>
+        <option *ngFor="let t of tehsils" [value]="t">
+          {{ t }}
+        </option>
+      </select>
 
-        <!-- VILLAGE -->
-        <select class="filter-item" [(ngModel)]="selectedVillage">
-          <option value="">Village</option>
-          <option *ngFor="let v of villages" [value]="v">{{ v }}</option>
-        </select>
+      <!-- VILLAGE -->
+      <select class="filter-item"
+              [(ngModel)]="selectedVillage">
+        <option value="">Village</option>
+        <option *ngFor="let v of villages" [value]="v">
+          {{ v }}
+        </option>
+      </select>
 
-        <!-- SEARCH BUTTON -->
-        <button [disabled]="!selectedCategory || !selectedState || !selectedDistrict || !selectedTaluka || !selectedVillage" class="filter-btn" (click)="searchBoards()">Search</button>
+      <button class="filter-btn" (click)="searchBoards()">
+        Search
+      </button>
 
-      </div>
     </div>
-  </section>
-  <ng-container *ngIf="showcards">
-    <app-screen-board-card-list [filters]="filterData"></app-screen-board-card-list>
-  </ng-container>
+  </div>
+</section>
 
-
-
-
-  <!-- <app-footer/> -->
+<ng-container *ngIf="showcards">
+  <app-screen-board-card-list [filters]="filterData"></app-screen-board-card-list>
+</ng-container>

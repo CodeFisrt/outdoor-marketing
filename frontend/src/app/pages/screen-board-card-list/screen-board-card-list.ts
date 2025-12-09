@@ -11,47 +11,22 @@ import { Router } from '@angular/router';
   templateUrl: './screen-board-card-list.html',
   styleUrl: './screen-board-card-list.css'
 })
-export class ScreenBoardCardList implements OnChanges {
+export class ScreenBoardCardList  {
   
-  constructor(private router: Router) {
-
-  }
-
-  @Input() filters: any;
+  
+  @Input() filters: any; // array of boards
   boards: any[] = [];
   selectedBoard: any = null;
 
+  constructor(private router: Router) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['filters'] && this.filters) {
-      this.loadBoards();
+      this.boards = this.filters; // use API result directly
     }
   }
 
-  loadBoards() {
-    const category = this.filters.category?.toLowerCase() || "";
-    const state = this.filters.state?.toLowerCase() || "";
-    const district = this.filters.district?.toLowerCase() || "";
-    const taluka = this.filters.taluka?.toLowerCase() || "";
-    const village = this.filters.village?.toLowerCase() || "";
-
-    this.boards = this.filters.boards.filter((b: any) => {
-      return (
-        (!category || b.hoardingType?.toLowerCase() === category) &&
-        (!state || b.state?.toLowerCase() === state) &&
-        (!district || b.district?.toLowerCase() === district) &&
-        (!taluka || b.taluka?.toLowerCase() === taluka) &&
-        (!village || b.village?.toLowerCase() === village)
-      );
-    });
-
-    this.selectedBoard = null;
-  }
-
-// routing through data send screenBoardDescrpt componts
   viewMore(id: number) {
-   this.router.navigate(["/screenBoardDescrpt",id])
-    
+    this.router.navigateByUrl(`screenBoardDescrpt/${id}`)
   }
-
 }

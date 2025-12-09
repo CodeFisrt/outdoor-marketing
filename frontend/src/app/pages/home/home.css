@@ -148,6 +148,29 @@
 }
 
 /***********************************/
+@media (max-width: 992px) {
+  .filter-row {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .filter-item {
+    flex: 1 1 calc(50% - 10px);   /* 2 dropdowns per row */
+  }
+
+  .filter-btn {
+    flex: 1 1 100%;
+    text-align: center;
+    padding: 14px;
+  }
+
+  .filter-title {
+    font-size: 30px;
+  }
+}
+
+
+
 
 
 

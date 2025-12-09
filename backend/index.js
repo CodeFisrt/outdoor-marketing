@@ -1752,7 +1752,7 @@ app.post("/Users/login", (req, res) => {
 
 
 
-app.get('/search-services', (req, res) => {
+ app.get('/search-services', (req, res) => {
   const { service_type, State, District, Tehsil, Village } = req.query;
 
   if (!service_type) {
@@ -1763,6 +1763,7 @@ app.get('/search-services', (req, res) => {
     balloon_marketing: 'balloon_marketing',
     society_marketing: 'society_marketing',
     vehicle_marketing: 'vehicle_marketing',
+    
     hoardings: 'hoardings',
     outdoormarketingscreens: 'outdoormarketingscreens'
   };

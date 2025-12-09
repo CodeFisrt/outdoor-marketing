@@ -1,34 +1,33 @@
-<!-- LIST OF CARDS -->
+<!-- LIST OF CARDS --> 
 <div *ngIf="!selectedBoard" class="row">
-    <div class="col-md-4" *ngFor="let b of boards">
+  <div class="col-md-4" *ngFor="let b of boards">
+    <div class="custom-card">
 
-        <div class="custom-card">
+      <!-- Availability Dot -->
+      <span class="status-dot" [ngClass]="b.status === 'Available' ? 'green' : 'red'"></span>
 
-            <!-- Availability Dot -->
-            <span class="status-dot" [ngClass]="b.availability === 'Available' ? 'green' : 'red'">
-            </span>
+      <img [src]="b.image" class="card-img">
 
-            <img [src]="b.image" class="card-img">
+      <div class="card-content">
+        <h4 class="card-title">{{ b.service_type }} </h4>
 
-            <div class="card-content">
-                <h4 class="card-title">{{ b.hoardingType }}</h4>
+        <p class="location-text">
+          {{ b.State }}, {{ b.District }}, {{ b.Tehsil }}, {{ b.Village }}
+        </p>
 
-                <p class="location-text">
-                    {{ b.state }}, {{ b.district }}, {{ b.taluka }}, {{ b.village }}
-                </p>
+        <p class="exact-location">📍 {{ b.location }}</p>
 
-                <p class="exact-location">📍 {{ b.location }}</p>
-
-                <div class="price-size">
-                    <span>📐 {{ b.size }}</span>
-                    <span class="price">₹{{ b.price }}</span>
-                </div>
-
-                <button class="view-btn" (click)="viewMore(b.id)">View More</button>
-            </div>
+        <div class="price-size">
+          <span>📐 {{ b.size}}</span>
+          <span class="price">₹{{ b.rental_cost}}</span>
         </div>
+
+        <button class="view-btn" (click)="viewMore(b.id)">View More</button>
+      </div>
     </div>
+  </div>
 </div>
+
 
 
 
