@@ -10,7 +10,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 const JWT_SECRET = "mySuperSecretKey";
-const auth = require("./middleware/auth"); 
+const auth = require("./middleware/auth");
 const path = require('path');     // at top (if not present)
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -39,7 +39,7 @@ app.get("/", (req, res) => res.send("Welcome to Vehicle Marketing API"));
 const cors = require("cors");
 
 app.use(cors({
-    origin: ["http://localhost:4200","http://localhost:5173"], // Angular dev server
+    origin: ["http://localhost:4200", "http://localhost:5173"], // Angular dev server
     methods: ["GET", "POST", "PUT", "DELETE"]
 }));
 
@@ -112,7 +112,7 @@ app.use(cors({
 *       200:
 *         description: List of vehicles
 */
-app.get("/vehicles",(req, res) => {
+app.get("/vehicles", (req, res) => {
     db.query("SELECT * FROM vehicle_marketing", (err, results) => {
         if (err) return res.status(500).send(err);
         res.json(results);
@@ -877,7 +877,7 @@ app.delete("/balloons/:id", (req, res) => {
 app.get("/screens", (req, res) => {
     db.query("SELECT * FROM outdoormarketingscreens", (err, results) => {
         if (err) return res.status(500).send(err);
-        res.send({result:true,status:200,message:'Scrrent data fech Success',data:results});
+        res.send({ result: true, status: 200, message: 'Scrrent data fech Success', data: results });
     });
 });
 
@@ -902,7 +902,7 @@ app.get("/screens/:id", (req, res) => {
     db.query("SELECT * FROM outdoormarketingscreens WHERE ScreenID = ?", [id], (err, results) => {
         if (err) return res.status(500).send(err);
         if (results.length === 0) return res.status(404).send("Screen not found");
-        res.json({result:true,status:200,message:'screen data fetched',data:results[0]});
+        res.json({ result: true, status: 200, message: 'screen data fetched', data: results[0] });
     });
 });
 
@@ -954,7 +954,7 @@ app.post("/screens", (req, res) => {
 
     db.query(sql, values, (err, result) => {
         if (err) return res.status(500).send(err);
-        res.status(201).send({retult:true, status:201, message: "Screen created", data:result });
+        res.status(201).send({ retult: true, status: 201, message: "Screen created", data: result });
     });
 });
 
@@ -1014,9 +1014,9 @@ app.put("/screens/:id", (req, res) => {
         id,
     ];
 
-    db.query(sql, values, (err,result) => {
+    db.query(sql, values, (err, result) => {
         if (err) return res.status(500).send(err);
-        res.send({result:true,status:200, message: "Screen updated" ,data:result });
+        res.send({ result: true, status: 200, message: "Screen updated", data: result });
     });
 });
 
@@ -1040,7 +1040,7 @@ app.delete("/screens/:id", (req, res) => {
     const { id } = req.params;
     db.query("DELETE FROM outdoormarketingscreens WHERE ScreenID = ?", [id], (err) => {
         if (err) return res.status(500).send(err);
-        res.send({result:true,status:201, message: "Screen deleted" });
+        res.send({ result: true, status: 201, message: "Screen deleted" });
     });
 });
 
@@ -1249,7 +1249,7 @@ app.put("/hoardings/:id", (req, res) => {
         data.contract_start_date,
         data.contract_end_date,
         data.notes,
-       
+
         id,
     ];
 
@@ -1416,35 +1416,35 @@ app.get("/Users/:id", (req, res) => {
 *         description: User created
 */
 app.post("/Users/register", async (req, res) => {
-  try {
-    const data = req.body;
+    try {
+        const data = req.body;
 
-    // hash password before saving
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+        // hash password before saving
+        const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    const sql = `
+        const sql = `
         INSERT INTO users
         (userName, emailId, password)
         VALUES (?, ?, ?)
     `;
-    const values = [
-      data.userName,
-      data.emailId,
-      hashedPassword, // save hashed password
-    ];
+        const values = [
+            data.userName,
+            data.emailId,
+            hashedPassword, // save hashed password
+        ];
 
-    db.query(sql, values, (err, result) => {
-      if (err) {
-        if (err.code === "ER_DUP_ENTRY") {
-          return res.status(400).send({ message: "Email already exists" });
-        }
-        return res.status(500).send(err);
-      }
-      res.status(201).send({ message: "User created", id: result.insertId });
-    });
-  } catch (err) {
-    res.status(500).send({ message: err.message });
-  }
+        db.query(sql, values, (err, result) => {
+            if (err) {
+                if (err.code === "ER_DUP_ENTRY") {
+                    return res.status(400).send({ message: "Email already exists" });
+                }
+                return res.status(500).send(err);
+            }
+            res.status(201).send({ message: "User created", id: result.insertId });
+        });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
 });
 /**
 * @swagger
@@ -1479,32 +1479,32 @@ app.post("/Users/register", async (req, res) => {
 *         description: User updated
 */
 app.put("/Users/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const data = req.body;
+    try {
+        const { id } = req.params;
+        const data = req.body;
 
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+        const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    const sql = `
+        const sql = `
         UPDATE users SET
         userName=?, emailId=?, password=?
         WHERE userId=?
     `;
 
-    const values = [
-      data.userName,
-      data.emailId,
-      hashedPassword,
-      id // ✅ correct
-    ];
+        const values = [
+            data.userName,
+            data.emailId,
+            hashedPassword,
+            id // ✅ correct
+        ];
 
-    db.query(sql, values, (err, result) => {
-      if (err) return res.status(500).send(err);
-      res.send({ status:201,message: "User updated" });
-    });
-  } catch (err) {
-    res.status(500).send({status:500, message: err.message });
-  }
+        db.query(sql, values, (err, result) => {
+            if (err) return res.status(500).send(err);
+            res.send({ status: 201, message: "User updated" });
+        });
+    } catch (err) {
+        res.status(500).send({ status: 500, message: err.message });
+    }
 });
 
 
@@ -1596,36 +1596,36 @@ app.delete("/Users/:id", (req, res) => {
 
 
 app.post("/Users/login", (req, res) => {
-  const { emailId, password } = req.body;
+    const { emailId, password } = req.body;
 
-  db.query(
-    "SELECT * FROM users WHERE userEmail = ?",
-    [emailId],
-    async (err, results) => {
-      if (err) return res.status(500).send(err);
-      if (results.length === 0)
-        return res.status(400).send({ message: "User not found" });
+    db.query(
+        "SELECT * FROM users WHERE userEmail = ?",
+        [emailId],
+        async (err, results) => {
+            if (err) return res.status(500).send(err);
+            if (results.length === 0)
+                return res.status(400).send({ message: "User not found" });
 
-      const user = results[0];
+            const user = results[0];
 
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch)
-        return res.status(400).send({ message: "Invalid credentials" });
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch)
+                return res.status(400).send({ message: "Invalid credentials" });
 
-      const token = jwt.sign(
-        { id: user.id, role: user.role },
-        JWT_SECRET,
-        { expiresIn: "1h" }
-      );
+            const token = jwt.sign(
+                { id: user.id, role: user.role },
+                JWT_SECRET,
+                { expiresIn: "1h" }
+            );
 
-      res.send({
-        status: 200,
-        message: "Login successful",
-        data: user,
-        token,
-      });
-    }
-  );
+            res.send({
+                status: 200,
+                message: "Login successful",
+                data: user,
+                token,
+            });
+        }
+    );
 });
 //search api for services
 //service_type,state,district,taluka,village->api to get data from respective tables
@@ -1752,43 +1752,55 @@ app.post("/Users/login", (req, res) => {
 
 
 
- app.get('/search-services', (req, res) => {
-  const { service_type, State, District, Tehsil, Village } = req.query;
+app.get('/search-services', (req, res) => {
+    const { service_type, State, District, Tehsil, Village } = req.query;
 
-  if (!service_type) {
-    return res.status(400).json({ message: 'service_type is required' });
-  }
+    // 🔍 Log incoming request
+    console.log('🔍 Search API Called:', {
+        service_type,
+        filters: { State, District, Tehsil, Village }
+    });
 
-  const serviceTables = {
-    balloon_marketing: 'balloon_marketing',
-    society_marketing: 'society_marketing',
-    vehicle_marketing: 'vehicle_marketing',
-    
-    hoardings: 'hoardings',
-    outdoormarketingscreens: 'outdoormarketingscreens'
-  };
-
-  const tableName = serviceTables[service_type];
-  if (!tableName) {
-    return res.status(400).json({ message: 'Invalid service type' });
-  }
-
-  // Build query for selected service only
-  let query = `SELECT *, '${service_type}' AS service_type FROM ${tableName} WHERE 1=1`;
-  const params = [];
-
-  if (State)   { query += ' AND State = ?';   params.push(State); }
-  if (District){ query += ' AND District = ?';params.push(District); }
-  if (Tehsil)  { query += ' AND Tehsil = ?';  params.push(Tehsil); }
-  if (Village) { query += ' AND Village = ?'; params.push(Village); }
-
-  db.query(query, params, (err, results) => {
-    if (err) {
-      console.error("SQL ERROR:", err.sqlMessage || err);
-      return res.status(500).json({ message: err.sqlMessage || err.message });
+    if (!service_type) {
+        return res.status(400).json({ message: 'service_type is required' });
     }
-    res.json(results);
-  });
+
+    const serviceTables = {
+        balloon_marketing: 'balloon_marketing',
+        society_marketing: 'society_marketing',
+        vehicle_marketing: 'vehicle_marketing',
+        hoardings: 'hoardings',
+        outdoormarketingscreens: 'outdoormarketingscreens'
+    };
+
+    const tableName = serviceTables[service_type];
+    if (!tableName) {
+        return res.status(400).json({ message: 'Invalid service type' });
+    }
+
+    // ✅ Build optimized query with dynamic filters
+    let query = `SELECT *, '${service_type}' AS service_type FROM ${tableName} WHERE 1=1`;
+    const params = [];
+
+    // Add filters only if they are provided
+    if (State) { query += ' AND State = ?'; params.push(State); }
+    if (District) { query += ' AND District = ?'; params.push(District); }
+    if (Tehsil) { query += ' AND Tehsil = ?'; params.push(Tehsil); }
+    if (Village) { query += ' AND Village = ?'; params.push(Village); }
+
+    console.log('📤 Executing SQL Query:', query);
+    console.log('📋 Query Parameters:', params);
+
+    // Execute single optimized query
+    db.query(query, params, (err, results) => {
+        if (err) {
+            console.error("❌ SQL ERROR:", err.sqlMessage || err);
+            return res.status(500).json({ message: err.sqlMessage || err.message });
+        }
+
+        console.log(`✅ Query successful. Returned ${results.length} results.`);
+        res.json(results);
+    });
 });
 
 
@@ -1830,15 +1842,15 @@ app.post("/Users/login", (req, res) => {
  *         description: Server Error
  */
 app.post("/signup", (req, res) => {
-  const { userName, userEmail, password } = req.body;
+    const { userName, userEmail, password } = req.body;
 
-  const sql = "INSERT INTO users (userName, userEmail, password) VALUES (?,?,?)";
+    const sql = "INSERT INTO users (userName, userEmail, password) VALUES (?,?,?)";
 
-  db.query(sql, [userName, userEmail, password], (err, result) => {
-    if (err) return res.status(500).json({ message: "Error", err });
+    db.query(sql, [userName, userEmail, password], (err, result) => {
+        if (err) return res.status(500).json({ message: "Error", err });
 
-    return res.json({ message: "User registered successfully" });
-  });
+        return res.json({ message: "User registered successfully" });
+    });
 });
 // ---------------- Start Server ----------------
 app.listen(8080, () => {

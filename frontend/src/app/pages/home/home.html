@@ -37,9 +37,7 @@
     <div class="filter-row">
 
       <!-- CATEGORY -->
-      <select class="filter-item"
-              [(ngModel)]="selectedServiceType"
-              (change)="onServiceTypeChange()">
+      <select class="filter-item" [(ngModel)]="selectedServiceType" (change)="onServiceTypeChange()">
         <option value="">Select Type</option>
         <option *ngFor="let type of categoryList" [value]="type">
           {{ type }}
@@ -47,9 +45,7 @@
       </select>
 
       <!-- STATE -->
-      <select class="filter-item"
-              [(ngModel)]="selectedState"
-              (change)="onStateChange()">
+      <select class="filter-item" [(ngModel)]="selectedState" (change)="onStateChange()">
         <option value="">State</option>
         <option *ngFor="let s of states" [value]="s">
           {{ s }}
@@ -57,9 +53,7 @@
       </select>
 
       <!-- DISTRICT -->
-      <select class="filter-item"
-              [(ngModel)]="selectedDistrict"
-              (change)="onDistrictChange()">
+      <select class="filter-item" [(ngModel)]="selectedDistrict" (change)="onDistrictChange()">
         <option value="">District</option>
         <option *ngFor="let d of districts" [value]="d">
           {{ d }}
@@ -67,9 +61,7 @@
       </select>
 
       <!-- TEHSIL -->
-      <select class="filter-item"
-              [(ngModel)]="selectedTehsil"
-              (change)="onTehsilChange()">
+      <select class="filter-item" [(ngModel)]="selectedTehsil" (change)="onTehsilChange()">
         <option value="">Tehsil</option>
         <option *ngFor="let t of tehsils" [value]="t">
           {{ t }}
@@ -77,8 +69,7 @@
       </select>
 
       <!-- VILLAGE -->
-      <select class="filter-item"
-              [(ngModel)]="selectedVillage">
+      <select class="filter-item" [(ngModel)]="selectedVillage">
         <option value="">Village</option>
         <option *ngFor="let v of villages" [value]="v">
           {{ v }}
