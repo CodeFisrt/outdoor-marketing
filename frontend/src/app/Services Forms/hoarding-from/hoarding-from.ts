@@ -7,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-hoarding-from',
-  imports: [RouterLink, ReactiveFormsModule,NgClass,NgIf],
+  imports: [RouterLink, ReactiveFormsModule, NgClass, NgIf],
   templateUrl: './hoarding-from.html',
   styleUrl: './hoarding-from.css'
 })
@@ -22,7 +22,7 @@ export class HoardingFrom {
     private toastr: ToastrService
   ) { }
 
-   ngOnInit(): void {
+  ngOnInit(): void {
     this.hoardingForm = this.fb.group({
       h_name: ['', Validators.required],
       address: ['', Validators.required],
@@ -56,6 +56,7 @@ export class HoardingFrom {
   }
 
   loadHoardingsData(id: number) {
+    debugger
     this.http.get(`http://localhost:8080/hoardings/${this.hoardingId}`).subscribe({
       next: (data) => {
         this.hoardingForm.patchValue(data);

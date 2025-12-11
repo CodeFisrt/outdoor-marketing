@@ -38,10 +38,10 @@ export const routes: Routes = [
   { path: 'Blog', component: Blog },
   { path: 'contactUs', component: ContactUs },
   { path: 'Services', component: Services },
-  {path:"auth/callback",component:AuthCallback},
-  {path:"screenBoardCardList",component:ScreenBoardCardList},
-  {path:"screenBoardDescrpt/:id/:service_type'",component:ScreenBoardDescript},
- 
+  { path: "auth/callback", component: AuthCallback },
+  { path: "screenBoardCardList", component: ScreenBoardCardList },
+  { path: "screenBoardDescrpt/:id/:service_type'", component: ScreenBoardDescript },
+
 
   // ✅ Dashboard Layout with children
   {

@@ -17,7 +17,7 @@ export class ScreenBoardCardList implements OnChanges {
   imageBaseUrl: string = 'http://localhost:8080/uploads/';
   fallbackImage: string = 'assets/no-image.png';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['filters'] && this.filters) {
