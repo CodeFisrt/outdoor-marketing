@@ -1,4 +1,4 @@
-<!-- LIST OF CARDS --> 
+<!-- LIST OF CARDS -->
 <div *ngIf="!selectedBoard" class="row">
   <div class="col-md-4" *ngFor="let b of boards">
     <div class="custom-card">
@@ -6,10 +6,15 @@
       <!-- Availability Dot -->
       <span class="status-dot" [ngClass]="b.status === 'Available' ? 'green' : 'red'"></span>
 
-      <img [src]="b.image" class="card-img">
+      <!-- FIXED IMAGE WITH FALLBACK -->
+      <img 
+        [src]="imageBaseUrl + b.image" 
+        (error)="onImgError($event)"
+        class="card-img" 
+        alt="Board Image">
 
       <div class="card-content">
-        <h4 class="card-title">{{ b.service_type }} </h4>
+        <h4 class="card-title">{{ b.service_type }}</h4>
 
         <p class="location-text">
           {{ b.State }}, {{ b.District }}, {{ b.Tehsil }}, {{ b.Village }}
@@ -18,30 +23,14 @@
         <p class="exact-location">📍 {{ b.location }}</p>
 
         <div class="price-size">
-          <span>📐 {{ b.size}}</span>
-          <span class="price">₹{{ b.rental_cost}}</span>
+          <span>📐 {{ b.size }}</span>
+          <span class="price">₹{{ b.rental_cost }}</span>
         </div>
 
-        <button class="view-btn" (click)="viewMore(b.id)">View More</button>
+        <button class="view-btn" (click)="viewMore(b)">View More</button>
+
       </div>
+
     </div>
   </div>
 </div>
-
-
-
-
-<!-- VIEW MORE DETAILS -->
-<!-- 
-
-<div *ngIf="selectedBoard" class="details-box mt-4">
-    <button class="btn btn-secondary mb-3" (click)="goBack()">⬅ Back</button>
-    <h3>{{ selectedBoard.hoardingType }}</h3>
-    <img [src]="selectedBoard.image" width="100%" class="mb-3">
-    <p><strong>State:</strong> {{ selectedBoard.state }}</p>
-    <p><strong>District:</strong> {{ selectedBoard.district }}</p>
-    <p><strong>Taluka:</strong> {{ selectedBoard.taluka }}</p>
-    <p><strong>Village:</strong> {{ selectedBoard.village }}</p>
-
-    <p><strong>Description:</strong> {{ selectedBoard.description }}</p>
-</div> -->
