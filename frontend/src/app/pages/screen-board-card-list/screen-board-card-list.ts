@@ -35,7 +35,13 @@ export class ScreenBoardCardList implements OnChanges {
     return b.h_id || b.b_id || b.ScreenId || b.v_id || b.s_id;
   }
 
-  viewMore(id: number) {
-    this.router.navigateByUrl(`screenBoardDescrpt/${id}`);
+  viewMore(b: any) {
+    const id = this.getBoardId(b);
+    const type = b.service_type; // Ensure service_type is available in the object
+    if (id && type) {
+      this.router.navigate(['/screenBoardDescrpt', id, type]);
+    } else {
+      console.error('Missing ID or Service Type for navigation', b);
+    }
   }
 }

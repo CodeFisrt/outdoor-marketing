@@ -1,252 +1,157 @@
-<div class="details-box" *ngIf="board">
-
-  <button class="btn btn-secondary mb-3" (click)="goBack()">⬅ Back</button>
-
-  <h3>{{ board.hoardingType }}</h3>
-
-  <img [src]="board.image" width="100%" class="mb-3">
-
-  <p><strong>State:</strong> {{ board.state }}</p>
-  <p><strong>District:</strong> {{ board.district }}</p>
-  <p><strong>Taluka:</strong> {{ board.taluka }}</p>
-  <p><strong>Village:</strong> {{ board.village }}</p>
-
-  <p><strong>Description:</strong> {{ board.description }}</p>
-
-</div> 
+<div class="loading-container" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Loading Details...</p>
+</div>
 
 <!-- ✅ A. BOARD DETAILS VIEW -->
-<div *ngIf="board">
-  <div *ngIf="currentSection === 'details'" class="container">
+<div class="full-page-container" *ngIf="!loading && board">
+  <!-- Premium Card Container -->
+  <div class="premium-details-card" *ngIf="currentSection === 'details'">
 
-    <!-- Back Button -->
-    <button class="btn btn-outline-dark mb-3" (click)="goBack()">← Back</button>
-
-    <!-- Title -->
-    <h2 class="fw-bold text-primary text-center">{{ board.hoardingType }}</h2>
-
-    <!-- Board Image (Full visible, no cropping) -->
-    <img [src]="board.image" class="img-fluid rounded mb-3"
-      style="width: 30% !important; max-width: 30% !important; height: auto; display: block; margin: auto;">
-    <dl class="row">
-
-      <!-- Location -->
-      <dt class="col-sm-3 fw-bold">Location</dt>
-      <dd class="col-sm-9 text-muted">
-        <strong>{{ board.state }},</strong> <strong>{{ board.district }},</strong> <strong>{{ board.location }}</strong>
-      </dd>
-
-      <!-- Price -->
-      <dt class="col-sm-3 fw-bold">Price</dt>
-      <dd class="col-sm-9 text-success fw-bold">
-        ₹ {{ board.price }}
-      </dd>
-
-      <!-- Description -->
-      <dt class="col-sm-3 fw-bold">Description</dt>
-      <dd class="col-sm-9 text-secondary">
-        {{ board.description }}
-      </dd>
-
-    </dl>
-
-    <!-- Buttons -->
-    <div class="mt-4 d-flex gap-3 flex-wrap">
-
-      <button class="btn btn-success px-4" *ngIf="board.availability === 'Available'" (click)="showSection('book')">
-        Book Now
-      </button>
-
-      <button class="btn btn-warning px-4" *ngIf="board.availability === 'Available' || board.availability === 'Booked'"
-        (click)="showSection('schedule')">
-        Schedule
-      </button>
-
-      <button class="btn btn-primary px-4" (click)="showSection('bidding')">
-        Bidding
-      </button>
-
-    </div>
-
-
-  </div>
-</div>
-
-
-
-
-<!-- ✅ BOOK NOW SECTION -->
-<div *ngIf="currentSection === 'book'" class="container">
-
-  <!-- Back Button -->
-  <div class="mb-3">
-    <button class="btn btn-outline-secondary" (click)="showSection('details')">← Back</button>
-  </div>
-
-  <!-- Title -->
-  <h3 class="fw-bold text-primary mb-4">📌 Book Now</h3>
-
-  <!-- Form Box -->
-  <div class="card shadow-sm p-4" style="border-radius: 15px;">
-
-    <div class="row mb-3">
-      <div class="col-md-12">
-        <label class="form-label fw-semibold">Full Name</label>
-        <input type="text" class="form-control" placeholder="Enter your name">
-      </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label class="form-label fw-semibold">Start Date</label>
-        <input type="date" class="form-control">
-      </div>
-
-      <div class="col-md-6">
-        <label class="form-label fw-semibold">End Date</label>
-        <input type="date" class="form-control">
-      </div>
-    </div>
-
-    <!-- Submit Button -->
-    <button class="btn btn-success w-100 mt-3 py-2 fw-bold">
-      Confirm Booking
+    <!-- Close/Back Button -->
+    <!-- <button class="close-btn" (click)="goBack()">✖</button> -->
+    <button class="back-btn" (click)="goBack()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7" />
+      </svg>
+      Back
     </button>
 
-  </div>
-</div>
+    <div class="card-layout">
 
+      <!-- Left Side: Hero Image -->
+      <div class="image-section">
+        <div class="image-wrapper">
+          <img [src]="board.image" [alt]="board.hoardingType" class="hero-image">
+          <div class="status-badge"
+            [ngClass]="board.availability === 'Available' ? 'status-available' : 'status-booked'">
+            {{ board.availability }}
+          </div>
+        </div>
+      </div>
 
+      <!-- Right Side: Content & Details -->
+      <div class="content-section">
 
+        <div class="header-info">
+          <div class="service-tag">{{ board.district }}</div>
+          <h1 class="main-title">{{ board.hoardingType }}</h1>
+          <p class="location-sub">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            {{ board.location }}
+          </p>
+        </div>
 
-<!-- ✅ C. SCHEDULE BOOKING SECTION -->
-<div *ngIf="currentSection === 'schedule'" class="container">
+        <div class="price-box">
+          <span class="price-label">Price per unit</span>
+          <span class="price-val">₹ {{ board.price }}</span>
+        </div>
 
-  <!-- Back Button -->
-  <button class="btn btn-outline-secondary mb-3" (click)="showSection('details')">← Back</button>
+        <!-- Dynamic Grid Attributes -->
+        <div class="attributes-grid">
+          <div class="attr-item" *ngFor="let attr of board.attributes">
+            <span class="attr-label">{{ attr.label }}</span>
+            <span class="attr-val">{{ attr.value }}</span>
+          </div>
+          <!-- Always show Contact if available -->
+          <div class="attr-item" *ngIf="board.contactName">
+            <span class="attr-label">Contact Person</span>
+            <span class="attr-val">{{ board.contactName }}</span>
+          </div>
+          <div class="attr-item" *ngIf="board.contactNum">
+            <span class="attr-label">Phone</span>
+            <span class="attr-val">{{ board.contactNum }}</span>
+          </div>
+        </div>
 
-  <!-- Title -->
-  <h3 class="fw-bold text-warning mb-4">⏳ Schedule Booking</h3>
+        <div class="description-box">
+          <h3>Description</h3>
+          <p>{{ board.description || 'No description available for this service.' }}</p>
+        </div>
 
-  <!-- Card -->
-  <div class="card shadow-sm p-4" style="border-radius: 15px;">
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="btn-premium btn-book" *ngIf="board.availability === 'Available'" (click)="showSection('book')">
+            Book Now
+          </button>
+          <button class="btn-premium btn-schedule"
+            *ngIf="board.availability === 'Available' || board.availability === 'Booked'"
+            (click)="showSection('schedule')">
+            Schedule Visit
+          </button>
+          <button class="btn-premium btn-bid" (click)="showSection('bidding')">
+            Place Bid
+          </button>
+        </div>
 
-    <div class="mb-3">
-      <label class="form-label fw-semibold">Select Date</label>
-      <input type="date" class="form-control">
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label fw-semibold">Time Slot</label>
-      <select class="form-select">
-        <option>10 AM - 1 PM</option>
-        <option>1 PM - 4 PM</option>
-        <option>4 PM - 7 PM</option>
-      </select>
-    </div>
-
-    <button class="btn btn-warning w-100 py-2 fw-bold">
-      Schedule
-    </button>
-
-  </div>
-</div>
-
-
-
-
-
-<!-- ✅ D. BIDDING SECTION -->
-<div *ngIf="currentSection === 'bidding'" class="container">
-
-  <!-- Back Button -->
-  <button class="btn btn-outline-secondary mb-3" (click)="showSection('details')">← Back</button>
-
-  <!-- Title -->
-  <h3 class="fw-bold text-primary mb-4">💰 Place Your Bid</h3>
-
-  <!-- Card -->
-  <div class="card shadow-sm p-4" style="border-radius: 15px;">
-
-    <div class="mb-3">
-      <label class="form-label fw-semibold">Bid Amount</label>
-      <input type="number" class="form-control" placeholder="Enter your bid amount">
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label fw-semibold">Message</label>
-      <textarea class="form-control" rows="3" placeholder="Add a short message..."></textarea>
-    </div>
-
-    <button class="btn btn-primary w-100 py-2 fw-bold">
-      Submit Bid
-    </button>
-
-  </div>
-</div>
-
-
-
-<!-- Nearby Boards Section -->
-<div *ngIf="nearBoards.length > 0" class="mt-4">
-  <h3 class="fw-bold text-primary mb-3">
-    Nearby Boards in {{ board.district }}
-  </h3>
-
-  <div *ngFor="let nb of nearBoards" class="card shadow-sm border-0 mb-3 p-3 rounded-3">
-
-    <!-- Board Info -->
-    <div class="d-flex align-items-center">
-
-      <!-- Image -->
-      <img [src]="nb.image" class="rounded" style="width: 120px; height: 90px; object-fit: cover;" />
-
-      <!-- Text Info -->
-      <div class="ms-3">
-        <h5 class="fw-bold mb-1">{{ nb.hoardingType }}</h5>
-        <p class="text-muted mb-1">{{ nb.location }}</p>
-        <p class="text-success fw-bold fs-5">₹ {{ nb.price }}</p>
       </div>
     </div>
-
-    <hr>
-
-    <!-- Buttons -->
-    <div class="d-flex justify-content-start">
-
-      <!-- AVAILABLE → Book Now + Schedule + Bidding -->
-      <ng-container *ngIf="nb.availability === 'Available'">
-        <!-- Book Now (Green Solid + Shadow) -->
-        <button class="btn btn-success btn-sm me-2 px-3 shadow-sm rounded-pill">
-          Book Now
-        </button>
-
-        <!-- Schedule (Yellow Outline) -->
-        <button class="btn btn-outline-warning btn-sm me-2 px-3 rounded-pill fw-semibold">
-          Schedule
-        </button>
-
-        <!-- Bidding (Blue Gradient Style) -->
-        <button class="btn btn-primary btn-sm px-3 rounded-pill shadow">
-          <i class="bi bi-currency-rupee"></i> Bidding
-        </button>
-      </ng-container>
-
-
-      <!-- BOOKED → Only Schedule + Bidding -->
-      <ng-container *ngIf="nb.availability === 'Booked'">
-        <!-- Schedule (Yellow Filled) -->
-        <button class="btn btn-warning btn-sm me-2 px-3 rounded-3 shadow-sm fw-semibold">
-          Schedule
-        </button>
-
-        <!-- Bidding (Blue Outline) -->
-        <button class="btn btn-outline-primary btn-sm px-3 rounded-3 fw-semibold">
-          Bidding
-        </button>
-      </ng-container>
-
-    </div>
-
   </div>
+
+  <!-- SUB SECTIONS (Retained structure but wrapped nicely) -->
+
+  <!-- BOOK NOW SECTION -->
+  <div *ngIf="currentSection === 'book'" class="sub-section-container">
+    <button class="back-link" (click)="showSection('details')">← Back to Details</button>
+    <div class="form-card">
+      <h3>📌 Book this Service</h3>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" placeholder="Enter your full name">
+      </div>
+      <div class="row-inputs">
+        <div class="form-group">
+          <label>Start Date</label>
+          <input type="date">
+        </div>
+        <div class="form-group">
+          <label>End Date</label>
+          <input type="date">
+        </div>
+      </div>
+      <button class="btn-primary-action">Confirm Booking</button>
+    </div>
+  </div>
+
+  <!-- SCHEDULE SECTION -->
+  <div *ngIf="currentSection === 'schedule'" class="sub-section-container">
+    <button class="back-link" (click)="showSection('details')">← Back to Details</button>
+    <div class="form-card">
+      <h3>⏳ Schedule a Visit</h3>
+      <div class="form-group">
+        <label>Select Date</label>
+        <input type="date">
+      </div>
+      <div class="form-group">
+        <label>Time Slot</label>
+        <select>
+          <option>10:00 AM - 01:00 PM</option>
+          <option>02:00 PM - 05:00 PM</option>
+        </select>
+      </div>
+      <button class="btn-primary-action btn-sched">Confirm Schedule</button>
+    </div>
+  </div>
+
+  <!-- BIDDING SECTION -->
+  <div *ngIf="currentSection === 'bidding'" class="sub-section-container">
+    <button class="back-link" (click)="showSection('details')">← Back to Details</button>
+    <div class="form-card">
+      <h3>💰 Place Your Bid</h3>
+      <p class="bid-info">Current Price: <strong>₹ {{ board.price }}</strong></p>
+      <div class="form-group">
+        <label>Your Bid Amount</label>
+        <input type="number" placeholder="Enter amount">
+      </div>
+      <div class="form-group">
+        <label>Message (Optional)</label>
+        <textarea rows="3"></textarea>
+      </div>
+      <button class="btn-primary-action btn-bid">Submit Bid</button>
+    </div>
+  </div>
+
 </div>
