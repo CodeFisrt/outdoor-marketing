@@ -30,8 +30,6 @@
   </div>
 </section>
 
-<app-category-cards (categorySelected)="onCategorySelect($event)"></app-category-cards>
-
 <section class="filter-section">
   <div class="filter-card">
     <h3 class="filter-title">Find Outdoor Advertising</h3>
@@ -86,6 +84,10 @@
   </div>
 </section>
 
-<ng-container *ngIf="showcards">
+
+<div class="search-results-container" *ngIf="showcards">
+  <h3 class="results-title">Search Results</h3>
   <app-screen-board-card-list [filters]="filterData"></app-screen-board-card-list>
-</ng-container>
+</div>
+
+<app-category-cards (categorySelected)="onCategorySelect($event)"></app-category-cards>
