@@ -1,0 +1,59 @@
+<section class="premium-category-section">
+    <div class="category-wrapper">
+        <!-- Section Header with Premium Design -->
+        <div class="section-header">
+            <div class="header-badge">Explore Services</div>
+            <h2 class="premium-title">
+                Choose Your Perfect
+                <span class="gradient-text">Advertising Solution</span>
+            </h2>
+            <p class="premium-subtitle">
+                Transform your brand with our premium outdoor marketing services
+            </p>
+        </div>
+
+        <!-- Premium Cards Grid -->
+        <div class="premium-cards-grid">
+            <article *ngFor="let category of categories; let i = index" class="premium-card"
+                (click)="onCardClick(category)" [attr.data-index]="i" [attr.data-category]="category.title">
+                <!-- Card Background Image -->
+                <div class="card-bg-wrapper">
+                    <img [src]="category.image" [alt]="category.title" class="card-bg-image" loading="lazy">
+                    <!-- Premium Gradient Overlay -->
+                    <div class="card-gradient-overlay" [style.background]="category.gradient"></div>
+                    <!-- Noise Texture for Premium Feel -->
+                    <div class="card-noise"></div>
+                </div>
+
+                <!-- Card Content -->
+                <div class="card-content-wrapper">
+                    <!-- Top Badge/Icon -->
+                    <div class="card-icon-badge">
+                        <span class="category-emoji">{{ category.icon }}</span>
+                    </div>
+
+                    <!-- Bottom Content -->
+                    <div class="card-bottom-content">
+                        <div class="card-text">
+                            <h3 class="card-title">{{ category.title }}</h3>
+                            <p class="card-description">{{ category.description }}</p>
+                        </div>
+
+                        <!-- Arrow CTA -->
+                        <div class="card-cta">
+                            <div class="cta-circle">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shimmer Effect on Hover -->
+                <div class="card-shimmer"></div>
+            </article>
+        </div>
+    </div>
+</section>

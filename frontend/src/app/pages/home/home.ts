@@ -7,9 +7,11 @@ import { ScreenBoardCardList } from '../screen-board-card-list/screen-board-card
 import { Search } from '../../SearchServices/search';
 import { HttpParams } from '@angular/common/http';
 
+import { CategoryCards } from '../category-cards/category-cards';
+
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, FormsModule, ScreenBoardCardList],
+  imports: [CommonModule, FormsModule, ScreenBoardCardList, CategoryCards],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
@@ -43,6 +45,16 @@ export class Home {
 
   // 🔥 Store all data locally to avoid multiple API calls
   allServiceData: any[] = [];
+
+  onCategorySelect(category: string) {
+    if (this.categoryMap[category]) {
+      this.selectedServiceType = category;
+      this.onServiceTypeChange();
+
+      // Scroll to filter section smoothly
+      document.querySelector('.filter-section')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 
   // 🔵 STEP 1: SERVICE TYPE → Load ALL data for this service type ONCE
   onServiceTypeChange() {
