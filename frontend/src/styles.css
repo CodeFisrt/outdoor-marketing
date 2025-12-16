@@ -5,282 +5,310 @@
 
 
 :root {
-    --primary-color: #2373a6;
-    --secondary-color: #f4ae1e;
-    --secondarytwo-color: #fff;
-  }
-  
-  body {
-    font-family: Roboto, sans-serif;
-  }
-  
-  .mask {
-    width: 100%;
-    height: 100%;
-  }
-  .main-img {
-    width: 100%;
-    height: 100vh;
-  }
-  .home-sec img {
-    height: 80vh;
-    /* object-fit: cover; */
-    /* object-position: center; */
-  }
-  .services {
-    height: 100vh;
-    width: 100vw;
-    background-color: var(--primary-color);
-  }
-  .footer-sec p {
-    color: var(--secondarytwo-color);
-    margin: 0;
-  }
-  .footer-sec i {
-    height: 10px;
-    width: 10px;
-    color: var(--secondary-color);
-  }
-  
-  .scrolling-text-bar {
-    background: var(--secondary-color);
-    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-    color: var(--secondarytwo-color);
-  }
-  
-  .running-text {
-    color: var(--secondarytwo-color);
-    padding: 6px 0;
-    display: inline-block;
-    animation: slide-left 15s linear infinite;
-  }
-  
-  @keyframes slide-left {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(-200%);
-    }
-  }
-  
-  .nav-bar {
-    background-color: black;
-    color: var(--secondarytwo-color);
-    padding: 4px;
-    list-style: none;
-  }
-  
-  .nav-btn a {
-    background-color: var(--primary-color);
-    padding: 6px 24px;
-  }
-  .nav-toggle-btn {
-    background-color: var(--primary-color);
-  }
-  .nav-toggle-btn > span {
-  }
-  
-  /* service card css  */
-  .serviceslide-controls button {
-    all: unset;
-    border: none;
-    background-color: var(--primary-color);
-    color: var(--secondarytwo-color);
-    padding: 8px 12px;
-    border-radius: 50%;
-    font-size: 24px;
-  }
-  
-  /* Ensure all swiper slides and cards stretch equally */
-  .service-card-slide {
-    height: 100%;
-    background-color: var(--primary-color);
-    
-  }
-  
-  .service-card {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--primary-color);
-    color: var(--secondarytwo-color);
-  }
-  
-  .service-card img {
-    height: 150px;
-    object-fit: cover;
-  }
-  
-  .service-card-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* our work css  */
-  .our-work-left-btn,
-  .our-work-right-btn {
-    all: unset;
-    border: none;
-    background-color: var(--primary-color);
-    color: var(--secondarytwo-color);
-    padding: 8px 12px;
-    border-radius: 50%;
-    font-size: 24px;
-  }
-  .ourwork-card .card-title{
-    color: var(--primary-color);
-  }
-  .ourwork-card img {
-    height: 180px;
-  }
-  .ourwork-card:last-child{
-    color: gray;
-  }
-  
-  /* sign in css  */
-  .signin-left {
-    border-radius: 20px 0 0 20px;
-    background: linear-gradient(to bottom right, var(--primary-color), #0056b3);
-  }
-  
-  .signin-left p {
-    color: var(--secondarytwo-color);
-    margin-bottom: 1.5rem;
-  }
-  
-  /* signup page css  */
-  .signup-right {
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    background: linear-gradient(to bottom right, var(--primary-color), #0056b3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  /* Contact us page  */
-  
-  .contactus-left {
-    background-color: var(--primary-color);
-  }
-  .contactus-right {
-    padding: 24px 96px;
-  }
-  
-  .contactus-right > h4 {
-    color: var(--primary-color);
-  }
-  .bg-light {
-    background-color: #e2e2e2 !important;
-  }
-  
-  textarea.form-control {
-    resize: none;
-  }
-  
-  .contactus-submit-btn {
-    background-color: var(--primary-color);
-    padding: 8px 24px;
-  }
-  /* otp  verification page */
-  
-  
-      .otp-container {
-        background-color: white;
-        border-radius: 12px;
-        padding: 40px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        max-width: 400px;
-        width: 100%;
-      }
-  
-      .otp-input {
-        background-color: #e6f0fa;
-        border: none;
-        border-radius: 6px;
-        width: 50px;
-        height: 50px;
-        font-size: 24px;
-        text-align: center;
-        margin: 0 5px;
-      }
-  
-      .otp-input:focus {
-        outline: none;
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-      }
-  
-      .resend-code {
-        font-size: 14px;
-      }
-  
-      .illustration {
-        max-width: 400px;
-      }
-      /* .service-hero-section {
-        background-image: url("../img/service-hero-img.png");
-        background-repeat: no-repeat;
-        background-size: cover;
-        color: #fff;
-      } */
-      .service-hero-section {
-        position: relative;
-        /* background-image: url("../img/service-hero-img.png"); */
-        background-repeat: no-repeat;
-        background-size: cover;
-        color: #fff;
-        padding-top: 300px;
-        padding-bottom: 150px;
-  
-        z-index: 1;
-        overflow: hidden;
-      }
-      
-      .service-hero-section::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5); /* Dark overlay */
-        z-index: 0;
-      }
-      
-      .service-hero-section .slider-conetnt-wrap {
-        position: relative;
-        z-index: 1; 
-      }
-      
-      .service-hero-section h6 {
-        font-size: 18px;
-      }
-      .service-hero-section h1 {
-        font-size: 64px;
-        font-weight: bold;
-      }
-      .theme-word {
-        color: #FF8D41;
-      }
-      .theme-btn-color {
-        background-color: #FF8D41;
-        color: #fff;
-      }
-      .line {
-        width: 20px;
-        height: 2px;
-        background-color: #000;
-      }
-      @media (max-width: 768px) {
-        .illustration {
-          display: none;
-        }
-      }
-  
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+  --primary-color: #2373a6;
+  --secondary-color: #f4ae1e;
+  --secondarytwo-color: #fff;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+  font-family: Roboto, sans-serif;
+}
+
+.mask {
+  width: 100%;
+  height: 100%;
+}
+
+.main-img {
+  width: 100%;
+  height: 100vh;
+}
+
+.home-sec img {
+  height: 80vh;
+  /* object-fit: cover; */
+  /* object-position: center; */
+}
+
+.services {
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--primary-color);
+}
+
+.footer-sec p {
+  color: var(--secondarytwo-color);
+  margin: 0;
+}
+
+.footer-sec i {
+  height: 10px;
+  width: 10px;
+  color: var(--secondary-color);
+}
+
+.scrolling-text-bar {
+  background: var(--secondary-color);
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  color: var(--secondarytwo-color);
+}
+
+.running-text {
+  color: var(--secondarytwo-color);
+  padding: 6px 0;
+  display: inline-block;
+  animation: slide-left 15s linear infinite;
+}
+
+@keyframes slide-left {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-200%);
+  }
+}
+
+.nav-bar {
+  background-color: black;
+  color: var(--secondarytwo-color);
+  padding: 4px;
+  list-style: none;
+}
+
+.nav-btn a {
+  background-color: var(--primary-color);
+  padding: 6px 24px;
+}
+
+.nav-toggle-btn {
+  background-color: var(--primary-color);
+}
+
+.nav-toggle-btn>span {}
+
+/* service card css  */
+.serviceslide-controls button {
+  all: unset;
+  border: none;
+  background-color: var(--primary-color);
+  color: var(--secondarytwo-color);
+  padding: 8px 12px;
+  border-radius: 50%;
+  font-size: 24px;
+}
+
+/* Ensure all swiper slides and cards stretch equally */
+.service-card-slide {
+  height: 100%;
+  background-color: var(--primary-color);
+
+}
+
+.service-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primary-color);
+  color: var(--secondarytwo-color);
+}
+
+.service-card img {
+  height: 150px;
+  object-fit: cover;
+}
+
+.service-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* our work css  */
+.our-work-left-btn,
+.our-work-right-btn {
+  all: unset;
+  border: none;
+  background-color: var(--primary-color);
+  color: var(--secondarytwo-color);
+  padding: 8px 12px;
+  border-radius: 50%;
+  font-size: 24px;
+}
+
+.ourwork-card .card-title {
+  color: var(--primary-color);
+}
+
+.ourwork-card img {
+  height: 180px;
+}
+
+.ourwork-card:last-child {
+  color: gray;
+}
+
+/* sign in css  */
+.signin-left {
+  border-radius: 20px 0 0 20px;
+  background: linear-gradient(to bottom right, var(--primary-color), #0056b3);
+}
+
+.signin-left p {
+  color: var(--secondarytwo-color);
+  margin-bottom: 1.5rem;
+}
+
+/* signup page css  */
+.signup-right {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background: linear-gradient(to bottom right, var(--primary-color), #0056b3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Contact us page  */
+
+.contactus-left {
+  background-color: var(--primary-color);
+}
+
+.contactus-right {
+  padding: 24px 96px;
+}
+
+.contactus-right>h4 {
+  color: var(--primary-color);
+}
+
+.bg-light {
+  background-color: #e2e2e2 !important;
+}
+
+textarea.form-control {
+  resize: none;
+}
+
+.contactus-submit-btn {
+  background-color: var(--primary-color);
+  padding: 8px 24px;
+}
+
+/* otp  verification page */
+
+
+.otp-container {
+  background-color: white;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+}
+
+.otp-input {
+  background-color: #e6f0fa;
+  border: none;
+  border-radius: 6px;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  text-align: center;
+  margin: 0 5px;
+}
+
+.otp-input:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.resend-code {
+  font-size: 14px;
+}
+
+.illustration {
+  max-width: 400px;
+}
+
+.service-hero-section {
+  position: relative;
+  /* background-image: url("../img/service-hero-img.png"); */
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: #fff;
+  padding-top: 300px;
+  padding-bottom: 150px;
+
+  z-index: 1;
+  overflow: hidden;
+}
+
+.service-hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  /* Dark overlay */
+  z-index: 0;
+}
+
+.service-hero-section .slider-conetnt-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.service-hero-section h6 {
+  font-size: 18px;
+}
+
+.service-hero-section h1 {
+  font-size: 64px;
+  font-weight: bold;
+}
+
+.theme-word {
+  color: #FF8D41;
+}
+
+.theme-btn-color {
+  background-color: #FF8D41;
+  color: #fff;
+}
+
+.line {
+  width: 20px;
+  height: 2px;
+  background-color: #000;
+}
+
+@media (max-width: 768px) {
+  .illustration {
+    display: none;
+  }
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}

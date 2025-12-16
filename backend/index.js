@@ -17,9 +17,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 const db = require("./db");
-// app.get("/", (req, res) => {
-//   res.redirect("/api-docs");
-// });
+
 // Swagger Setup
 const options = {
     definition: {

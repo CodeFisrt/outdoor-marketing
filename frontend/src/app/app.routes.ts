@@ -65,9 +65,5 @@ export const routes: Routes = [
   },
 
   // ✅ Forms (standalone)
-  // { path: 'screen-Form/:id', component: ScreenForm },
-  // { path: 'poll-Kisok-Form/:id', component: PollKisokForm },
-  // { path: 'vehicle-Ads-Form/:id', component: VehicleAdsForm },
-  // { path: 'wall-Paints-Form/:id', component: WallpaintsFrom },
-  // { path: 'hoarding-form/:id', component: HoardingFrom },
+
 ];
