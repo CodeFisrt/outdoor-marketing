@@ -96,90 +96,176 @@
 
   <!-- BOOK NOW SECTION -->
   <div *ngIf="currentSection === 'book'" class="sub-section-container">
-    <button class="back-link" (click)="showSection('details')">← Back to Details</button>
-    <div class="form-card">
-      <h3>📌 Book this Service</h3>
+    <button class="back-link" (click)="showSection('details')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7" />
+      </svg>
+      Back to Details
+    </button>
+
+    <div class="form-card animate-in">
+      <div class="form-header">
+        <div class="icon-bg">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <div>
+          <h3>Book this Service</h3>
+          <p class="sub-text">Fill in the details to reserve your spot.</p>
+        </div>
+      </div>
 
       <!-- Personal Details -->
       <div class="form-group">
         <label>Full Name</label>
-        <input type="text" [(ngModel)]="bookingDetails.fullName" placeholder="Enter your full name">
+        <div class="modern-input-group">
+          <div class="input-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <input type="text" class="modern-input" [(ngModel)]="bookingDetails.fullName" placeholder="John Doe">
+        </div>
       </div>
 
       <div class="row-inputs">
         <div class="form-group">
           <label>Email Address</label>
-          <input type="email" [(ngModel)]="bookingDetails.email" placeholder="name@example.com">
+          <div class="modern-input-group">
+            <div class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </div>
+            <input type="email" class="modern-input" [(ngModel)]="bookingDetails.email" placeholder="john@example.com">
+          </div>
         </div>
         <div class="form-group">
           <label>Contact Number</label>
-          <input type="tel" [(ngModel)]="bookingDetails.phone" placeholder="+91 XXXXX XXXXX" maxlength="10">
+          <div class="modern-input-group">
+            <div class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                </path>
+              </svg>
+            </div>
+            <input type="tel" class="modern-input" [(ngModel)]="bookingDetails.phone" placeholder="+91 98765 43210"
+              maxlength="10">
+          </div>
         </div>
       </div>
 
       <!-- Design Options -->
       <div class="form-group">
         <label>Do you have the design/creative ready?</label>
-        <select [(ngModel)]="bookingDetails.designReady">
-          <option value="Yes">Yes, I have the design</option>
-          <option value="No">No, I don't have it</option>
-        </select>
+        <div class="select-wrapper">
+          <select class="modern-input" [(ngModel)]="bookingDetails.designReady">
+            <option value="Yes">Yes, I have the design</option>
+            <option value="No">No, I don't have it</option>
+          </select>
+        </div>
       </div>
 
-      <div class="form-group" *ngIf="bookingDetails.designReady === 'No'">
+      <div class="form-group animate-slide-down" *ngIf="bookingDetails.designReady === 'No'">
         <label>Do you want our design team to create the design?</label>
-        <select [(ngModel)]="bookingDetails.needDesignService">
-          <option value="Yes">Yes, please design it for me</option>
-          <option value="No">No, I will arrange it myself</option>
-        </select>
+        <div class="select-wrapper">
+          <select class="modern-input" [(ngModel)]="bookingDetails.needDesignService">
+            <option value="Yes">Yes, please design it for me</option>
+            <option value="No">No, I will arrange it myself</option>
+          </select>
+        </div>
       </div>
 
       <!-- Dates -->
       <div class="row-inputs">
         <div class="form-group">
           <label>Start Date</label>
-          <input type="date" [(ngModel)]="bookingDetails.startDate" [min]="minDate">
+          <div class="modern-input-group">
+            <div class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <input type="date" class="modern-input" [(ngModel)]="bookingDetails.startDate" [min]="minDate">
+          </div>
         </div>
         <div class="form-group">
           <label>End Date</label>
-          <input type="date" [(ngModel)]="bookingDetails.endDate" [min]="minDate">
+          <div class="modern-input-group">
+            <div class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <input type="date" class="modern-input" [(ngModel)]="bookingDetails.endDate" [min]="minDate">
+          </div>
         </div>
       </div>
 
       <!-- Payment -->
       <div class="form-group">
-        <label>Payment Completed?</label>
-        <select [(ngModel)]="bookingDetails.paymentCompleted">
-          <option value="Yes">Yes, Payment Done</option>
-          <option value="No">No, Payment Pending</option>
-        </select>
-        <p class="error-text" *ngIf="bookingDetails.paymentCompleted === 'No'">
-          ⚠️ Please complete the payment to proceed.
-        </p>
+        <label>Payment Status</label>
+        <div class="select-wrapper">
+          <select class="modern-input" [(ngModel)]="bookingDetails.paymentCompleted">
+            <option value="Yes">✅ Payment Completed</option>
+            <option value="No">⏳ Payment Pending</option>
+          </select>
+        </div>
+        <div class="alert-box warning" *ngIf="bookingDetails.paymentCompleted === 'No'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <small>Payment is required to confirm the booking.</small>
+        </div>
       </div>
 
       <!-- Repeat Service -->
       <div class="form-group">
-        <label>Are you looking to book the same service again?</label>
-        <select [(ngModel)]="bookingDetails.repeatService">
-          <option value="Yes">Yes, Interested</option>
-          <option value="No">No, Just this time</option>
-        </select>
+        <label>Recurring Booking?</label>
+        <div class="select-wrapper">
+          <select class="modern-input" [(ngModel)]="bookingDetails.repeatService">
+            <option value="Yes">Yes, I'm interested in repeating this</option>
+            <option value="No">No, just this one time</option>
+          </select>
+        </div>
       </div>
 
       <!-- Terms -->
       <div class="form-group checkbox-group">
-        <label class="checkbox-container">
+        <label class="custom-checkbox">
           <input type="checkbox" [(ngModel)]="bookingDetails.agreedToTerms">
-          <span class="checkmark"></span>
-          I have read and agree to the terms and conditions.
+          <span class="checkmark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </span>
+          <span class="label-text">I agree to the <a href="#">Terms and Conditions</a></span>
         </label>
       </div>
 
       <button class="btn-primary-action" (click)="submitBooking()"
         [disabled]="bookingDetails.paymentCompleted === 'No' || !bookingDetails.agreedToTerms"
         [ngClass]="{'disabled-btn': bookingDetails.paymentCompleted === 'No' || !bookingDetails.agreedToTerms}">
-        Confirm Booking
+        <span>Confirm Booking</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
       </button>
     </div>
   </div>
