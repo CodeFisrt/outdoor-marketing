@@ -37,7 +37,12 @@ export class ScreenBoardDescript implements OnInit {
 
   constructor(private route: ActivatedRoute, private searchService: Search, private cdr: ChangeDetectorRef) { }
 
+  minDate: string = '';
+
   ngOnInit(): void {
+    const today = new Date();
+    this.minDate = today.toISOString().split('T')[0];
+
     this.route.paramMap.subscribe(params => {
       const id = Number(params.get('id'));
       const type = params.get('service_type');
@@ -169,6 +174,26 @@ export class ScreenBoardDescript implements OnInit {
 
   submitBooking() {
     console.log('Booking Submission:', this.bookingDetails);
+
+    // Validate Full Name
+    if (!this.bookingDetails.fullName || this.bookingDetails.fullName.trim() === '') {
+      alert("Please enter your full name.");
+      return;
+    }
+
+    // Validate Email
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!this.bookingDetails.email || !emailPattern.test(this.bookingDetails.email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    // Validate Contact Number (10 Digits)
+    const phonePattern = /^[0-9]{10}$/;
+    if (!this.bookingDetails.phone || !phonePattern.test(this.bookingDetails.phone)) {
+      alert("Please enter a valid 10-digit contact number.");
+      return;
+    }
 
     if (!this.bookingDetails.agreedToTerms) {
       alert("Please agree to the terms and conditions to proceed.");
