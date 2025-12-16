@@ -3,6 +3,7 @@ import { Home } from './pages/home/home';
 import { ContactUs } from './pages/contact-us/contact-us';
 import { OurWork } from './pages/our-work/our-work';
 import { Blog } from './pages/blog/blog';
+import { BlogDetails } from './pages/blog-details/blog-details';
 import { Hoardings } from './Services/hoardings/hoardings';
 import { DigitalScreen } from './Services/digital-screen/digital-screen';
 import { VehicleAds } from './Services/vehicle-ads/vehicle-ads';
@@ -36,6 +37,7 @@ export const routes: Routes = [
   { path: 'home', component: Home },
   { path: 'ourWork', component: OurWork },
   { path: 'Blog', component: Blog },
+  { path: 'blog-details/:id', component: BlogDetails },
   { path: 'contactUs', component: ContactUs },
   { path: 'Services', component: Services },
   { path: "auth/callback", component: AuthCallback },

@@ -1,0 +1,56 @@
+<section class="blog-details-section">
+    <div class="container" *ngIf="post; else loading">
+
+        <!-- Hero Image -->
+        <div class="blog-header">
+            <div class="image-container">
+                <img [src]="post.image" [alt]="post.title" class="featured-image">
+                <span class="category-tag">{{ post.category }}</span>
+            </div>
+        </div>
+
+        <div class="blog-content-wrapper">
+            <!-- Meta Info -->
+            <div class="meta-row">
+                <span class="meta-item author">
+                    <i class="bi bi-person-circle"></i> {{ post.author }}
+                </span>
+                <span class="separator">•</span>
+                <span class="meta-item date">
+                    <i class="bi bi-calendar3"></i> {{ post.date }}
+                </span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="blog-title">{{ post.title }}</h1>
+
+            <!-- Content -->
+            <div class="blog-body" [innerHTML]="post.content"></div>
+
+            <!-- Tags -->
+            <div class="tags-section" *ngIf="post.tags">
+                <h4>Related Topic:</h4>
+                <div class="tags-list">
+                    <span class="tag" *ngFor="let tag of post.tags">#{{ tag }}</span>
+                </div>
+            </div>
+
+            <!-- Back Button -->
+            <!-- <div class="navigation-footer">
+        <a routerLink="/Blog" class="back-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Back to Insights
+        </a>
+      </div> -->
+        </div>
+
+    </div>
+
+    <ng-template #loading>
+        <div class="loading-state">
+            <h3>Loading article...</h3>
+        </div>
+    </ng-template>
+</section>

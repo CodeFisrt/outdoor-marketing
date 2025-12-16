@@ -172,6 +172,38 @@ export class ScreenBoardDescript implements OnInit {
     history.back();
   }
 
+  // 💰 Total Cost Calculation
+  totalCost: number = 0;
+  durationDays: number = 0;
+
+  calculateTotalCost() {
+    if (this.bookingDetails.startDate && this.bookingDetails.endDate && this.board?.price) {
+      const start = new Date(this.bookingDetails.startDate);
+      const end = new Date(this.bookingDetails.endDate);
+
+      // Calculate difference in time
+      const timeDiff = end.getTime() - start.getTime();
+
+      // Calculate difference in days (divide by 1000 * 3600 * 24)
+      const days = timeDiff / (1000 * 3600 * 24);
+
+      if (days > 0) {
+        this.durationDays = Math.ceil(days);
+        // clean price string (remove '₹', commas, spaces)
+        const cleanPrice = String(this.board.price).replace(/[^0-9.]/g, '');
+        const unitPrice = parseFloat(cleanPrice) || 0;
+
+        this.totalCost = this.durationDays * unitPrice;
+      } else {
+        this.durationDays = 0;
+        this.totalCost = 0;
+      }
+    } else {
+      this.durationDays = 0;
+      this.totalCost = 0;
+    }
+  }
+
   submitBooking() {
     console.log('Booking Submission:', this.bookingDetails);
 
@@ -205,15 +237,20 @@ export class ScreenBoardDescript implements OnInit {
       return;
     }
 
+    // Prepare Payload with calculated cost
+    const payload = {
+      ...this.bookingDetails,
+      totalCost: this.totalCost,
+      durationDays: this.durationDays,
+      serviceType: this.board.hoardingType,
+      boardId: this.board.id // Ensure ID is passed if available
+    };
+
     // Call Backend API
-    this.searchService.bookService(this.bookingDetails).subscribe({
+    this.searchService.bookService(payload).subscribe({
       next: (res) => {
         console.log('API Response:', res);
         alert('Booking Submitted Successfully!');
-
-        // Optional: Reset form or navigate away
-        // this.showSection('details'); 
-        // Or reset bookingDetails object...
       },
       error: (err) => {
         console.error('API Error:', err);
