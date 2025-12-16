@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Search } from '../../SearchServices/search';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-screen-board-descript',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './screen-board-descript.html',
   styleUrl: './screen-board-descript.css'
 })
@@ -19,6 +20,20 @@ export class ScreenBoardDescript implements OnInit {
   // ⬅️ THIS VARIABLE WILL CONTROL WHICH UI TO SHOW
   currentSection: string = "details";         //// details | book | schedule | bidding
   nearBoards: any[] = [];
+
+  // 📝 Booking Form Data
+  bookingDetails = {
+    fullName: '',
+    email: '',
+    phone: '',
+    designReady: 'Yes', // 'Yes' | 'No'
+    needDesignService: 'No', // 'Yes' | 'No'
+    startDate: '',
+    endDate: '',
+    paymentCompleted: 'No', // 'Yes' | 'No'
+    agreedToTerms: false,
+    repeatService: 'No' // 'Yes' | 'No'
+  };
 
   constructor(private route: ActivatedRoute, private searchService: Search, private cdr: ChangeDetectorRef) { }
 
@@ -150,5 +165,22 @@ export class ScreenBoardDescript implements OnInit {
 
   goBack() {
     history.back();
+  }
+
+  submitBooking() {
+    console.log('Booking Submission:', this.bookingDetails);
+
+    if (!this.bookingDetails.agreedToTerms) {
+      alert("Please agree to the terms and conditions to proceed.");
+      return;
+    }
+
+    if (this.bookingDetails.paymentCompleted === 'No') {
+      alert("Please complete the payment to proceed.");
+      return;
+    }
+
+    alert('Booking Submitted Successfully! (Demo)');
+    // Implement API call here
   }
 }
