@@ -7,11 +7,11 @@ import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Footer,NgIf],
-  
+  imports: [RouterOutlet, Header, Footer, NgIf],
+
   // imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css',
+
 })
 export class App {
   protected readonly title = signal('frontend');

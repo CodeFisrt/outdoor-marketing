@@ -6,14 +6,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // for HTML forms
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-
-const JWT_SECRET = "mySuperSecretKey";
-const auth = require("./middleware/auth");
-const path = require('path');     // at top (if not present)
+const path = require('path');
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 
 const db = require("./db");
