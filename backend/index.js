@@ -1854,6 +1854,76 @@ app.post("/signup", (req, res) => {
         return res.json({ message: "User registered successfully" });
     });
 });
+// ================== Service Booking API ====================
+
+/**
+ * @swagger
+ * /book-service:
+ *   post:
+ *     summary: Book a service
+ *     tags: [ServiceBookings]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               designReady:
+ *                 type: string
+ *               needDesignService:
+ *                 type: string
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *               paymentCompleted:
+ *                 type: string
+ *               repeatService:
+ *                 type: string
+ *               agreedToTerms:
+ *                 type: boolean
+ *     responses:
+ *       201:
+ *         description: Booking successful
+ */
+app.post("/book-service", (req, res) => {
+    const data = req.body;
+    const sql = `
+        INSERT INTO service_bookings 
+        (full_name, email, contact_number, design_ready, design_team_required, start_date, end_date, payment_completed, booking_again, terms_accepted)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const values = [
+        data.fullName,
+        data.email,
+        data.phone,
+        data.designReady.toLowerCase(),
+        data.needDesignService.toLowerCase(),
+        data.startDate,
+        data.endDate,
+        data.paymentCompleted.toLowerCase(),
+        data.repeatService.toLowerCase(),
+        data.agreedToTerms ? 1 : 0
+    ];
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error("Error inserting booking:", err);
+            return res.status(500).send(err);
+        }
+        res.status(201).send({ message: "Booking successful", id: result.insertId });
+    });
+});
+
 // ---------------- Start Server ----------------
 app.listen(8080, () => {
     console.log(`Server running at http://localhost:${8080}`);

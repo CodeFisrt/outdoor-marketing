@@ -205,7 +205,20 @@ export class ScreenBoardDescript implements OnInit {
       return;
     }
 
-    alert('Booking Submitted Successfully! (Demo)');
-    // Implement API call here
+    // Call Backend API
+    this.searchService.bookService(this.bookingDetails).subscribe({
+      next: (res) => {
+        console.log('API Response:', res);
+        alert('Booking Submitted Successfully!');
+
+        // Optional: Reset form or navigate away
+        // this.showSection('details'); 
+        // Or reset bookingDetails object...
+      },
+      error: (err) => {
+        console.error('API Error:', err);
+        alert('Failed to submit booking. Please try again.');
+      }
+    });
   }
 }

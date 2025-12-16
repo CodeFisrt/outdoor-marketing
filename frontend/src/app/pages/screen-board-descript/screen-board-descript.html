@@ -120,22 +120,18 @@
       <!-- Design Options -->
       <div class="form-group">
         <label>Do you have the design/creative ready?</label>
-        <div class="modern-select-wrapper">
-          <select [(ngModel)]="bookingDetails.designReady" class="custom-dropdown">
-            <option value="Yes">Yes, I have the design</option>
-            <option value="No">No, I don't have it</option>
-          </select>
-        </div>
+        <select [(ngModel)]="bookingDetails.designReady">
+          <option value="Yes">Yes, I have the design</option>
+          <option value="No">No, I don't have it</option>
+        </select>
       </div>
 
       <div class="form-group" *ngIf="bookingDetails.designReady === 'No'">
         <label>Do you want our design team to create the design?</label>
-        <div class="modern-select-wrapper">
-          <select [(ngModel)]="bookingDetails.needDesignService" class="custom-dropdown">
-            <option value="Yes">Yes, please design it for me</option>
-            <option value="No">No, I will arrange it myself</option>
-          </select>
-        </div>
+        <select [(ngModel)]="bookingDetails.needDesignService">
+          <option value="Yes">Yes, please design it for me</option>
+          <option value="No">No, I will arrange it myself</option>
+        </select>
       </div>
 
       <!-- Dates -->
@@ -153,12 +149,10 @@
       <!-- Payment -->
       <div class="form-group">
         <label>Payment Completed?</label>
-        <div class="modern-select-wrapper">
-          <select [(ngModel)]="bookingDetails.paymentCompleted" class="custom-dropdown">
-            <option value="Yes">Yes, Payment Done</option>
-            <option value="No">No, Payment Pending</option>
-          </select>
-        </div>
+        <select [(ngModel)]="bookingDetails.paymentCompleted">
+          <option value="Yes">Yes, Payment Done</option>
+          <option value="No">No, Payment Pending</option>
+        </select>
         <p class="error-text" *ngIf="bookingDetails.paymentCompleted === 'No'">
           ⚠️ Please complete the payment to proceed.
         </p>
@@ -167,12 +161,10 @@
       <!-- Repeat Service -->
       <div class="form-group">
         <label>Are you looking to book the same service again?</label>
-        <div class="modern-select-wrapper">
-          <select [(ngModel)]="bookingDetails.repeatService" class="custom-dropdown">
-            <option value="Yes">Yes, Interested</option>
-            <option value="No">No, Just this time</option>
-          </select>
-        </div>
+        <select [(ngModel)]="bookingDetails.repeatService">
+          <option value="Yes">Yes, Interested</option>
+          <option value="No">No, Just this time</option>
+        </select>
       </div>
 
       <!-- Terms -->

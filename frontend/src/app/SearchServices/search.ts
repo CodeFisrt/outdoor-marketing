@@ -47,4 +47,8 @@ export class Search {
     return this.http.get(`http://localhost:8080/${endpoint}/${id}`);
   }
 
+  bookService(data: any): Observable<any> {
+    return this.http.post('http://localhost:8080/book-service', data);
+  }
+
 }
