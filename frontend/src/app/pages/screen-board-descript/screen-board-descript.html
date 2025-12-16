@@ -22,7 +22,8 @@
       <!-- Left Side: Hero Image -->
       <div class="image-section">
         <div class="image-wrapper">
-          <img [src]="board.image" [alt]="board.hoardingType" class="hero-image">
+          <img [src]="board.image" [alt]="board.hoardingType" class="hero-image"
+            (error)="board.image = 'assets/billboardimg.jpg'">
           <div class="status-badge"
             [ngClass]="board.availability === 'Available' ? 'status-available' : 'status-booked'">
             {{ board.availability }}

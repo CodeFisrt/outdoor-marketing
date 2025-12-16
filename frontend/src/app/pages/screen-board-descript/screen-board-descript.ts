@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Search } from '../../SearchServices/search';
 
@@ -20,28 +20,39 @@ export class ScreenBoardDescript implements OnInit {
   currentSection: string = "details";         //// details | book | schedule | bidding
   nearBoards: any[] = [];
 
-  constructor(private route: ActivatedRoute, private searchService: Search) { }
+  constructor(private route: ActivatedRoute, private searchService: Search, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    const type = this.route.snapshot.paramMap.get('service_type');
+    this.route.paramMap.subscribe(params => {
+      const id = Number(params.get('id'));
+      const type = params.get('service_type');
 
-    if (id && type) {
-      this.searchService.getServiceDetails(type, id).subscribe({
-        next: (res: any) => {
-          // API might return { result: true, data: {...} } or just {...}
-          let data = res;
-          if (res.data) data = res.data;
+      if (id && type) {
+        this.loadBoardDetails(type, id);
+      }
+    });
+  }
 
-          this.board = this.normalizeData(data, type!);
-          this.loading = false;
-        },
-        error: (err) => {
-          console.error('Error fetching details', err);
-          this.loading = false;
-        }
-      });
-    }
+  loadBoardDetails(type: string, id: number) {
+    this.loading = true;
+    this.board = null; // Clear previous board data
+
+    this.searchService.getServiceDetails(type, id).subscribe({
+      next: (res: any) => {
+        // API might return { result: true, data: {...} } or just {...}
+        let data = res;
+        if (res.data) data = res.data;
+
+        this.board = this.normalizeData(data, type);
+        this.loading = false;
+        this.cdr.detectChanges(); // Force UI update to ensure image renders
+      },
+      error: (err) => {
+        console.error('Error fetching details', err);
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   normalizeData(data: any, type: string) {
