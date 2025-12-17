@@ -15,7 +15,7 @@ import { CategoryCards } from '../category-cards/category-cards';
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home {
+export class Home implements OnInit {
 
   constructor(private searchService: Search, private cdr: ChangeDetectorRef) { }
 
@@ -84,6 +84,8 @@ export class Home {
         .filter((state: any) => state !== "")
         .map((state: any) => state.charAt(0).toUpperCase() + state.slice(1))
         .sort();
+
+      this.saveState(); // Save state after loading initial data
     });
   }
 
@@ -113,6 +115,8 @@ export class Home {
       .filter((dist: any) => dist !== "")
       .map((dist: any) => dist.charAt(0).toUpperCase() + dist.slice(1))
       .sort();
+
+    this.saveState();
   }
 
   // 🔵 STEP 3: DISTRICT → Filter tehsils locally (NO API CALL)
@@ -134,8 +138,11 @@ export class Home {
     this.tehsils = [
       ...new Set(filteredData.map((item: any) => (item.Tehsil || "").trim())),
     ]
+
       .filter((tehsil) => tehsil !== "")
       .sort();
+
+    this.saveState();
   }
 
   // 🔵 STEP 4: TEHSIL → Filter villages locally (NO API CALL)
@@ -156,8 +163,11 @@ export class Home {
     this.villages = [
       ...new Set(filteredData.map((item: any) => (item.Village || "").trim())),
     ]
+
       .filter((village) => village !== "")
       .sort();
+
+    this.saveState();
   }
 
   // 🔵 FINAL SEARCH - Only ONE API call when button is clicked
@@ -182,9 +192,69 @@ export class Home {
         this.filterData = res;
         this.showcards = true;
         console.log("✅ API Response:", this.filterData);
+        this.saveState(); // Save state with results
         this.cdr.detectChanges();
       },
       error: (err) => console.error("❌ Error fetching boards:", err),
     });
+  }
+  // Save full state to service
+  saveState() {
+    this.searchService.setSearchState({
+      criteria: {
+        selectedServiceType: this.selectedServiceType,
+        selectedState: this.selectedState,
+        selectedDistrict: this.selectedDistrict,
+        selectedTehsil: this.selectedTehsil,
+        selectedVillage: this.selectedVillage,
+      },
+      dropdowns: {
+        states: this.states,
+        districts: this.districts,
+        tehsils: this.tehsils,
+        villages: this.villages,
+      },
+      data: {
+        allServiceData: this.allServiceData,
+        filterData: this.filterData,
+        showcards: this.showcards
+      }
+    });
+  }
+
+  // Restore state from service
+  restoreState() {
+    const state = this.searchService.getSearchState();
+    if (state) {
+      console.log("Restoring search state...", state);
+
+      this.selectedServiceType = state.criteria.selectedServiceType;
+      this.selectedState = state.criteria.selectedState;
+      this.selectedDistrict = state.criteria.selectedDistrict;
+      this.selectedTehsil = state.criteria.selectedTehsil;
+      this.selectedVillage = state.criteria.selectedVillage;
+
+      this.states = state.dropdowns.states;
+      this.districts = state.dropdowns.districts;
+      this.tehsils = state.dropdowns.tehsils;
+      this.villages = state.dropdowns.villages;
+
+      this.allServiceData = state.data.allServiceData;
+      this.filterData = state.data.filterData;
+      this.showcards = state.data.showcards;
+
+      this.cdr.detectChanges();
+
+      // Scroll to results if we have them
+      if (this.showcards) {
+        setTimeout(() => {
+          document.querySelector('.search-results-container')?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    }
+  }
+
+  ngOnInit() {
+    this.restoreState();
   }
 }

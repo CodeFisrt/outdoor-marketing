@@ -10,6 +10,20 @@ export class Search {
 
   constructor(private http: HttpClient) { }
 
+  private searchState: any = null;
+
+  setSearchState(state: any) {
+    this.searchState = state;
+  }
+
+  getSearchState() {
+    return this.searchState;
+  }
+
+  clearSearchState() {
+    this.searchState = null;
+  }
+
 
 
 
