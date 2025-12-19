@@ -20,11 +20,14 @@ export class Home implements OnInit {
   constructor(private searchService: Search, private cdr: ChangeDetectorRef) { }
 
   categoryMap: any = {
-    "Hoarding": "hoardings",
-    "Vehicle Marketing": "vehicle_marketing",
-    "Digital Marketing": "outdoormarketingscreens",
+    "Billboard & Hoarding Advertising": "hoardings",
+    "Transit Advertising": "vehicle_marketing",
+    "Digital Outdoor Advertising (DOOH)": "outdoormarketingscreens",
     "Poll Kiosk": "balloon_marketing",
-    "Wall Painting": "society_marketing"
+    "Wall Painting": "society_marketing",
+    "Posters, Banners & Street Signage": "posters_banners_streetsignage",
+    "Event Sponsorship & Brand Activation": "event_sponsorship_brand_activation",
+    "RWA & Society Branding": "society_marketing",
   };
 
   categoryList = Object.keys(this.categoryMap);
