@@ -1,0 +1,41 @@
+.get-touch-section {
+  /* background-image: url('/assets/worldimgs.png'); */
+      background-image: url("https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  padding: 80px 0;
+}
+
+/* Text styles */
+.touch-title {
+    font-size: 56px;
+    font-weight: 300;
+    color: #2b2f33;
+}
+
+.touch-title span {
+    color: #9b6b43;
+    font-weight: 400;
+}
+
+.touch-text {
+    font-size: 16px;
+    color: #5f6b73;
+    max-width: 600px;
+}
+
+.touch-text a {
+    color: #1a73e8;
+    font-weight: 500;
+    text-decoration: none;
+}
+.contact-form-section h2 span {
+    color: #0d6efd; /* Primary Bootstrap color */
+}
+.contact-form-section .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
+}

@@ -7,6 +7,8 @@ app.use(express.urlencoded({ extended: true })); // for HTML forms
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 const path = require('path');
+const bodyParser = require("body-parser"); 
+const nodemailer = require("nodemailer");
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -1917,6 +1919,144 @@ app.post("/book-service", (req, res) => {
         res.status(201).send({ message: "Booking successful", id: result.insertId });
     });
 });
+
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Contact:
+ *       type: object
+ *       required:
+ *         - full_name
+ *         - email
+ *         - subject
+ *         - message
+ *       properties:
+ *         full_name:
+ *           type: string
+ *           description: Name of the sender
+ *         email:
+ *           type: string
+ *           description: Email of the sender
+ *         subject:
+ *           type: string
+ *           description: Subject of the message
+ *         message:
+ *           type: string
+ *           description: Content of the message
+ *       example:
+ *         full_name: Sagar
+ *         email: sagar@example.com
+ *         subject: Test message
+ *         message: Hello, this is a test message.
+ */
+
+
+/**
+ * @swagger
+ * /api/contact:
+ *   post:
+ *     summary: Save contact form message
+ *     tags: [Contact]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - full_name
+ *               - email
+ *               - subject
+ *               - message
+ *             properties:
+ *               full_name:
+ *                 type: string
+ *                 example: Sagar
+ *               email:
+ *                 type: string
+ *                 example: sagar@example.com
+ *               subject:
+ *                 type: string
+ *                 example: Enquiry
+ *               message:
+ *                 type: string
+ *                 example: I want more details about your service
+ *     responses:
+ *       201:
+ *         description: Message saved successfully
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Database error
+ */
+
+app.post("/api/contact", (req, res) => {
+  const { full_name, email, subject, message } = req.body;
+
+  if (!full_name || !email || !subject || !message) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  const sql = `
+    INSERT INTO contact_messages (full_name, email, subject, message)
+    VALUES (?, ?, ?, ?)
+  `;
+
+  const values = [full_name, email, subject, message];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Error inserting contact message:", err);
+      return res.status(500).json({ message: "Database error" });
+    }
+
+    res.status(201).json({
+      message: "Message saved successfully",
+      id: result.insertId
+    });
+  });
+});
+
+app.post("/api/send-mail", async (req, res) => {
+  const { full_name, email, subject, message } = req.body;
+
+  try {
+    console.log("Incoming mail request:",req.body);
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user:process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+   const info = await transporter.sendMail({
+      from: `"${full_name}"`, 
+      to: "sagarmasal12@gmail.com",
+      replyTo: email,                                 
+      subject: subject,
+      html: `
+        <h3>New Contact Message</h3>
+        <p><b>Name:</b> ${full_name}</p>
+        <p><b>Email:</b> ${email}</p>
+        <p>${message}</p>
+      `
+    });
+    console.log("Mail sent Info:", info)
+    res.json({ message: "Mail sent successfully",info });
+
+  } catch (err) {
+    console.error("Mail error:", err);
+    res.status(500).json({ message: "Mail failed", error: err.message });
+  }
+});
+
+
+
+
+
 
 // ---------------- Start Server ----------------
 app.listen(8080, () => {
