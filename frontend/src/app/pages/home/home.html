@@ -3,19 +3,19 @@
     <div id="home-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img src="assets/billboardimg.jpg" class="d-block w-100" alt="..." />
+          <img src="assets/billboardimg.jpg" class="d-block w-100" alt="Large outdoor billboard advertising in city area" />
+        </div>
+        <div class="carousel-item">
+          <img src="assets/digitalscreen.jpg" class="d-block w-100" alt="Digital outdoor advertising screen display" loading="lazy" />
         </div>
         <div class="carousel-item">
           <img src="assets/digitalscreen.jpg" class="d-block w-100" alt="..." loading="lazy" />
         </div>
         <div class="carousel-item">
-          <img src="assets/digitalscreen.jpg" class="d-block w-100" alt="..." loading="lazy" />
+          <img src="assets/vehicleimg.jpg" class="d-block w-100" alt="Vehicle branding outdoor advertisement" loading="lazy" />
         </div>
         <div class="carousel-item">
-          <img src="assets/vehicleimg.jpg" class="d-block w-100" alt="..." loading="lazy" />
-        </div>
-        <div class="carousel-item">
-          <img src="assets/streetimg.jpg" class="d-block w-100" alt="..." />
+          <img src="assets/streetimg.jpg" class="d-block w-100" alt="Street outdoor advertising display" />
         </div>
       </div>
       <button class="carousel-control-prev" type="button" data-bs-target="#home-carousel" data-bs-slide="prev">
@@ -32,6 +32,9 @@
 
 <section class="filter-section">
   <div class="filter-card">
+    <h1 class="visually-hidden">
+  Outdoor Advertising & Billboard Booking Platform in India
+</h1>
     <h3 class="filter-title">Find Outdoor Advertising</h3>
 
     <div class="filter-row">
@@ -46,7 +49,7 @@
 
       <!-- STATE -->
       <select class="filter-item" [(ngModel)]="selectedState" (change)="onStateChange()">
-        <option value="">State</option>
+        <option value="" disabled>State</option>
         <option *ngFor="let s of states" [value]="s">
           {{ s }}
         </option>
@@ -54,7 +57,7 @@
 
       <!-- DISTRICT -->
       <select class="filter-item" [(ngModel)]="selectedDistrict" (change)="onDistrictChange()">
-        <option value="">District</option>
+        <option value="" disabled>District</option>
         <option *ngFor="let d of districts" [value]="d">
           {{ d }}
         </option>
@@ -62,7 +65,7 @@
 
       <!-- TEHSIL -->
       <select class="filter-item" [(ngModel)]="selectedTehsil" (change)="onTehsilChange()">
-        <option value="">Tehsil</option>
+        <option value="" disabled>Tehsil</option>
         <option *ngFor="let t of tehsils" [value]="t">
           {{ t }}
         </option>
@@ -70,7 +73,7 @@
 
       <!-- VILLAGE -->
       <select class="filter-item" [(ngModel)]="selectedVillage">
-        <option value="">Village</option>
+        <option value="" disabled>Village</option>
         <option *ngFor="let v of villages" [value]="v">
           {{ v }}
         </option>

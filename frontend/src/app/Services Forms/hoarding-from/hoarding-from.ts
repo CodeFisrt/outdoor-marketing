@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { SeoService } from '../../ApiServices/Seo-Service/seo-service';
 
 @Component({
   selector: 'app-hoarding-from',
@@ -12,6 +13,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './hoarding-from.css'
 })
 export class HoardingFrom {
+
   hoardingForm!: FormGroup;
   hoardingId?: number;
   constructor(
@@ -19,7 +21,8 @@ export class HoardingFrom {
     private http: HttpClient,
     private router: Router,
     private route: ActivatedRoute,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private seo :SeoService
   ) { }
 
   ngOnInit(): void {
@@ -42,6 +45,16 @@ export class HoardingFrom {
       contract_end_date: [''],
       notes: [''],
       created_at: [{ value: new Date().toISOString(), disabled: true }]
+    });
+    this.seo.updateSeo({
+      title: 'Outdoor Advertising & Billboard Booking Platform in India',
+      description: 'Find and book outdoor advertising like billboards, digital screens, vehicle and street ads across India with location-based search.',
+      keywords: 'outdoor advertising, billboard advertising, digital screen advertising, hoarding ads, vehicle branding, street advertising, outdoor media booking, billboard booking platform, advertising in India',
+      canonical: 'https://adonstreet.com/hording',
+      robots: 'INDEX, FOLLOW',
+      author: 'CodingEra',
+      publisher: 'adonstreet',
+      lang: 'en-IN'
     });
 
     this.route.paramMap.subscribe(params => {

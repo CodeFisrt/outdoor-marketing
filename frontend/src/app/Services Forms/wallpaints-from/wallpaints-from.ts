@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Route, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { SeoService } from '../../ApiServices/Seo-Service/seo-service';
 
 
 @Component({
@@ -22,7 +23,8 @@ export class WallpaintsFrom {
     private http: HttpClient,
     private route: ActivatedRoute,
     private toaster: ToastrService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private seo:SeoService
   ) {
     // ✅ now initialize safely here
     this.societyForm = this.fb.group({
@@ -64,6 +66,17 @@ export class WallpaintsFrom {
         }
       }
     });
+    this.seo.updateSeo({
+      title:"",
+      description:'',
+      keywords:'',
+      canonical:'',
+      robots:'',
+      author:'',
+      publisher:'',
+      lang:''
+
+    })
   }
 
   //load edits

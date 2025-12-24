@@ -2038,7 +2038,7 @@ app.post("/api/send-mail", async (req, res) => {
       replyTo: email,                                 
       subject: subject,
       html: `
-        <h3>New Contact Message</h3>
+        <h3>Welcome to AdonSteet</h3>
         <p><b>Name:</b> ${full_name}</p>
         <p><b>Email:</b> ${email}</p>
         <p>${message}</p>

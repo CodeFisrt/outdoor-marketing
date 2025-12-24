@@ -8,35 +8,55 @@ import { Search } from '../../SearchServices/search';
 import { HttpParams } from '@angular/common/http';
 
 import { CategoryCards } from '../category-cards/category-cards';
+import { SeoService } from '../../ApiServices/Seo-Service/seo-service';
 
 @Component({
   selector: 'app-home',
   imports: [CommonModule, FormsModule, ScreenBoardCardList, CategoryCards],
   templateUrl: './home.html',
-  styleUrl: './home.css'
+  styleUrl: './home.css',
 })
 export class Home implements OnInit {
+  constructor(
+    private searchService: Search,
+    private cdr: ChangeDetectorRef,
+    private seo:SeoService
+  ) {}
 
-  constructor(private searchService: Search, private cdr: ChangeDetectorRef) { }
+  ngOnInit() {
+    this.restoreState();
+
+    this.seo.updateSeo({
+    title: 'Outdoor Advertising & Billboard Booking Platform in India',
+    description: 'Find and book outdoor advertising like billboards, digital screens, vehicle and street ads across India with location-based search.',
+    keywords: 'outdoor advertising, billboard advertising, digital screen advertising, hoarding ads, vehicle branding, street advertising, outdoor media booking, billboard booking platform, advertising in India',
+    canonical: 'https://adonstreet.com/home',
+    robots: 'INDEX, FOLLOW',
+    author: 'CodingEra',
+    publisher: 'adonstreet',
+    lang: 'en-IN'
+  });
+    
+  }
 
   categoryMap: any = {
-    "Billboard & Hoarding Advertising": "hoardings",
-    "Transit Advertising": "vehicle_marketing",
-    "Digital Outdoor Advertising (DOOH)": "outdoormarketingscreens",
-    "Poll Kiosk": "balloon_marketing",
-    "Wall Painting": "society_marketing",
-    "Posters, Banners & Street Signage": "posters_banners_streetsignage",
-    "Event Sponsorship & Brand Activation": "event_sponsorship_brand_activation",
-    "RWA & Society Branding": "society_marketing",
+    'Billboard & Hoarding Advertising': 'hoardings',
+    'Transit Advertising': 'vehicle_marketing',
+    'Digital Outdoor Advertising (DOOH)': 'outdoormarketingscreens',
+    'Poll Kiosk': 'balloon_marketing',
+    'Wall Painting': 'society_marketing',
+    'Posters, Banners & Street Signage': 'posters_banners_streetsignage',
+    'Event Sponsorship & Brand Activation': 'event_sponsorship_brand_activation',
+    'RWA & Society Branding': 'society_marketing',
   };
 
   categoryList = Object.keys(this.categoryMap);
 
-  selectedServiceType = "";
-  selectedState = "";
-  selectedDistrict = "";
-  selectedTehsil = "";
-  selectedVillage = "";
+  selectedServiceType = '';
+  selectedState = '';
+  selectedDistrict = '';
+  selectedTehsil = '';
+  selectedVillage = '';
 
   states: any[] = [];
   districts: any[] = [];
@@ -64,10 +84,10 @@ export class Home implements OnInit {
     const service_type = this.categoryMap[this.selectedServiceType];
 
     // Reset all filters
-    this.selectedState = "";
-    this.selectedDistrict = "";
-    this.selectedTehsil = "";
-    this.selectedVillage = "";
+    this.selectedState = '';
+    this.selectedDistrict = '';
+    this.selectedTehsil = '';
+    this.selectedVillage = '';
     this.states = [];
     this.districts = [];
     this.tehsils = [];
@@ -81,10 +101,10 @@ export class Home implements OnInit {
       // Extract unique states from the data
       this.states = [
         ...new Set(
-          res.map((service: any) => (service.State || "").toString().trim().toLowerCase())
+          res.map((service: any) => (service.State || '').toString().trim().toLowerCase())
         ),
       ]
-        .filter((state: any) => state !== "")
+        .filter((state: any) => state !== '')
         .map((state: any) => state.charAt(0).toUpperCase() + state.slice(1))
         .sort();
 
@@ -94,9 +114,9 @@ export class Home implements OnInit {
 
   // � STEP 2: STATE → Filter districts locally (NO API CALL)
   onStateChange() {
-    this.selectedDistrict = "";
-    this.selectedTehsil = "";
-    this.selectedVillage = "";
+    this.selectedDistrict = '';
+    this.selectedTehsil = '';
+    this.selectedVillage = '';
     this.districts = [];
     this.tehsils = [];
     this.villages = [];
@@ -110,12 +130,10 @@ export class Home implements OnInit {
 
     this.districts = [
       ...new Set(
-        filteredData.map((item: any) =>
-          (item.District || "").toString().trim().toLowerCase()
-        )
+        filteredData.map((item: any) => (item.District || '').toString().trim().toLowerCase())
       ),
     ]
-      .filter((dist: any) => dist !== "")
+      .filter((dist: any) => dist !== '')
       .map((dist: any) => dist.charAt(0).toUpperCase() + dist.slice(1))
       .sort();
 
@@ -124,8 +142,8 @@ export class Home implements OnInit {
 
   // 🔵 STEP 3: DISTRICT → Filter tehsils locally (NO API CALL)
   onDistrictChange() {
-    this.selectedTehsil = "";
-    this.selectedVillage = "";
+    this.selectedTehsil = '';
+    this.selectedVillage = '';
     this.tehsils = [];
     this.villages = [];
 
@@ -138,11 +156,9 @@ export class Home implements OnInit {
         item.District?.toLowerCase() === this.selectedDistrict.toLowerCase()
     );
 
-    this.tehsils = [
-      ...new Set(filteredData.map((item: any) => (item.Tehsil || "").trim())),
-    ]
+    this.tehsils = [...new Set(filteredData.map((item: any) => (item.Tehsil || '').trim()))]
 
-      .filter((tehsil) => tehsil !== "")
+      .filter((tehsil) => tehsil !== '')
       .sort();
 
     this.saveState();
@@ -150,7 +166,7 @@ export class Home implements OnInit {
 
   // 🔵 STEP 4: TEHSIL → Filter villages locally (NO API CALL)
   onTehsilChange() {
-    this.selectedVillage = "";
+    this.selectedVillage = '';
     this.villages = [];
 
     if (!this.selectedTehsil) return;
@@ -163,11 +179,9 @@ export class Home implements OnInit {
         item.Tehsil?.trim() === this.selectedTehsil.trim()
     );
 
-    this.villages = [
-      ...new Set(filteredData.map((item: any) => (item.Village || "").trim())),
-    ]
+    this.villages = [...new Set(filteredData.map((item: any) => (item.Village || '').trim()))]
 
-      .filter((village) => village !== "")
+      .filter((village) => village !== '')
       .sort();
 
     this.saveState();
@@ -175,10 +189,10 @@ export class Home implements OnInit {
 
   // 🔵 FINAL SEARCH - Only ONE API call when button is clicked
   searchBoards() {
-    console.log("🔍 Search initiated - Single API call with all filters");
+    console.log('🔍 Search initiated - Single API call with all filters');
 
     const filters: any = {
-      service_type: this.categoryMap[this.selectedServiceType]
+      service_type: this.categoryMap[this.selectedServiceType],
     };
 
     // Only add filters that are selected
@@ -187,18 +201,18 @@ export class Home implements OnInit {
     if (this.selectedTehsil) filters.Tehsil = this.selectedTehsil;
     if (this.selectedVillage) filters.Village = this.selectedVillage;
 
-    console.log("📤 API Request Payload:", filters);
+    console.log('📤 API Request Payload:', filters);
 
     // ✅ SINGLE API CALL with all selected filters
     this.searchService.searchServices(filters).subscribe({
       next: (res: any) => {
         this.filterData = res;
         this.showcards = true;
-        console.log("✅ API Response:", this.filterData);
+        console.log('✅ API Response:', this.filterData);
         this.saveState(); // Save state with results
         this.cdr.detectChanges();
       },
-      error: (err) => console.error("❌ Error fetching boards:", err),
+      error: (err) => console.error('❌ Error fetching boards:', err),
     });
   }
   // Save full state to service
@@ -220,8 +234,8 @@ export class Home implements OnInit {
       data: {
         allServiceData: this.allServiceData,
         filterData: this.filterData,
-        showcards: this.showcards
-      }
+        showcards: this.showcards,
+      },
     });
   }
 
@@ -229,7 +243,7 @@ export class Home implements OnInit {
   restoreState() {
     const state = this.searchService.getSearchState();
     if (state) {
-      console.log("Restoring search state...", state);
+      console.log('Restoring search state...', state);
 
       this.selectedServiceType = state.criteria.selectedServiceType;
       this.selectedState = state.criteria.selectedState;
@@ -251,13 +265,11 @@ export class Home implements OnInit {
       // Scroll to results if we have them
       if (this.showcards) {
         setTimeout(() => {
-          document.querySelector('.search-results-container')?.scrollIntoView({ behavior: 'smooth' });
+          document
+            .querySelector('.search-results-container')
+            ?.scrollIntoView({ behavior: 'smooth' });
         }, 100);
       }
     }
-  }
-
-  ngOnInit() {
-    this.restoreState();
   }
 }

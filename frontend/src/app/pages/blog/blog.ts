@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { SeoService } from '../../ApiServices/Seo-Service/seo-service';
 
 @Component({
   selector: 'app-blog',
@@ -8,7 +9,24 @@ import { RouterModule } from '@angular/router';
   templateUrl: './blog.html',
   styleUrl: './blog.css'
 })
-export class Blog {
+export class Blog implements OnInit{
+
+constructor(private seo:SeoService){
+
+}
+  
+  ngOnInit(): void {
+    this.seo.updateSeo({
+    title: 'Outdoor Advertising Blog | Insights, News & Media Trends',
+    description: 'Read the latest insights, news, tips and strategies on outdoor advertising, billboards, digital screens and media marketing trends.',
+    keywords: 'outdoor advertising blog, billboard advertising tips, digital advertising trends, outdoor media news, hoarding advertising, advertising strategies, OOH marketing blog',
+    canonical: 'https://adonstreet.com/blog',
+    robots: 'INDEX, FOLLOW',
+    author: 'CodingEra',
+    publisher: 'adonstreet',
+    lang: 'en-IN'
+  });
+  }
   blogPosts = [
     {
       id: 1,
@@ -48,5 +66,5 @@ export class Blog {
     }
   ];
 
-  constructor() { }
+
 }

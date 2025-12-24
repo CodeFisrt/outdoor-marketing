@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { SeoService } from '../../ApiServices/Seo-Service/seo-service';
 
 @Component({
   selector: 'app-vehicle-ads-form',
@@ -12,6 +13,8 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './vehicle-ads-form.css'
 })
 export class VehicleAdsForm {
+
+
   vehicleForm!: FormGroup;
   apiUrl = "http://localhost:8080/vehicles";
 vehicleId: number = 0;
@@ -20,7 +23,8 @@ vehicleId: number = 0;
     private http: HttpClient,
      private route: ActivatedRoute,
     private toaster: ToastrService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private seo:SeoService
   ) {
     this.vehicleForm = this.fb.group({
       v_id: [0],
@@ -54,6 +58,17 @@ ngOnInit(){
         }
       }
     });
+    this.seo.updateSeo({
+
+      title: 'Add or Edit Vehicle Ads | AdonStreet Dashboard',
+      description: 'Manage vehicle advertising campaigns by adding or editing vehicles in AdonStreet dashboard. Update vehicle type, location, cost, and campaign details easily.',
+      keywords: 'vehicle advertising, add vehicle, edit vehicle, vehicle ad dashboard, AdonStreet management, vehicle ad cost, vehicle campaign management',
+      canonical: 'https://adonstreet.com/dashboard/vehicle-ads',
+      robots: 'NOINDEX, NOFOLLOW', // Prevent indexing of admin form pages
+      author: 'AdonStreet',
+      publisher: 'AdonStreet',
+      lang: 'en-IN'
+    })
 }
 calculateDuration() {
     const start = this.vehicleForm.get('v_start_date')?.value;

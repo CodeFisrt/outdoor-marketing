@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Route, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { SeoService } from '../../ApiServices/Seo-Service/seo-service';
 
 
 @Component({
@@ -21,7 +22,8 @@ export class ScreenForm {
     private route: ActivatedRoute,
     private http: HttpClient,
     private toaster: ToastrService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private seo:SeoService
   ) { }
 
   ngOnInit(): void {
@@ -36,6 +38,14 @@ export class ScreenForm {
         }
       }
     });
+    this.seo.updateSeo({  title: 'Outdoor Advertising & Billboard Booking Platform in India',
+      description: 'Find and book outdoor advertising like billboards, digital screens, vehicle and street ads across India with location-based search.',
+      keywords: 'outdoor advertising, billboard advertising, digital screen advertising, hoarding ads, vehicle branding, street advertising, outdoor media booking, billboard booking platform, advertising in India',
+      canonical: 'https://adonstreet.com/dashboard/digitalscreen/edit/'+ this.selectedScreenId,
+      robots: 'NOINDEX, NOFOLLOW',
+      author: 'CodingEra',
+      publisher: 'Adonstreet',
+      lang: 'en-IN'})
   }
 
 
