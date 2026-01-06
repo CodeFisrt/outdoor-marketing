@@ -13,8 +13,9 @@ import { CommonModule, NgClass } from '@angular/common';
   styleUrl: './vehicle-ads.css'
 })
 export class VehicleAds {
+
   vehicleList: Vehicle[] = [];
-  vehicleForm!: FormGroup;
+  vehicleForm!: FormGroup;                 // declared
   apiUrl = "http://localhost:8080/vehicles";
   filteredList: any[] = [];
   searchTerm: string = "";
@@ -24,17 +25,37 @@ export class VehicleAds {
     private http: HttpClient,
     private toaster: ToastrService,
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef       // 👈 ADDED
-  ) {}
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit() {
+
+    // ✅✅✅ FIX 1: FORM INITIALIZATION (THIS WAS MISSING)
+    this.vehicleForm = this.fb.group({
+      v_id: [0],
+      v_type: ['', Validators.required],
+      v_number: ['', Validators.required],
+      v_area: [''],
+      v_city: [''],
+      v_start_date: [''],
+      v_end_date: [''],
+      v_duration_days: [0],
+      expected_crowd: [0],
+      v_contact_person_name: [''],
+      v_contact_num: [''],
+      v_cost: [''],
+      payment_status: ['Pending'],
+      remarks: ['']
+    });
+
+    // existing logic (kept exactly)
     this.getAllVechile();
 
-    // FIX ExpressionChangedAfterItHasBeenCheckedError
+    // existing logic (kept exactly)
     setTimeout(() => {
       this.vehicleForm.valueChanges.subscribe(() => {
         this.calculateDuration();
-        this.cdr.detectChanges();       // 👈 ADDED
+        this.cdr.detectChanges();
       });
     });
   }
@@ -48,7 +69,7 @@ export class VehicleAds {
       s.v_cost.toString().includes(term)
     );
 
-    this.cdr.detectChanges();           // 👈 ADDED
+    this.cdr.detectChanges();
   }
 
   calculateDuration() {
@@ -58,14 +79,16 @@ export class VehicleAds {
     if (start && end) {
       const s = new Date(start);
       const e = new Date(end);
-      const diff = Math.ceil((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      const diff = Math.ceil(
+        (e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24)
+      ) + 1;
 
       this.vehicleForm.get('v_duration_days')?.setValue(
         diff > 0 ? diff : 0,
         { emitEvent: false }
       );
 
-      this.cdr.detectChanges();         // 👈 ADDED
+      this.cdr.detectChanges();
     }
   }
 
@@ -74,8 +97,7 @@ export class VehicleAds {
     this.http.get<Vehicle[]>(this.apiUrl).subscribe((res: any) => {
       this.vehicleList = res;
       this.filteredList = res;
-
-      this.cdr.detectChanges();         // 👈 ADDED
+      this.cdr.detectChanges();
     });
   }
 
@@ -91,8 +113,7 @@ export class VehicleAds {
       this.toaster.success("Vehicle added successfully");
       this.getAllVechile();
       this.vehicleForm.reset();
-
-      this.cdr.detectChanges();         // 👈 ADDED
+      this.cdr.detectChanges();
     });
   }
 
@@ -104,12 +125,14 @@ export class VehicleAds {
       return;
     }
 
-    this.http.put(`${this.apiUrl}/${this.vehicleForm.value.v_id}`, this.vehicleForm.value).subscribe(() => {
+    this.http.put(
+      `${this.apiUrl}/${this.vehicleForm.value.v_id}`,
+      this.vehicleForm.value
+    ).subscribe(() => {
       this.toaster.success("Vehicle updated successfully");
       this.getAllVechile();
       this.vehicleForm.reset();
-
-      this.cdr.detectChanges();         // 👈 ADDED
+      this.cdr.detectChanges();
     });
   }
 
@@ -119,8 +142,7 @@ export class VehicleAds {
       this.http.delete(`${this.apiUrl}/${id}`).subscribe(() => {
         this.toaster.success("Vehicle deleted successfully");
         this.getAllVechile();
-
-        this.cdr.detectChanges();       // 👈 ADDED
+        this.cdr.detectChanges();
       });
     }
   }
@@ -129,7 +151,6 @@ export class VehicleAds {
   editVehicle(vehicleId: number) {
     this.router.navigateByUrl("/dashboard/vehicle-Ads-Form/" + vehicleId);
     this.toaster.info("Edit Vehicle data loaded into form");
-
-    this.cdr.detectChanges();           // 👈 ADDED
+    this.cdr.detectChanges();
   }
 }

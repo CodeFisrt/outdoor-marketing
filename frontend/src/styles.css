@@ -1,8 +1,6 @@
 @import 'swiper/swiper-bundle.css';
 @import 'ngx-toastr/toastr';
-@import "bootstrap/dist/css/bootstrap.min.css";
-
-
+@import 'bootstrap/dist/css/bootstrap.min.css';
 
 :root {
   --primary-color: #2373a6;
@@ -49,7 +47,7 @@ body {
 
 .scrolling-text-bar {
   background: var(--secondary-color);
-  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   color: var(--secondarytwo-color);
 }
 
@@ -86,7 +84,9 @@ body {
   background-color: var(--primary-color);
 }
 
-.nav-toggle-btn>span {}
+/* .nav-toggle-btn>span {
+  
+} */
 
 /* service card css  */
 .serviceslide-controls button {
@@ -103,7 +103,6 @@ body {
 .service-card-slide {
   height: 100%;
   background-color: var(--primary-color);
-
 }
 
 .service-card {
@@ -180,7 +179,7 @@ body {
   padding: 24px 96px;
 }
 
-.contactus-right>h4 {
+.contactus-right > h4 {
   color: var(--primary-color);
 }
 
@@ -198,7 +197,6 @@ textarea.form-control {
 }
 
 /* otp  verification page */
-
 
 .otp-container {
   background-color: white;
@@ -247,7 +245,7 @@ textarea.form-control {
 }
 
 .service-hero-section::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -273,11 +271,11 @@ textarea.form-control {
 }
 
 .theme-word {
-  color: #FF8D41;
+  color: #ff8d41;
 }
 
 .theme-btn-color {
-  background-color: #FF8D41;
+  background-color: #ff8d41;
   color: #fff;
 }
 
@@ -300,7 +298,7 @@ body {
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
 html,
@@ -310,5 +308,5 @@ body {
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
 }

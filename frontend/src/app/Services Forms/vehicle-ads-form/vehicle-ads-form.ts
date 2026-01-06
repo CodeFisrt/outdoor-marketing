@@ -8,7 +8,7 @@ import { SeoService } from '../../ApiServices/Seo-Service/seo-service';
 
 @Component({
   selector: 'app-vehicle-ads-form',
-  imports: [NgClass,ReactiveFormsModule,RouterLink],
+  imports: [NgClass, ReactiveFormsModule, RouterLink],
   templateUrl: './vehicle-ads-form.html',
   styleUrl: './vehicle-ads-form.css'
 })
@@ -17,14 +17,14 @@ export class VehicleAdsForm {
 
   vehicleForm!: FormGroup;
   apiUrl = "http://localhost:8080/vehicles";
-vehicleId: number = 0;
+  vehicleId: number = 0;
   constructor(
     private router: Router,
     private http: HttpClient,
-     private route: ActivatedRoute,
+    private route: ActivatedRoute,
     private toaster: ToastrService,
     private fb: FormBuilder,
-    private seo:SeoService
+    private seo: SeoService
   ) {
     this.vehicleForm = this.fb.group({
       v_id: [0],
@@ -43,13 +43,13 @@ vehicleId: number = 0;
       remarks: ['']
     });
   }
-ngOnInit(){
-   this.vehicleForm.valueChanges.subscribe(() => {
+  ngOnInit() {
+    this.vehicleForm.valueChanges.subscribe(() => {
       this.calculateDuration();
     });
 
     //to react activated route id
-      this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
       if (idParam) {
         this.vehicleId = +idParam;
@@ -69,8 +69,8 @@ ngOnInit(){
       publisher: 'AdonStreet',
       lang: 'en-IN'
     })
-}
-calculateDuration() {
+  }
+  calculateDuration() {
     const start = this.vehicleForm.get('v_start_date')?.value;
     const end = this.vehicleForm.get('v_end_date')?.value;
 
@@ -86,8 +86,8 @@ calculateDuration() {
       }
     }
   }
-  loadVehicleData(id:number){
- this.http.get<any>(`${this.apiUrl}/${id}`).subscribe({
+  loadVehicleData(id: number) {
+    this.http.get<any>(`${this.apiUrl}/${id}`).subscribe({
       next: (data) => {
         this.vehicleForm.patchValue(data);
       },
@@ -106,7 +106,7 @@ calculateDuration() {
     }
     this.http.post(this.apiUrl, this.vehicleForm.value).subscribe(() => {
       this.toaster.success("Vehicle added successfully");
-          this.router.navigateByUrl("/dashboard/vehicle-ads")
+      this.router.navigateByUrl("/dashboard/vehicle-ads")
       this.vehicleForm.reset();
     });
   }
@@ -120,7 +120,7 @@ calculateDuration() {
     }
     this.http.put(`${this.apiUrl}/${this.vehicleForm.value.v_id}`, this.vehicleForm.value).subscribe(() => {
       this.toaster.success("Vehicle updated successfully");
-     this.router.navigateByUrl("/dashboard/vehicle-ads")
+      this.router.navigateByUrl("/dashboard/vehicle-ads")
       this.vehicleForm.reset();
     });
   }

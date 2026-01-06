@@ -10,26 +10,26 @@ import { FormsModule } from '@angular/forms';
 })
 export class SignUp {
 
-user = {
-  userName: '',
-  userEmail: '',
-  password: ''
-};
+  user = {
+    userName: '',
+    userEmail: '',
+    password: ''
+  };
 
-constructor(private data: Signupservice) {}
+  constructor(private data: Signupservice) { }
 
-register() {
-  (this.data as any).post(this.user).subscribe({
-    next: (res:any) => {
-      console.log("User registered:", res);
-      alert("Signup Successful!");
-    },
-    error: (err: any) => {
-      console.error("Signup error:", err);
-      alert("Signup Failed!");
-    }
-  });
-}
+  register() {
+    this.data.SignUp(this.user).subscribe({
+      next: (res: any) => {
+        console.log("User registered:", res);
+        alert("Signup Successful!");
+      },
+      error: (err: any) => {
+        console.error("Signup error:", err);
+        alert("Signup Failed!");
+      }
+    });
+  }
 
 
 }

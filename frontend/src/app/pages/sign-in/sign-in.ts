@@ -99,8 +99,8 @@ export class SignIn {
       "width=500,height=600,left=200,top=100"
     );
   }
-  
-  
+
+
 
 
   loginWithFacebook() {
@@ -112,7 +112,7 @@ export class SignIn {
 
     window.open(fbAuthUrl, 'facebookLogin', 'width=500,height=600,left=200,top=100');
   };
-  
+
 
 
   loginWithTwitter() {
