@@ -5,10 +5,11 @@ import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Vehicle } from '../../Model/model';
 import { CommonModule, NgClass } from '@angular/common';
+import { NgxSkeletonLoaderComponent } from "ngx-skeleton-loader";
 
 @Component({
   selector: 'app-vehicle-ads',
-  imports: [NgClass, FormsModule, CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [NgClass, FormsModule, CommonModule, ReactiveFormsModule, RouterLink, NgxSkeletonLoaderComponent],
   templateUrl: './vehicle-ads.html',
   styleUrl: './vehicle-ads.css'
 })

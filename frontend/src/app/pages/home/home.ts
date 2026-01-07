@@ -20,23 +20,23 @@ export class Home implements OnInit {
   constructor(
     private searchService: Search,
     private cdr: ChangeDetectorRef,
-    private seo:SeoService
-  ) {}
+    private seo: SeoService
+  ) { }
 
   ngOnInit() {
     this.restoreState();
 
     this.seo.updateSeo({
-    title: 'Outdoor Advertising & Billboard Booking Platform in India',
-    description: 'Find and book outdoor advertising like billboards, digital screens, vehicle and street ads across India with location-based search.',
-    keywords: 'outdoor advertising, billboard advertising, digital screen advertising, hoarding ads, vehicle branding, street advertising, outdoor media booking, billboard booking platform, advertising in India',
-    canonical: 'https://adonstreet.com/home',
-    robots: 'INDEX, FOLLOW',
-    author: 'CodingEra',
-    publisher: 'adonstreet',
-    lang: 'en-IN'
-  });
-    
+      title: 'Outdoor Advertising & Billboard Booking Platform in India',
+      description: 'Find and book outdoor advertising like billboards, digital screens, vehicle and street ads across India with location-based search.',
+      keywords: 'outdoor advertising, billboard advertising, digital screen advertising, hoarding ads, vehicle branding, street advertising, outdoor media booking, billboard booking platform, advertising in India',
+      canonical: 'https://adonstreet.com/home',
+      robots: 'INDEX, FOLLOW',
+      author: 'CodingEra',
+      publisher: 'adonstreet',
+      lang: 'en-IN'
+    });
+
   }
 
   categoryMap: any = {

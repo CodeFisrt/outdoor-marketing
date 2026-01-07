@@ -2,10 +2,11 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessC
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { provideHttpClient,withFetch, withInterceptors} from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { authInterceptor } from './Interceptor/auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -15,11 +16,22 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
     provideHttpClient(withInterceptors([authInterceptor])),
-     provideHttpClient(withFetch()),
+    provideHttpClient(withFetch()),
 
     // ✅ Import NgModules using importProvidersFrom
     importProvidersFrom(
-      ReactiveFormsModule,
+      ReactiveFormsModule, NgxSkeletonLoaderModule.forRoot({
+        theme: {
+          extendsFromRoot: true,
+          color: '#f2f8ff',
+          backgroundColor: '#e6f0ff',
+          height: '18px',
+          borderRadius: '6px',
+          animation: 'progress',
+          animationDuration: '1.1s',
+        },
+      }),
+
       BrowserAnimationsModule,
       ToastrModule.forRoot({
         timeOut: 3000,

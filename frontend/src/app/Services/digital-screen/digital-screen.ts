@@ -6,11 +6,12 @@ import { ToastrService } from 'ngx-toastr';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NgxSkeletonLoaderComponent } from "ngx-skeleton-loader";
 
 @Component({
   selector: 'app-digital-screen',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, FormsModule, NgxSkeletonLoaderComponent],
   templateUrl: './digital-screen.html',
   styleUrls: ['./digital-screen.css']
 })
@@ -27,7 +28,7 @@ export class DigitalScreen implements OnInit {
     private toaster: ToastrService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef   // ✔️ CDR added
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();

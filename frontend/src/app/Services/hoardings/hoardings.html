@@ -4,13 +4,31 @@
     <h2 class="fw-bold text-primary">📋 Hoarding List</h2>
 
     <!-- Search Bar -->
-    <input type="text" class="form-control w-25 me-3"
-      placeholder="🔍 Search hoardings..."
-      [(ngModel)]="searchTerm"
-      (input)="filterHoardings()" />
+    <div class="input-group w-25 me-3">
+      <!-- 🔍 Search Icon Button (ADDED) -->
 
-    <button class="btn btn-primary d-flex align-items-center gap-2"
-      routerLink="/dashboard/hoarding-form/0">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search hoardings..."
+        [(ngModel)]="searchTerm"
+        (input)="filterHoardings()"
+      />
+
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        (click)="applySearch()"
+        title="Search"
+      >
+        🔍
+      </button>
+    </div>
+
+    <button
+      class="btn btn-primary d-flex align-items-center gap-2"
+      routerLink="/dashboard/hoarding-form/0"
+    >
       <i class="bi bi-plus-circle"></i> Add New Hoarding
     </button>
   </div>
@@ -36,15 +54,17 @@
             <td>{{ h.h_name }}</td>
             <td>{{ h.city }}</td>
             <td>{{ h.state }}</td>
-            <td>₹ {{ h.rental_cost }}</td>
+            <td>{{ h.rental_cost | currency : 'INR' }}</td>
             <td>
-              <span class="badge"
+              <span
+                class="badge"
                 [ngClass]="{
                   'bg-success': h.status === 'Available',
                   'bg-danger': h.status === 'Occupied',
                   'bg-warning text-dark': h.status === 'Under Maintenance',
                   'bg-info': h.status === 'Booked'
-                }">
+                }"
+              >
                 {{ h.status }}
               </span>
             </td>
@@ -59,11 +79,11 @@
           </tr>
         </tbody>
       </table>
-
+      <ngx-skeleton-loader count="15" appearance="line"></ngx-skeleton-loader>
       <!-- No Data -->
       <div *ngIf="filteredList.length === 0" class="text-center py-4 text-muted">
-        <i class="bi bi-emoji-frown fs-2"></i>
-        <p class="mt-2">No hoardings found. Please add one.</p>
+        <!-- <i class="bi bi-emoji-frown fs-2"></i>
+        <p class="mt-2">No hoardings found. Please add one.</p> -->
       </div>
     </div>
   </div>

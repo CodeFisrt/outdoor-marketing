@@ -1,20 +1,23 @@
 <div class="container mt-4">
-
   <!-- Card Wrapper -->
   <div class="card shadow-sm border-0 rounded-3">
-
     <!-- Header with Add Button -->
     <div class="card-header text-dark d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">
-        <i class="bi bi-tv me-2"></i> Digital Screens List
-      </h5>
+      <h5 class="mb-0"><i class="bi bi-tv me-2"></i> Digital Screens List</h5>
 
       <!-- 🔍 Search Bar -->
-      <input type="text" class="form-control w-25 me-3" placeholder="🔍 Search screens..." [(ngModel)]="searchTerm"
-        (input)="filterScreens()" />
+      <input
+        type="text"
+        class="form-control w-25 me-3"
+        placeholder="🔍 Search screens..."
+        [(ngModel)]="searchTerm"
+        (input)="filterScreens()"
+      />
 
-
-      <button class="btn btn-primary btn-sm d-flex align-items-center" routerLink="/dashboard/screen-Form/0">
+      <button
+        class="btn btn-primary btn-sm d-flex align-items-center"
+        routerLink="/dashboard/screen-Form/0"
+      >
         <i class="bi bi-plus-circle me-1 text-success fs-5"></i>
         <span class="fw-semibold">Add New Screen</span>
       </button>
@@ -40,35 +43,45 @@
             <td>{{ screen.Location }}</td>
             <td><i class="bi bi-geo-alt me-1 text-danger"></i> {{ screen.City }}</td>
             <td>
-              <span class="badge"
-                [ngClass]="{'bg-success': screen.Status==='Active', 'bg-warning text-dark': screen.Status==='Pending', 'bg-danger': screen.Status==='Inactive'}">
+              <span
+                class="badge"
+                [ngClass]="{
+                  'bg-success': screen.Status === 'Active',
+                  'bg-warning text-dark': screen.Status === 'Pending',
+                  'bg-danger': screen.Status === 'Inactive'
+                }"
+              >
                 {{ screen.Status }}
               </span>
             </td>
             <td class="text-center">
               <!-- Edit Button -->
-              <button class="btn btn-sm btn-outline-primary me-2 d-inline-flex align-items-center"
-                (click)="editScreen(screen.ScreenID)">
+              <button
+                class="btn btn-sm btn-outline-primary me-2 d-inline-flex align-items-center"
+                (click)="editScreen(screen.ScreenID)"
+              >
                 <i class="bi bi-pencil-square me-1"></i> Edit
               </button>
 
               <!-- Delete Button -->
-              <button class="btn btn-sm btn-outline-danger d-inline-flex align-items-center"
-                (click)="deleteScreen(screen.ScreenID)">
+              <button
+                class="btn btn-sm btn-outline-danger d-inline-flex align-items-center"
+                (click)="deleteScreen(screen.ScreenID)"
+              >
                 <i class="bi bi-trash me-1"></i> Delete
               </button>
             </td>
           </tr>
 
           <!-- Empty State -->
-          <tr *ngIf="screenList.length === 0">
+          <!-- <tr *ngIf="screenList.length === 0">
             <td colspan="6" class="text-center text-muted py-3">
               <i class="bi bi-info-circle me-2"></i> No screens available
             </td>
-          </tr>
+          </tr> -->
         </tbody>
       </table>
+      <ngx-skeleton-loader count="15" appearance="line"></ngx-skeleton-loader>
     </div>
   </div>
-
 </div>

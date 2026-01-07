@@ -18,18 +18,18 @@ interface CategoryCard {
     styleUrl: './category-cards.css'
 })
 export class CategoryCards implements OnInit {
-    constructor(private seo:SeoService){}
+    constructor(private seo: SeoService) { }
 
     ngOnInit(): void {
-      this.seo.updateSeo({
-        title: 'Outdoor Advertising Services in India | Billboard, Digital & Street Ads',
-        description:
-          'Explore premium outdoor advertising services in India including billboards, digital screens, vehicle branding and street advertising. Choose the best advertising solution for your brand.',
-        keywords:
-          'outdoor advertising services, billboard advertising India, digital screen advertising, hoarding ads, street advertising, vehicle branding, outdoor media services, advertising solutions India',
-        canonical: 'https://adonsteet/services',
-        robots: 'INDEX, FOLLOW',
-      });
+        this.seo.updateSeo({
+            title: 'Outdoor Advertising Services in India | Billboard, Digital & Street Ads',
+            description:
+                'Explore premium outdoor advertising services in India including billboards, digital screens, vehicle branding and street advertising. Choose the best advertising solution for your brand.',
+            keywords:
+                'outdoor advertising services, billboard advertising India, digital screen advertising, hoarding ads, street advertising, vehicle branding, outdoor media services, advertising solutions India',
+            canonical: 'https://adonsteet/services',
+            robots: 'INDEX, FOLLOW',
+        });
     }
     categories: CategoryCard[] = [
         {

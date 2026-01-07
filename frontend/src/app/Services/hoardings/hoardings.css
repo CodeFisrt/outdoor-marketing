@@ -1,0 +1,134 @@
+/* =========================
+   Page Container
+========================= */
+.container {
+  max-width: 1200px;
+}
+
+/* =========================
+   Header & Search
+========================= */
+h2 {
+  letter-spacing: 0.5px;
+}
+
+.form-control {
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+}
+
+/* =========================
+   Card Styling
+========================= */
+.card {
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+/* =========================
+   Table Styling
+========================= */
+.table {
+  margin-bottom: 0;
+  border-collapse: separate; /* ✅ REQUIRED for spacing */
+  border-spacing: 0 14px; /* ✅ SPACE BETWEEN ROWS */
+}
+
+.table thead th {
+  border: none;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.table tbody tr {
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.table tbody tr:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+}
+
+/* ✅ Rounded row corners */
+.table tbody tr td:first-child {
+  border-top-left-radius: 14px;
+  border-bottom-left-radius: 14px;
+}
+
+.table tbody tr td:last-child {
+  border-top-right-radius: 14px;
+  border-bottom-right-radius: 14px;
+}
+
+/* =========================
+   Cell Padding (row height)
+========================= */
+.table tbody tr td {
+  padding: 7px 7px; /* ✅ Increased vertical space */
+  vertical-align: middle;
+  border: none;
+  font-size: 14px;
+}
+
+/* =========================
+   Badges
+========================= */
+.badge {
+  padding: 8px 14px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================
+   Action Buttons
+========================= */
+.btn-outline-primary,
+.btn-outline-danger {
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+}
+
+.btn-outline-primary i,
+.btn-outline-danger i {
+  font-size: 16px;
+}
+
+/* =========================
+   Skeleton Loader
+========================= */
+ngx-skeleton-loader {
+  margin-top: 20px;
+}
+
+/* =========================
+   No Data Message
+========================= */
+.text-muted {
+  font-size: 15px;
+}
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 768px) {
+  .form-control {
+    width: 100% !important;
+    margin-bottom: 12px;
+  }
+
+  .d-flex {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+}

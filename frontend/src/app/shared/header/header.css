@@ -10,6 +10,7 @@
 
 .navbar {
   background: linear-gradient(90deg, #0b0b0b, #1a1a1a, #0b0b0b);
+  background: linear-gradient(90deg, #0f172a, #1e293b);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
 }
 
@@ -25,8 +26,9 @@
 
 .navbar-nav .nav-link {
   font-weight: 500;
-  font-size: 15px;
+  font-size: 18px;
   position: relative;
+  gap: 5px;
   padding: 8px 14px;
   color: #e6e6e6 !important;
   transition: color 0.3s ease;
@@ -37,7 +39,7 @@
   position: absolute;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, #686af8, #f49af4);
+  background: linear-gradient(90deg, #c1c1e4, #9fa0e6);
   left: 50%;
   bottom: 0;
   transition: all 0.3s ease;
@@ -49,13 +51,15 @@
 }
 
 .navbar-nav .nav-link:hover {
-  color: #8c59f3 !important;
+  color: #7129f6 !important;
+  transition: all 0.35s ease;
+  font-size: 18px;
 }
 
 .btn-outline-light {
   border-radius: 24px;
   padding: 6px 18px;
-  font-size: 14px;
+  font-size: 20px;
   border: 1.5px solid #ffffff;
   transition: all 0.35s ease;
 }

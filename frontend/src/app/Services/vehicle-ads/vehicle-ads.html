@@ -1,19 +1,21 @@
 <div class="container mt-4">
-
   <!-- Header + Add New Btn -->
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="fw-bold">
-      <i class="bi bi-truck-front"></i> Vehicle Management
-    </h3>
+    <h3 class="fw-bold"><i class="bi bi-truck-front"></i> Vehicle Management</h3>
 
-     <!-- 🔍 Search Bar -->
-  <input type="text" class="form-control w-25 me-3"
-    placeholder="🔍 Search screens..."
-    [(ngModel)]="searchTerm"
-    (input)="filterVechile()" />
+    <!-- 🔍 Search Bar -->
+    <input
+      type="text"
+      class="form-control w-25 me-3"
+      placeholder="🔍 Search screens..."
+      [(ngModel)]="searchTerm"
+      (input)="filterVechile()"
+    />
 
-
-    <a class="btn btn-primary d-flex align-items-center gap-2" routerLink="/dashboard/vehicle-Ads-Form/0">
+    <a
+      class="btn btn-primary d-flex align-items-center gap-2"
+      routerLink="/dashboard/vehicle-Ads-Form/0"
+    >
       <i class="bi bi-plus-circle"></i> Add New Vehicle
     </a>
   </div>
@@ -46,8 +48,13 @@
             <td><i class="bi bi-geo-alt"></i> {{ v.v_city }}</td>
             <td>₹ {{ v.v_cost }}</td>
             <td>
-              <span class="badge px-3 py-2 fs-6"
-                [ngClass]="{'bg-success': v.payment_status==='Paid', 'bg-warning text-dark': v.payment_status==='Pending'}">
+              <span
+                class="badge px-3 py-2 fs-6"
+                [ngClass]="{
+                  'bg-success': v.payment_status === 'Paid',
+                  'bg-warning text-dark': v.payment_status === 'Pending'
+                }"
+              >
                 {{ v.payment_status }}
               </span>
             </td>
@@ -61,15 +68,16 @@
             </td>
           </tr>
           }
-          @if(vehicleList.length === 0) {
+          <!-- @if(vehicleList.length === 0) {
           <tr>
             <td colspan="7" class="text-center text-muted py-3">
               <i class="bi bi-info-circle"></i> No vehicles available
             </td>
           </tr>
-          }
+          } -->
         </tbody>
       </table>
+      <ngx-skeleton-loader count="15" appearance="line"></ngx-skeleton-loader>
     </div>
   </div>
 </div>

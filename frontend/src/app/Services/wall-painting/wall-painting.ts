@@ -5,10 +5,11 @@ import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { Society } from '../../Model/model';
 import { CommonModule, NgClass } from '@angular/common';
+import { NgxSkeletonLoaderComponent } from "ngx-skeleton-loader";
 
 @Component({
   selector: 'app-wall-painting',
-  imports: [NgClass, ReactiveFormsModule, RouterLink, FormsModule, CommonModule],
+  imports: [NgClass, ReactiveFormsModule, RouterLink, FormsModule, CommonModule, NgxSkeletonLoaderComponent],
   templateUrl: './wall-painting.html',
   styleUrl: './wall-painting.css'
 })

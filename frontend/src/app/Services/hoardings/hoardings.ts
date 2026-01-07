@@ -5,15 +5,16 @@ import { Hoarding } from '../../Model/model';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NgxSkeletonLoaderComponent } from "ngx-skeleton-loader";
 
 @Component({
   selector: 'app-hoardings',
-  imports: [NgFor, CommonModule, RouterLink, FormsModule],
+  imports: [NgFor, CommonModule, RouterLink, FormsModule, NgxSkeletonLoaderComponent],
   templateUrl: './hoardings.html',
   styleUrl: './hoardings.css'
 })
 export class Hoardings {
-  
+
   hoardingList: Hoarding[] = [];
   filteredList: Hoarding[] = [];
   searchTerm: string = "";
@@ -23,7 +24,7 @@ export class Hoardings {
     public router: Router,
     private toaster: ToastrService,
     private cd: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.getAllHoardings();
@@ -48,15 +49,21 @@ export class Hoardings {
 
   // 🔍 Search filter
   filterHoardings() {
-    const term = this.searchTerm.toLowerCase();
+    const term = this.searchTerm?.toLowerCase();
 
     this.filteredList = this.hoardingList.filter(h =>
-      h.h_name.toLowerCase().includes(term) ||
-      h.city.toLowerCase().includes(term) ||
-      h.state.toLowerCase().includes(term) ||
-      h.status.toLowerCase().includes(term)
+      h.h_name?.toLowerCase().includes(term) ||
+      h.city?.toLowerCase().includes(term) ||
+      h.state?.toLowerCase().includes(term) ||
+      h.status?.toLowerCase().includes(term)
     );
   }
+
+  // 🔍 Search triggered by icon click (ADDED)
+  applySearch() {
+    this.filterHoardings(); // reuse existing logic
+  }
+
 
   // ✏️ Edit record
   edit(id: number) {
@@ -67,7 +74,7 @@ export class Hoardings {
   // ❌ Delete record
   deleteHoardings(id: number) {
     const confirmDelete = window.confirm("Are you sure you want to delete this hoarding?");
-    
+
     if (confirmDelete) {
       this.http.delete("http://localhost:8080/hoardings/" + id, { responseType: 'text' })
         .subscribe({
