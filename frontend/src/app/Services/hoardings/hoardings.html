@@ -42,7 +42,7 @@
             <th>#</th>
             <th>Hoarding Name</th>
             <th>City</th>
-            <th>State</th>
+            <!-- <th>State</th> -->
             <th>Rental Cost</th>
             <th>Status</th>
             <th class="text-center">Actions</th>
@@ -53,8 +53,8 @@
             <td>{{ i + 1 }}</td>
             <td>{{ h.h_name }}</td>
             <td>{{ h.city }}</td>
-            <td>{{ h.state }}</td>
-            <td>{{ h.rental_cost | currency : 'INR' }}</td>
+            <!-- <td>{{ h.state }}</td> -->
+            <td>₹ {{ h.rental_cost }}</td>
             <td>
               <span
                 class="badge"
@@ -68,12 +68,22 @@
                 {{ h.status }}
               </span>
             </td>
-            <td class="text-center">
-              <button class="btn btn-sm btn-outline-primary me-2" (click)="edit(h.h_id)">
-                <i class="bi bi-pencil-square"></i>
+
+            <td class="text-center action-buttons">
+              <!-- Edit Button -->
+              <button
+                class="btn btn-sm btn-outline-primary me-2 d-inline-flex align-items-center action-btn edit-btn"
+                (click)="edit(h.h_id)"
+              >
+                <i class="bi bi-pencil-square me-1"></i> Edit
               </button>
-              <button class="btn btn-sm btn-outline-danger" (click)="deleteHoardings(h.h_id)">
-                <i class="bi bi-trash"></i>
+
+              <!-- Delete Button -->
+              <button
+                class="btn btn-sm btn-outline-danger d-inline-flex align-items-center action-btn delete-btn"
+                (click)="deleteHoardings(h.h_id)"
+              >
+                <i class="bi bi-trash me-1"></i> Delete
               </button>
             </td>
           </tr>

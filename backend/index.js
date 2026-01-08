@@ -162,8 +162,8 @@ app.post("/vehicles", (req, res) => {
   const data = req.body;
   const sql = `
             INSERT INTO vehicle_marketing 
-            (v_type, v_number, v_area, v_city, v_start_date, v_end_date, v_duration_days, expected_crowd, v_contact_person_name, v_contact_num, v_cost, payment_status, remarks)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (v_type, v_number, v_area, v_city, v_start_date, v_end_date, v_duration_days, expected_crowd, v_contact_person_name, v_contact_num, v_cost, payment_status, remarks, featured)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
   const values = [
     data.v_type,
@@ -179,6 +179,7 @@ app.post("/vehicles", (req, res) => {
     data.v_cost,
     data.payment_status,
     data.remarks,
+    data.featured ? 1 : 0,
   ];
 
   db.query(sql, values, (err, result) => {
@@ -215,7 +216,7 @@ app.put("/vehicles/:id", (req, res) => {
   const sql = `
             UPDATE vehicle_marketing SET 
             v_type=?, v_number=?, v_area=?, v_city=?, v_start_date=?, v_end_date=?, v_duration_days=?, expected_crowd=?, 
-            v_contact_person_name=?, v_contact_num=?, v_cost=?, payment_status=?, remarks=?
+            v_contact_person_name=?, v_contact_num=?, v_cost=?, payment_status=?, remarks=?, featured=?
             WHERE v_id=?
         `;
   const values = [
@@ -232,6 +233,7 @@ app.put("/vehicles/:id", (req, res) => {
     data.v_cost,
     data.payment_status,
     data.remarks,
+    data.featured ? 1 : 0,
     id,
   ];
 
@@ -425,8 +427,8 @@ app.post("/societies", (req, res) => {
   const data = req.body;
   const sql = `
             INSERT INTO society_marketing
-            (s_name, s_area, s_city, s_pincode, s_contact_person_name, s_contact_num, s_no_flats, s_type, s_event_type, event_date, event_time, s_address, s_lat, s_long, s_crowd, approval_status, event_status, expected_cost, actual_cost, responsible_person, follow_up_date, remarks)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (s_name, s_area, s_city, s_pincode, s_contact_person_name, s_contact_num, s_no_flats, s_type, s_event_type, event_date, event_time, s_address, s_lat, s_long, s_crowd, approval_status, event_status, expected_cost, actual_cost, responsible_person, follow_up_date, remarks, featured)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
   const values = [
     data.s_name,
@@ -451,6 +453,7 @@ app.post("/societies", (req, res) => {
     data.responsible_person,
     data.follow_up_date,
     data.remarks,
+    data.featured ? 1 : 0,
   ];
 
   db.query(sql, values, (err, result) => {
@@ -488,7 +491,7 @@ app.put("/societies/:id", (req, res) => {
             UPDATE society_marketing SET
             s_name=?, s_area=?, s_city=?, s_pincode=?, s_contact_person_name=?, s_contact_num=?, s_no_flats=?, s_type=?, 
             s_event_type=?, event_date=?, event_time=?, s_address=?, s_lat=?, s_long=?, s_crowd=?, 
-            approval_status=?, event_status=?, expected_cost=?, actual_cost=?, responsible_person=?, follow_up_date=?, remarks=?
+            approval_status=?, event_status=?, expected_cost=?, actual_cost=?, responsible_person=?, follow_up_date=?, remarks=?, featured=?
             WHERE s_id=?
         `;
   const values = [
@@ -514,6 +517,7 @@ app.put("/societies/:id", (req, res) => {
     data.responsible_person,
     data.follow_up_date,
     data.remarks,
+    data.featured ? 1 : 0,
     id,
   ];
 
@@ -687,8 +691,8 @@ app.post("/balloons", (req, res) => {
   const data = req.body;
   const sql = `
             INSERT INTO balloon_marketing
-            (b_location_name, b_area, b_city, b_address, b_lat, b_long, b_size, b_type, b_height, b_duration_days, b_start_date, b_end_date, expected_crowd, b_contact_person_name, b_contact_num, b_cost, payment_status, remarks)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (b_location_name, b_area, b_city, b_address, b_lat, b_long, b_size, b_type, b_height, b_duration_days, b_start_date, b_end_date, expected_crowd, b_contact_person_name, b_contact_num, b_cost, payment_status, remarks, featured)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
   const values = [
     data.b_location_name,
@@ -709,6 +713,7 @@ app.post("/balloons", (req, res) => {
     data.b_cost,
     data.payment_status,
     data.remarks,
+    data.featured ? 1 : 0,
   ];
 
   db.query(sql, values, (err, result) => {
@@ -746,7 +751,7 @@ app.put("/balloons/:id", (req, res) => {
             UPDATE balloon_marketing SET
             b_location_name=?, b_area=?, b_city=?, b_address=?, b_lat=?, b_long=?, b_size=?, b_type=?, 
             b_height=?, b_duration_days=?, b_start_date=?, b_end_date=?, expected_crowd=?, 
-            b_contact_person_name=?, b_contact_num=?, b_cost=?, payment_status=?, remarks=?
+            b_contact_person_name=?, b_contact_num=?, b_cost=?, payment_status=?, remarks=?, featured=?
             WHERE b_id=?
         `;
   const values = [
@@ -768,6 +773,7 @@ app.put("/balloons/:id", (req, res) => {
     data.b_cost,
     data.payment_status,
     data.remarks,
+    data.featured ? 1 : 0,
     id,
   ];
 
@@ -948,8 +954,8 @@ app.post("/screens", (req, res) => {
   const data = req.body;
   const sql = `
             INSERT INTO outdoormarketingscreens
-            (ScreenName, Location, City, State, Latitude, Longitude, ScreenType, Size, Resolution, OwnerName, ContactPerson, ContactNumber, OnboardingDate, Status, RentalCost, ContractStartDate, ContractEndDate, PowerBackup, InternetConnectivity, Notes)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (ScreenName, Location, City, State, Latitude, Longitude, ScreenType, Size, Resolution, OwnerName, ContactPerson, ContactNumber, OnboardingDate, Status, RentalCost, ContractStartDate, ContractEndDate, PowerBackup, InternetConnectivity, Notes, featured)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
   const values = [
     data.ScreenName,
@@ -972,6 +978,7 @@ app.post("/screens", (req, res) => {
     data.PowerBackup,
     data.InternetConnectivity,
     data.Notes,
+    data.featured ? 1 : 0, // conversion of true / false in 1/0
   ];
 
   db.query(sql, values, (err, result) => {
@@ -1014,7 +1021,7 @@ app.put("/screens/:id", (req, res) => {
             UPDATE outdoormarketingscreens SET
             ScreenName=?, Location=?, City=?, State=?, Latitude=?, Longitude=?, ScreenType=?, Size=?, Resolution=?, 
             OwnerName=?, ContactPerson=?, ContactNumber=?, OnboardingDate=?, Status=?, RentalCost=?, ContractStartDate=?, 
-            ContractEndDate=?, PowerBackup=?, InternetConnectivity=?, Notes=?
+            ContractEndDate=?, PowerBackup=?, InternetConnectivity=?, Notes=?, featured=?
             WHERE ScreenID=?
         `;
   const values = [
@@ -1038,6 +1045,7 @@ app.put("/screens/:id", (req, res) => {
     data.PowerBackup,
     data.InternetConnectivity,
     data.Notes,
+    data.featured ? 1 : 0,
     id,
   ];
 

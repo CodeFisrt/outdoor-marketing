@@ -40,7 +40,8 @@ export class VehicleAdsForm {
       v_contact_num: ['', [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]], // Indian 10-digit mobile
       v_cost: ['', [Validators.required, Validators.min(1)]],
       payment_status: ['Pending', Validators.required],
-      remarks: ['']
+      remarks: [''],
+      featured: [false]
     });
   }
   ngOnInit() {
@@ -86,16 +87,23 @@ export class VehicleAdsForm {
       }
     }
   }
+
   loadVehicleData(id: number) {
     this.http.get<any>(`${this.apiUrl}/${id}`).subscribe({
       next: (data) => {
-        this.vehicleForm.patchValue(data);
+        this.vehicleForm.patchValue({
+          ...data,
+          v_start_date: data.v_start_date?.split('T')[0],
+          v_end_date: data.v_end_date?.split('T')[0],
+          featured: data.featured === 1
+        });
       },
       error: () => {
         this.toaster.error("Failed to load vehicle details");
       }
     });
   }
+
 
   // 🔹 CREATE
   addVehicle() {
@@ -104,12 +112,19 @@ export class VehicleAdsForm {
       this.toaster.error("Please fix form errors before submitting");
       return;
     }
-    this.http.post(this.apiUrl, this.vehicleForm.value).subscribe(() => {
+
+    const payload = {
+      ...this.vehicleForm.value,
+      featured: this.vehicleForm.value.featured ? 1 : 0
+    };
+
+    this.http.post(this.apiUrl, payload).subscribe(() => {
       this.toaster.success("Vehicle added successfully");
-      this.router.navigateByUrl("/dashboard/vehicle-ads")
+      this.router.navigateByUrl("/dashboard/vehicle-ads");
       this.vehicleForm.reset();
     });
   }
+
 
   // 🔹 UPDATE
   updateVehicle() {
@@ -118,11 +133,18 @@ export class VehicleAdsForm {
       this.toaster.error("Please fix form errors before updating");
       return;
     }
-    this.http.put(`${this.apiUrl}/${this.vehicleForm.value.v_id}`, this.vehicleForm.value).subscribe(() => {
+
+    const payload = {
+      ...this.vehicleForm.value,
+      featured: this.vehicleForm.value.featured ? 1 : 0
+    };
+
+    this.http.put(`${this.apiUrl}/${payload.v_id}`, payload).subscribe(() => {
       this.toaster.success("Vehicle updated successfully");
-      this.router.navigateByUrl("/dashboard/vehicle-ads")
+      this.router.navigateByUrl("/dashboard/vehicle-ads");
       this.vehicleForm.reset();
     });
   }
+
 
 }

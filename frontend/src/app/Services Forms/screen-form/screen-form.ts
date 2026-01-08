@@ -1,15 +1,17 @@
-import { NgClass, NgIf } from '@angular/common';
+import { CommonModule, NgClass, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Route, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { SeoService } from '../../ApiServices/Seo-Service/seo-service';
+import { features } from 'node:process';
+import { log } from 'node:console';
 
 
 @Component({
   selector: 'app-screen-form',
-  imports: [NgClass, ReactiveFormsModule, NgIf,RouterLink],
+  imports: [NgClass, ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './screen-form.html',
   styleUrl: './screen-form.css'
 })
@@ -23,7 +25,7 @@ export class ScreenForm {
     private http: HttpClient,
     private toaster: ToastrService,
     private fb: FormBuilder,
-    private seo:SeoService
+    private seo: SeoService
   ) { }
 
   ngOnInit(): void {
@@ -38,14 +40,16 @@ export class ScreenForm {
         }
       }
     });
-    this.seo.updateSeo({  title: 'Outdoor Advertising & Billboard Booking Platform in India',
+    this.seo.updateSeo({
+      title: 'Outdoor Advertising & Billboard Booking Platform in India',
       description: 'Find and book outdoor advertising like billboards, digital screens, vehicle and street ads across India with location-based search.',
       keywords: 'outdoor advertising, billboard advertising, digital screen advertising, hoarding ads, vehicle branding, street advertising, outdoor media booking, billboard booking platform, advertising in India',
-      canonical: 'https://adonstreet.com/dashboard/digitalscreen/edit/'+ this.selectedScreenId,
+      canonical: 'https://adonstreet.com/dashboard/digitalscreen/edit/' + this.selectedScreenId,
       robots: 'NOINDEX, NOFOLLOW',
       author: 'CodingEra',
       publisher: 'Adonstreet',
-      lang: 'en-IN'})
+      lang: 'en-IN'
+    })
   }
 
 
@@ -71,23 +75,36 @@ export class ScreenForm {
       ContractEndDate: ['', Validators.required],
       PowerBackup: [false],
       InternetConnectivity: ['', Validators.required],
-      Notes: ['']
+      Notes: [''],
+      featured: [false]
     });
   }
   //load Edit
   loadScreenData(id: number) {
     this.http.get<any>(`http://localhost:8080/screens/${id}`).subscribe({
       next: (data) => {
-        this.screenForm.patchValue(data);
+        this.screenForm.patchValue({
+          ...data,
+          OnboardingDate: data.OnboardingDate?.split('T')[0],
+          ContractStartDate: data.ContractStartDate?.split('T')[0],
+          ContractEndDate: data.ContractEndDate?.split('T')[0],
+          featured: data.featured === 1
+        });
+        console.log(data);
       },
       error: () => {
         this.toaster.error("Failed to load vehicle details");
       }
     });
   }
+
   // Save new screen or update existing
   addOrUpdateScreen() {
-    const payload = this.screenForm.value;
+    // const payload = this.screenForm.value;
+    const payload = {
+      ...this.screenForm.value,
+      featured: this.screenForm.value.featured ? 1 : 0
+    };
 
     if (this.selectedScreenId === 0) {
       // Create new screen

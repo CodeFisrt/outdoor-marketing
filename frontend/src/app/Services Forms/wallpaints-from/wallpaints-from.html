@@ -1,6 +1,8 @@
 <div class="container mt-5">
   <div class="card shadow-lg border-0">
-    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+    <div
+      class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+    >
       <h5 class="mb-0">{{ societyForm.value.s_id ? '✏️ Edit Society' : '➕ Add Society' }}</h5>
       <button class="btn btn-light btn-sm" routerLink="/dashboard/wall-painting">
         <i class="bi bi-arrow-left me-1"></i>Back
@@ -9,15 +11,16 @@
 
     <div class="card-body p-4">
       <form [formGroup]="societyForm" (ngSubmit)="societyForm.value.s_id ? update() : add()">
-
         <!-- 🔹 Society Info -->
         <h6 class="mb-3 text-primary">Society Info</h6>
         <div class="row g-3 mb-4">
           <div class="col-md-4">
             <label class="form-label">Society Name</label>
             <input class="form-control" formControlName="s_name" placeholder="Enter society name" />
-            <small class="text-danger"
-              *ngIf="societyForm.get('s_name')?.touched && societyForm.get('s_name')?.invalid">
+            <small
+              class="text-danger"
+              *ngIf="societyForm.get('s_name')?.touched && societyForm.get('s_name')?.invalid"
+            >
               Society name is required
             </small>
           </div>
@@ -25,8 +28,10 @@
           <div class="col-md-4">
             <label class="form-label">City</label>
             <input class="form-control" formControlName="s_city" placeholder="Enter city" />
-            <small class="text-danger"
-              *ngIf="societyForm.get('s_city')?.touched && societyForm.get('s_city')?.invalid">
+            <small
+              class="text-danger"
+              *ngIf="societyForm.get('s_city')?.touched && societyForm.get('s_city')?.invalid"
+            >
               City is required
             </small>
           </div>
@@ -34,8 +39,10 @@
           <div class="col-md-4">
             <label class="form-label">Area</label>
             <input class="form-control" formControlName="s_area" placeholder="Enter area" />
-            <small class="text-danger"
-              *ngIf="societyForm.get('s_area')?.touched && societyForm.get('s_area')?.invalid">
+            <small
+              class="text-danger"
+              *ngIf="societyForm.get('s_area')?.touched && societyForm.get('s_area')?.invalid"
+            >
               Area is required
             </small>
           </div>
@@ -43,8 +50,10 @@
           <div class="col-md-3">
             <label class="form-label">Pincode</label>
             <input class="form-control" formControlName="s_pincode" placeholder="6-digit pincode" />
-            <small class="text-danger"
-              *ngIf="societyForm.get('s_pincode')?.touched && societyForm.get('s_pincode')?.invalid">
+            <small
+              class="text-danger"
+              *ngIf="societyForm.get('s_pincode')?.touched && societyForm.get('s_pincode')?.invalid"
+            >
               Enter valid 6-digit pincode
             </small>
           </div>
@@ -52,8 +61,12 @@
           <div class="col-md-3">
             <label class="form-label">No. of Flats</label>
             <input type="number" class="form-control" formControlName="s_no_flats" min="1" />
-            <small class="text-danger"
-              *ngIf="societyForm.get('s_no_flats')?.touched && societyForm.get('s_no_flats')?.invalid">
+            <small
+              class="text-danger"
+              *ngIf="
+                societyForm.get('s_no_flats')?.touched && societyForm.get('s_no_flats')?.invalid
+              "
+            >
               Enter flats (min 1)
             </small>
           </div>
@@ -65,8 +78,10 @@
               <option value="Residential">Residential</option>
               <option value="Commercial">Commercial</option>
             </select>
-            <small class="text-danger"
-              *ngIf="societyForm.get('s_type')?.touched && societyForm.get('s_type')?.invalid">
+            <small
+              class="text-danger"
+              *ngIf="societyForm.get('s_type')?.touched && societyForm.get('s_type')?.invalid"
+            >
               Select type
             </small>
           </div>
@@ -77,18 +92,36 @@
         <div class="row g-3 mb-4">
           <div class="col-md-4">
             <label class="form-label">Contact Person</label>
-            <input class="form-control" formControlName="s_contact_person_name" placeholder="Name" />
-            <small class="text-danger"
-              *ngIf="societyForm.get('s_contact_person_name')?.touched && societyForm.get('s_contact_person_name')?.invalid">
+            <input
+              class="form-control"
+              formControlName="s_contact_person_name"
+              placeholder="Name"
+            />
+            <small
+              class="text-danger"
+              *ngIf="
+                societyForm.get('s_contact_person_name')?.touched &&
+                societyForm.get('s_contact_person_name')?.invalid
+              "
+            >
               Required
             </small>
           </div>
 
           <div class="col-md-4">
             <label class="form-label">Contact Number</label>
-            <input class="form-control" formControlName="s_contact_num" placeholder="10-digit number" />
-            <small class="text-danger"
-              *ngIf="societyForm.get('s_contact_num')?.touched && societyForm.get('s_contact_num')?.invalid">
+            <input
+              class="form-control"
+              formControlName="s_contact_num"
+              placeholder="10-digit number"
+            />
+            <small
+              class="text-danger"
+              *ngIf="
+                societyForm.get('s_contact_num')?.touched &&
+                societyForm.get('s_contact_num')?.invalid
+              "
+            >
               Enter 10-digit number
             </small>
           </div>
@@ -99,7 +132,11 @@
         <div class="row g-3 mb-4">
           <div class="col-md-4">
             <label class="form-label">Event Type</label>
-            <input class="form-control" formControlName="s_event_type" placeholder="Type of event" />
+            <input
+              class="form-control"
+              formControlName="s_event_type"
+              placeholder="Type of event"
+            />
           </div>
 
           <div class="col-md-3">
@@ -181,19 +218,48 @@
         <!-- 🔹 Remarks -->
         <div class="mb-4">
           <label class="form-label">Remarks</label>
-          <textarea class="form-control" formControlName="remarks" rows="2" placeholder="Additional notes"></textarea>
+          <textarea
+            class="form-control"
+            formControlName="remarks"
+            rows="2"
+            placeholder="Additional notes"
+          ></textarea>
+        </div>
+
+        <div class="form-check mt-3">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="featured"
+            formControlName="featured"
+          />
+          <label class="form-check-label fw-semibold" for="featured"> ⭐ Set As Featured </label>
         </div>
 
         <!-- 🔹 Buttons -->
         <div class="d-flex justify-content-end">
-          <button class="btn btn-outline-secondary me-2" type="button" (click)="societyForm.reset()">Reset</button>
-          <button class="btn btn-secondary me-2" type="button" routerLink="/societies">Cancel</button>
-          <button class="btn" [ngClass]="{'btn-success': !societyForm.value.s_id, 'btn-warning': societyForm.value.s_id}"
-            type="submit" [disabled]="societyForm.invalid">
+          <button
+            class="btn btn-outline-secondary me-2"
+            type="button"
+            (click)="societyForm.reset()"
+          >
+            Reset
+          </button>
+          <button class="btn btn-secondary me-2" type="button" routerLink="/societies">
+            Cancel
+          </button>
+          <button
+            class="btn"
+            [ngClass]="{
+              'btn-success': !societyForm.value.s_id,
+              'btn-warning': societyForm.value.s_id
+            }"
+            type="submit"
+            [disabled]="societyForm.invalid"
+          >
             {{ societyForm.value.s_id ? 'Update' : 'Add' }}
           </button>
         </div>
-
       </form>
     </div>
   </div>

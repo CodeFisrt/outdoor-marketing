@@ -9,7 +9,7 @@ import { SeoService } from '../../ApiServices/Seo-Service/seo-service';
 
 @Component({
   selector: 'app-wallpaints-from',
-  imports: [ReactiveFormsModule,NgClass,NgIf,RouterLink],
+  imports: [ReactiveFormsModule, NgClass, NgIf, RouterLink],
   templateUrl: './wallpaints-from.html',
   styleUrl: './wallpaints-from.css'
 })
@@ -24,7 +24,7 @@ export class WallpaintsFrom {
     private route: ActivatedRoute,
     private toaster: ToastrService,
     private fb: FormBuilder,
-    private seo:SeoService
+    private seo: SeoService
   ) {
     // ✅ now initialize safely here
     this.societyForm = this.fb.group({
@@ -50,7 +50,8 @@ export class WallpaintsFrom {
       actual_cost: ['0'],
       responsible_person: ['', Validators.required],
       follow_up_date: ['', Validators.required],
-      remarks: ['']
+      remarks: [''],
+      featured: [false]
     });
 
 
@@ -67,14 +68,14 @@ export class WallpaintsFrom {
       }
     });
     this.seo.updateSeo({
-      title:"",
-      description:'',
-      keywords:'',
-      canonical:'',
-      robots:'',
-      author:'',
-      publisher:'',
-      lang:''
+      title: "",
+      description: '',
+      keywords: '',
+      canonical: '',
+      robots: '',
+      author: '',
+      publisher: '',
+      lang: ''
 
     })
   }
@@ -83,7 +84,12 @@ export class WallpaintsFrom {
   loadWallData(id: number) {
     this.http.get<any>(`http://localhost:8080/societies/${id}`).subscribe({
       next: (data) => {
-        this.societyForm.patchValue(data);
+        this.societyForm.patchValue({
+          ...data,
+          event_date: data.event_date?.split('T')[0],
+          follow_up_date: data.follow_up_date?.split('T')[0],
+          featured: data.featured === 1
+        });
       },
       error: () => {
         this.toaster.error("Failed to load societies details");
@@ -93,7 +99,13 @@ export class WallpaintsFrom {
   // ✅ Add
   add() {
     if (this.societyForm.invalid) return;
-    this.http.post('http://localhost:8080/societies/', this.societyForm.value).subscribe({
+
+    const payLoad = {
+      ...this.societyForm.value,
+      featured: this.societyForm.value.featured ? 1 : 0
+    };
+
+    this.http.post('http://localhost:8080/societies/', payLoad).subscribe({
       next: () => {
         this.toaster.success('Society Added');
         this.router.navigateByUrl("/dashboard/wall-painting")
@@ -108,10 +120,16 @@ export class WallpaintsFrom {
   update() {
     const id = this.societyForm.value.s_id;
     if (!id) return;
-    this.http.put(`http://localhost:8080/societies/${id}`, this.societyForm.value).subscribe({
+
+    const payLoad = {
+      ...this.societyForm.value,
+      featured: this.societyForm.value.featured ? 1 : 0
+    };
+
+    this.http.put(`http://localhost:8080/societies/${id}`, payLoad).subscribe({
       next: () => {
         this.toaster.success('Society Updated');
-         this.router.navigateByUrl("/dashboard/wall-painting")
+        this.router.navigateByUrl("/dashboard/wall-painting")
         this.societyForm.reset({ approval_status: 'Pending', event_status: 'Scheduled' });
 
       },

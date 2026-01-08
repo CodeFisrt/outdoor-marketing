@@ -57,7 +57,8 @@ export class PollKiosk implements OnInit {
       b_contact_num: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
       b_cost: ['', Validators.required],
       payment_status: ['', Validators.required],
-      remarks: ['']
+      remarks: [''],
+      featured: [false]
     });
   }
 

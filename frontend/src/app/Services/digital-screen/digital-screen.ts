@@ -90,6 +90,10 @@ export class DigitalScreen implements OnInit {
     this.cdr.detectChanges(); // ✔️ Fix ExpressionChangedAfterItHasBeenCheckedError
   }
 
+  applySearch() {
+    this.filterScreens(); // reuse existing logic
+  }
+
   // Add or Update Screen
   addOrUpdateScreen() {
     const payload = this.screenForm.value;

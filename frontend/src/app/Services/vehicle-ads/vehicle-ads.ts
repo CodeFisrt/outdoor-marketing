@@ -46,7 +46,8 @@ export class VehicleAds {
       v_contact_num: [''],
       v_cost: [''],
       payment_status: ['Pending'],
-      remarks: ['']
+      remarks: [''],
+      featured: [false]
     });
 
     // existing logic (kept exactly)
@@ -61,7 +62,7 @@ export class VehicleAds {
     });
   }
 
-  filterVechile() {
+  filterVehicle() {
     const term = this.searchTerm.toLowerCase();
     this.filteredList = this.vehicleList.filter(s =>
       s.v_type.toLowerCase().includes(term) ||
@@ -71,6 +72,11 @@ export class VehicleAds {
     );
 
     this.cdr.detectChanges();
+  }
+
+  // 🔍 Search triggered by icon click (ADDED)
+  applySearch() {
+    this.filterVehicle(); // reuse existing logic
   }
 
   calculateDuration() {

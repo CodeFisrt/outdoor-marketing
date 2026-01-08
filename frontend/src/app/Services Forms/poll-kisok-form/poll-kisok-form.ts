@@ -7,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-poll-kisok-form',
-  imports: [CommonModule,ReactiveFormsModule,NgIf,NgClass,RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, NgIf, NgClass, RouterLink],
   templateUrl: './poll-kisok-form.html',
   styleUrl: './poll-kisok-form.css'
 })
@@ -17,7 +17,7 @@ export class PollKisokForm {
   apiUrl = 'http://localhost:8080/balloons';
 
   constructor(
-    private router:Router,
+    private router: Router,
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private http: HttpClient,
@@ -59,21 +59,34 @@ export class PollKisokForm {
       b_contact_num: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
       b_cost: ['', Validators.required],
       payment_status: ['', Validators.required],
-      remarks: ['']
+      remarks: [''],
+      featured: [false]
     });
   }
 
-  loadPollKisokData(id:number){
-    this.http.get(`${this.apiUrl}/${this.editingId}`).subscribe({next: (data)=>{
-      this.balloonForm.patchValue(data);
-    }})
+  loadPollKisokData(id: number) {
+    this.http.get<any>(`${this.apiUrl}/${this.editingId}`).subscribe({
+      next: (data) => {
+        this.balloonForm.patchValue({
+          ...data,
+          b_start_date: data.b_start_date?.split('T')[0],
+          b_end_date: data.b_end_date?.split('T')[0],
+          featured: data.featured === 1
+        });
+      }
+    })
   }
   // ✅ Create or Update
   save() {
     if (this.balloonForm.invalid) return;
 
+    const payLoad = {
+      ...this.balloonForm.value,
+      featured: this.balloonForm.value.featured ? 1 : 0
+    };
+
     if (this.editingId) {
-      this.http.put(`${this.apiUrl}/${this.editingId}`, this.balloonForm.value).subscribe({
+      this.http.put(`${this.apiUrl}/${this.editingId}`, payLoad).subscribe({
         next: () => {
           this.router.navigateByUrl("/dashboard/poll-kiosk")
           this.toastr.success('Balloon updated successfully ✅');
@@ -82,7 +95,7 @@ export class PollKisokForm {
         error: () => this.toastr.error('Update failed ❌')
       });
     } else {
-      this.http.post(this.apiUrl, this.balloonForm.value).subscribe({
+      this.http.post(this.apiUrl, payLoad).subscribe({
         next: () => {
           this.router.navigateByUrl("/dashboard/poll-kiosk")
           this.toastr.success('Balloon added successfully 🎉');
@@ -100,15 +113,15 @@ export class PollKisokForm {
     this.toastr.info('Editing balloon record ✏️');
   }
 
- 
+
 
   // ✅ Cancel & reset
   cancel() {
     this.editingId = null;
     this.balloonForm.reset();
   }
-  resetForm(){
-     this.editingId = null;
+  resetForm() {
+    this.editingId = null;
     this.balloonForm.reset();
   }
 }

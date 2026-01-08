@@ -1,134 +1,192 @@
 /* =========================
-   Page Container
+   PAGE WRAPPER
 ========================= */
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
 }
 
 /* =========================
-   Header & Search
+   HEADER
 ========================= */
 h2 {
-  letter-spacing: 0.5px;
-}
-
-.form-control {
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 14px;
-}
-
-.form-control:focus {
-  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+  letter-spacing: 0.4px;
 }
 
 /* =========================
-   Card Styling
+   SEARCH BAR
+========================= */
+.input-group {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.input-group .form-control {
+  border: none;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+}
+
+.input-group .form-control:focus {
+  box-shadow: none;
+}
+
+.input-group .btn {
+  border: none;
+  padding: 0 16px;
+  font-size: 1rem;
+  background: #f4f6fb;
+  transition: background 0.2s ease;
+}
+
+.input-group .btn:hover {
+  background: #e7ebf7;
+}
+
+/* =========================
+   ADD BUTTON
+========================= */
+.btn-primary {
+  border-radius: 12px;
+  padding: 10px 18px;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(13, 110, 253, 0.25);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(13, 110, 253, 0.35);
+}
+
+/* =========================
+   CARD
 ========================= */
 .card {
-  border-radius: 16px;
-  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.card-body {
+  padding: 0;
 }
 
 /* =========================
-   Table Styling
+   TABLE
 ========================= */
 .table {
   margin-bottom: 0;
-  border-collapse: separate; /* ✅ REQUIRED for spacing */
-  border-spacing: 0 14px; /* ✅ SPACE BETWEEN ROWS */
+  border-collapse: separate;
+  border-spacing: 0 12px; /* SPACE BETWEEN ROWS */
 }
 
 .table thead th {
-  border: none;
-  font-size: 14px;
+  padding: 10px 12px;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.6px;
+  border: none;
 }
 
 .table tbody tr {
   background: #ffffff;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .table tbody tr:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
 }
 
-/* ✅ Rounded row corners */
+.table tbody td {
+  padding: 12px;
+  vertical-align: middle;
+  border: none;
+}
+
 .table tbody tr td:first-child {
-  border-top-left-radius: 14px;
-  border-bottom-left-radius: 14px;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
 }
 
 .table tbody tr td:last-child {
-  border-top-right-radius: 14px;
-  border-bottom-right-radius: 14px;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 
 /* =========================
-   Cell Padding (row height)
-========================= */
-.table tbody tr td {
-  padding: 7px 7px; /* ✅ Increased vertical space */
-  vertical-align: middle;
-  border: none;
-  font-size: 14px;
-}
-
-/* =========================
-   Badges
+   BADGES
 ========================= */
 .badge {
-  padding: 8px 14px;
-  border-radius: 30px;
-  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+.action-buttons {
+  white-space: nowrap;
+}
+
+.action-btn {
+  border-radius: 10px;
+  padding: 6px 14px;
   font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.25s ease;
+}
+
+/* Edit */
+.edit-btn {
+  border-color: #5c6ac4;
+  color: #5c6ac4;
+}
+
+.edit-btn:hover {
+  background: #5c6ac4;
+  color: #ffffff;
+  box-shadow: 0 6px 14px rgba(92, 106, 196, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Delete */
+.delete-btn {
+  border-color: #e5533d;
+  color: #e5533d;
+}
+
+.delete-btn:hover {
+  background: #e5533d;
+  color: #ffffff;
+  box-shadow: 0 6px 14px rgba(229, 83, 61, 0.35);
+  transform: translateY(-1px);
 }
 
 /* =========================
-   Action Buttons
-========================= */
-.btn-outline-primary,
-.btn-outline-danger {
-  border-radius: 8px;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-}
-
-.btn-outline-primary i,
-.btn-outline-danger i {
-  font-size: 16px;
-}
-
-/* =========================
-   Skeleton Loader
-========================= */
-ngx-skeleton-loader {
-  margin-top: 20px;
-}
-
-/* =========================
-   No Data Message
+   EMPTY STATE
 ========================= */
 .text-muted {
-  font-size: 15px;
+  font-size: 0.95rem;
 }
 
 /* =========================
-   Responsive
+   SKELETON LOADER
 ========================= */
-@media (max-width: 768px) {
-  .form-control {
-    width: 100% !important;
-    margin-bottom: 12px;
-  }
+ngx-skeleton-loader {
+  margin: 20px;
+}
 
-  .d-flex {
-    flex-direction: column;
-    align-items: flex-start !important;
-  }
+.btn-outline-secondary {
+  border-radius: 12px 12px 12px 12px;
+  border: solid;
+  padding: 0 16px;
+  font-size: 1rem;
+  background: #f4f6fb;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
 }

@@ -64,8 +64,13 @@ export class HoardingFrom {
       next: (data: any) => {
         this.hoardingForm.patchValue({
           ...data,
+          ad_start_date: data.ad_start_date?.split('T')[0],
+          ad_end_date: data.ad_end_date?.split('T')[0],
+          contract_start_date: data.contract_start_date?.split('T')[0],
+          contract_end_date: data.contract_end_date?.split('T')[0],
           featured: data.featured === 1 // convert 1 to true for checkbox
         });
+        console.log(data);
       }
     });
   }

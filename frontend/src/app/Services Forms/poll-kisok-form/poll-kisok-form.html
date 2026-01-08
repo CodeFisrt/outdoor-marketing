@@ -1,6 +1,8 @@
 <div class="container mt-5">
   <div class="card shadow-lg border-0">
-    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+    <div
+      class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+    >
       <h5 class="mb-0">{{ editingId ? '✏️ Edit Balloon' : '➕ Add Balloon' }}</h5>
       <button class="btn btn-light btn-sm" routerLink="/dashboard/poll-kiosk">
         <i class="bi bi-arrow-left me-1"></i>Back
@@ -9,15 +11,23 @@
 
     <div class="card-body p-4">
       <form [formGroup]="balloonForm" (ngSubmit)="save()">
-
         <!-- 🔹 Location Info -->
         <h6 class="mb-3 text-primary">Location Info</h6>
         <div class="row g-3 mb-4">
           <div class="col-md-4">
             <label class="form-label">Location Name</label>
-            <input class="form-control" formControlName="b_location_name" placeholder="Enter location" />
-            <small class="text-danger"
-              *ngIf="balloonForm.get('b_location_name')?.touched && balloonForm.get('b_location_name')?.invalid">
+            <input
+              class="form-control"
+              formControlName="b_location_name"
+              placeholder="Enter location"
+            />
+            <small
+              class="text-danger"
+              *ngIf="
+                balloonForm.get('b_location_name')?.touched &&
+                balloonForm.get('b_location_name')?.invalid
+              "
+            >
               Location name is required
             </small>
           </div>
@@ -25,8 +35,10 @@
           <div class="col-md-4">
             <label class="form-label">Area</label>
             <input class="form-control" formControlName="b_area" placeholder="Enter area" />
-            <small class="text-danger"
-              *ngIf="balloonForm.get('b_area')?.touched && balloonForm.get('b_area')?.invalid">
+            <small
+              class="text-danger"
+              *ngIf="balloonForm.get('b_area')?.touched && balloonForm.get('b_area')?.invalid"
+            >
               Area is required
             </small>
           </div>
@@ -34,8 +46,10 @@
           <div class="col-md-4">
             <label class="form-label">City</label>
             <input class="form-control" formControlName="b_city" placeholder="Enter city" />
-            <small class="text-danger"
-              *ngIf="balloonForm.get('b_city')?.touched && balloonForm.get('b_city')?.invalid">
+            <small
+              class="text-danger"
+              *ngIf="balloonForm.get('b_city')?.touched && balloonForm.get('b_city')?.invalid"
+            >
               City is required
             </small>
           </div>
@@ -48,8 +62,10 @@
           <div class="col-md-3">
             <label class="form-label">Latitude</label>
             <input class="form-control" formControlName="b_lat" placeholder="e.g. 18.5204" />
-            <small class="text-danger"
-              *ngIf="balloonForm.get('b_lat')?.touched && balloonForm.get('b_lat')?.invalid">
+            <small
+              class="text-danger"
+              *ngIf="balloonForm.get('b_lat')?.touched && balloonForm.get('b_lat')?.invalid"
+            >
               Latitude is required
             </small>
           </div>
@@ -57,8 +73,10 @@
           <div class="col-md-3">
             <label class="form-label">Longitude</label>
             <input class="form-control" formControlName="b_long" placeholder="e.g. 73.8567" />
-            <small class="text-danger"
-              *ngIf="balloonForm.get('b_long')?.touched && balloonForm.get('b_long')?.invalid">
+            <small
+              class="text-danger"
+              *ngIf="balloonForm.get('b_long')?.touched && balloonForm.get('b_long')?.invalid"
+            >
               Longitude is required
             </small>
           </div>
@@ -75,8 +93,10 @@
               <option>Medium</option>
               <option>Large</option>
             </select>
-            <small class="text-danger"
-              *ngIf="balloonForm.get('b_size')?.touched && balloonForm.get('b_size')?.invalid">
+            <small
+              class="text-danger"
+              *ngIf="balloonForm.get('b_size')?.touched && balloonForm.get('b_size')?.invalid"
+            >
               Select size
             </small>
           </div>
@@ -88,20 +108,32 @@
               <option>Sky</option>
               <option>Ground</option>
             </select>
-            <small class="text-danger"
-              *ngIf="balloonForm.get('b_type')?.touched && balloonForm.get('b_type')?.invalid">
+            <small
+              class="text-danger"
+              *ngIf="balloonForm.get('b_type')?.touched && balloonForm.get('b_type')?.invalid"
+            >
               Select type
             </small>
           </div>
 
           <div class="col-md-3">
             <label class="form-label">Height (m)</label>
-            <input type="number" class="form-control" formControlName="b_height" placeholder="Enter height" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="b_height"
+              placeholder="Enter height"
+            />
           </div>
 
           <div class="col-md-3">
             <label class="form-label">Duration (days)</label>
-            <input type="number" class="form-control" formControlName="b_duration_days" placeholder="Enter days" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="b_duration_days"
+              placeholder="Enter days"
+            />
           </div>
 
           <div class="col-md-3">
@@ -116,7 +148,12 @@
 
           <div class="col-md-3">
             <label class="form-label">Expected Crowd</label>
-            <input type="number" class="form-control" formControlName="expected_crowd" placeholder="0" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="expected_crowd"
+              placeholder="0"
+            />
           </div>
         </div>
 
@@ -125,14 +162,27 @@
         <div class="row g-3 mb-4">
           <div class="col-md-4">
             <label class="form-label">Contact Person</label>
-            <input class="form-control" formControlName="b_contact_person_name" placeholder="Name" />
+            <input
+              class="form-control"
+              formControlName="b_contact_person_name"
+              placeholder="Name"
+            />
           </div>
 
           <div class="col-md-4">
             <label class="form-label">Contact Number</label>
-            <input class="form-control" formControlName="b_contact_num" placeholder="10-digit number" />
-            <small class="text-danger"
-              *ngIf="balloonForm.get('b_contact_num')?.touched && balloonForm.get('b_contact_num')?.invalid">
+            <input
+              class="form-control"
+              formControlName="b_contact_num"
+              placeholder="10-digit number"
+            />
+            <small
+              class="text-danger"
+              *ngIf="
+                balloonForm.get('b_contact_num')?.touched &&
+                balloonForm.get('b_contact_num')?.invalid
+              "
+            >
               Enter 10-digit number
             </small>
           </div>
@@ -158,24 +208,46 @@
 
           <div class="col-md-5">
             <label class="form-label">Remarks</label>
-            <textarea class="form-control" formControlName="remarks" rows="1" placeholder="Any notes"></textarea>
+            <textarea
+              class="form-control"
+              formControlName="remarks"
+              rows="1"
+              placeholder="Any notes"
+            ></textarea>
           </div>
+        </div>
+
+        <div class="form-check mt-3">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="featured"
+            formControlName="featured"
+          />
+          <label class="form-check-label fw-semibold" for="featured"> ⭐ Set As Featured </label>
         </div>
 
         <!-- 🔹 Actions -->
         <div class="d-flex justify-content-end mt-4">
-          <button class="btn btn-outline-secondary me-2" type="button" (click)="balloonForm.reset()">
+          <button
+            class="btn btn-outline-secondary me-2"
+            type="button"
+            (click)="balloonForm.reset()"
+          >
             <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
           </button>
           <button class="btn btn-secondary me-2" type="button" (click)="balloonForm.reset()">
             Cancel
           </button>
-          <button class="btn" [ngClass]="{ 'btn-success': !editingId, 'btn-warning': editingId }" type="submit"
-            [disabled]="balloonForm.invalid">
+          <button
+            class="btn"
+            [ngClass]="{ 'btn-success': !editingId, 'btn-warning': editingId }"
+            type="submit"
+            [disabled]="balloonForm.invalid"
+          >
             {{ editingId ? 'Update Balloon' : 'Add Balloon' }}
           </button>
         </div>
-
       </form>
     </div>
   </div>

@@ -1,0 +1,164 @@
+/* ===============================
+   Page Container
+================================ */
+.container {
+  max-width: 1100px; /* same as hoarding form */
+  margin: 0 auto;
+  padding: 0 12px;
+}
+
+/* ===============================
+   Card Styling
+================================ */
+.card {
+  border-radius: 18px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.card-header {
+  padding: 18px 24px;
+  font-size: 16px;
+}
+
+.card-header h5 {
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.card-body {
+  padding: 30px 28px;
+}
+
+/* ===============================
+   Form Layout
+================================ */
+.row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 fields per row */
+  column-gap: 24px; /* horizontal gap */
+  row-gap: 18px; /* vertical gap */
+}
+
+/* For small devices, make it single column */
+@media (max-width: 992px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===============================
+   Labels
+================================ */
+.form-label {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+/* ===============================
+   Inputs & Selects
+================================ */
+.form-control,
+.form-select {
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 1px solid #ced4da;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+}
+
+/* Textarea */
+textarea.form-control {
+  resize: none;
+}
+
+/* ===============================
+   Buttons
+================================ */
+.btn {
+  border-radius: 10px;
+  padding: 8px 18px;
+  font-size: 14px;
+}
+
+.btn-light {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+}
+
+.btn-light:hover {
+  background: #e9ecef;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: #fff;
+}
+
+.btn-success {
+  background: #198754;
+  color: #fff;
+}
+
+.btn-warning {
+  background: #ffc107;
+  color: #000;
+}
+
+/* ===============================
+   Header Back Button
+================================ */
+.card-header .btn-light {
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+/* ===============================
+   Footer Button Layout
+================================ */
+.mt-4.d-flex {
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  gap: 12px;
+}
+
+/* ===============================
+   Validation/Error Messages
+================================ */
+.text-danger {
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* ===============================
+   Checkbox (if used)
+================================ */
+mat-checkbox {
+  display: block;
+  margin-top: 20px;
+  margin-left: 4px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* ===============================
+   Responsive
+================================ */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 22px 18px;
+  }
+
+  .container {
+    padding: 0 12px;
+  }
+}

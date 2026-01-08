@@ -2,15 +2,26 @@
   <!-- Header + Add New Btn -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h3 class="fw-bold"><i class="bi bi-truck-front"></i> Vehicle Management</h3>
+    <div class="input-group w-25 me-3">
+      <!-- 🔍 Search Icon Button (ADDED) -->
 
-    <!-- 🔍 Search Bar -->
-    <input
-      type="text"
-      class="form-control w-25 me-3"
-      placeholder="🔍 Search screens..."
-      [(ngModel)]="searchTerm"
-      (input)="filterVechile()"
-    />
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search hoardings..."
+        [(ngModel)]="searchTerm"
+        (input)="filterVehicle()"
+      />
+
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        (click)="applySearch()"
+        title="Search"
+      >
+        🔍
+      </button>
+    </div>
 
     <a
       class="btn btn-primary d-flex align-items-center gap-2"
