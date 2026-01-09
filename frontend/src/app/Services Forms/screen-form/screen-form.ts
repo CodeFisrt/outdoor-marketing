@@ -81,6 +81,7 @@ export class ScreenForm {
   }
   //load Edit
   loadScreenData(id: number) {
+    debugger;
     this.http.get<any>(`http://localhost:8080/screens/${id}`).subscribe({
       next: (data) => {
         this.screenForm.patchValue({

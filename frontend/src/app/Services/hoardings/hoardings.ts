@@ -6,10 +6,11 @@ import { ToastrService } from 'ngx-toastr';
 import { CommonModule, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxSkeletonLoaderComponent } from "ngx-skeleton-loader";
+import { FeaturedCards } from "../../pages/featured-cards/featured-cards";
 
 @Component({
   selector: 'app-hoardings',
-  imports: [NgFor, CommonModule, RouterLink, FormsModule, NgxSkeletonLoaderComponent],
+  imports: [CommonModule, RouterLink, FormsModule, NgxSkeletonLoaderComponent],
   templateUrl: './hoardings.html',
   styleUrl: './hoardings.css'
 })
@@ -18,6 +19,7 @@ export class Hoardings {
   hoardingList: Hoarding[] = [];
   filteredList: Hoarding[] = [];
   searchTerm: string = "";
+  ngifCount: number = 0;
 
   constructor(
     private http: HttpClient,

@@ -1,0 +1,189 @@
+/* ===============================
+   GRID SPACING
+================================ */
+.row {
+  margin-left: -24px;
+  margin-right: -24px;
+}
+
+.col-md-4 {
+  padding: 24px;
+}
+
+/* ===============================
+   SECTION HEADER (TITLE + VIEW LINK)
+================================ */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.section-header h4 {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* no color button */
+.view-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.view-link:hover {
+  color: #000;
+  text-decoration: underline;
+}
+
+/* ===============================
+   CARD
+================================ */
+.custom-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+  height: 100%;
+  box-shadow: rgba(0, 0, 0, 0.06) 0px 4px 6px, rgba(0, 0, 0, 0.08) 0px 10px 20px;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.custom-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 12px 24px, rgba(0, 0, 0, 0.18) 0px 24px 48px;
+}
+
+/* ===============================
+   IMAGE
+================================ */
+.card-img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.custom-card:hover .card-img {
+  transform: scale(1.08);
+}
+
+/* ===============================
+   CARD CONTENT
+================================ */
+.card-content {
+  padding: 18px 20px 20px;
+}
+
+.card-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #1a1a2e;
+}
+
+.location-text {
+  font-size: 14px;
+  color: #555;
+  margin: 0;
+}
+
+.exact-location {
+  font-size: 14px;
+  margin: 8px 0;
+  color: #0066ff;
+  font-weight: 600;
+}
+
+.price-size {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 14px 0 16px;
+  font-size: 14px;
+}
+
+.price {
+  font-weight: 700;
+  font-size: 16px;
+  color: #28a745;
+}
+
+/* ===============================
+   VIEW BUTTON (CARD)
+================================ */
+.view-btn {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, #007bff, #0056d6);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.view-btn:hover {
+  background: linear-gradient(135deg, #0056d6, #003ea8);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 91, 255, 0.35);
+}
+
+/* ===============================
+   STATUS DOT
+================================ */
+.status-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.35);
+  z-index: 2;
+}
+
+.status-dot.green {
+  background-color: #28a745;
+}
+
+.status-dot.red {
+  background-color: #dc3545;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+@media (max-width: 992px) {
+  .col-md-4 {
+    padding: 18px;
+  }
+
+  .card-img {
+    height: 190px;
+  }
+}
+
+@media (max-width: 576px) {
+  .col-md-4 {
+    padding: 14px;
+  }
+
+  .card-img {
+    height: 180px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}

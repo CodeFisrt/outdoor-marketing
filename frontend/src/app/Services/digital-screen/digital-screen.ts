@@ -57,7 +57,8 @@ export class DigitalScreen implements OnInit {
       ContractEndDate: ['', Validators.required],
       PowerBackup: [false],
       InternetConnectivity: ['', Validators.required],
-      Notes: ['']
+      Notes: [''],
+      featured: [false]
     });
   }
 
@@ -147,6 +148,7 @@ export class DigitalScreen implements OnInit {
 
   // Edit screen
   editScreen(screenId: number) {
+    debugger;
     this.router.navigateByUrl("/dashboard/screen-Form/" + screenId);
     this.toaster.info("Edit screen data loaded into form");
   }

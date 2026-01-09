@@ -1,0 +1,171 @@
+<div class="container my-5">
+  <!-- HOARDINGS -->
+  <section class="mb-5">
+    <div class="section-header">
+      <h4>🏢 Top Hoardings</h4>
+      <button class="view-link" (click)="viewMore('hoardings')">View full list →</button>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4" *ngFor="let h of hoardings">
+        <div class="custom-card">
+          <span class="status-dot green"></span>
+
+          <img
+            [src]="imageBaseUrl + h.image"
+            (error)="onImgError($event)"
+            class="card-img"
+            alt="Hoarding Image"
+          />
+
+          <div class="card-content">
+            <h4 class="card-title">{{ h.h_name }}</h4>
+            <p class="location-text">{{ h.city }}</p>
+            <p class="exact-location">📍 {{ h.address }}</p>
+
+            <div class="price-size">
+              <span>📐 {{ h.size }}</span>
+              <span class="price">₹{{ h.rental_cost }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREENS -->
+  <section class="mb-5">
+    <div class="section-header">
+      <h4 class="mb-3">📺 Top Screens</h4>
+      <button class="view-link" (click)="viewMore('screens')">View full list →</button>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4" *ngFor="let s of screens">
+        <div class="custom-card">
+          <span class="status-dot green"></span>
+
+          <img
+            [src]="imageBaseUrl + s.image"
+            (error)="onImgError($event)"
+            class="card-img"
+            alt="Screen Image"
+          />
+
+          <div class="card-content">
+            <h4 class="card-title">{{ s.ScreenName }}</h4>
+            <p class="location-text">{{ s.City }}</p>
+            <p class="exact-location">📍 {{ s.Location }}</p>
+
+            <div class="price-size">
+              <span>📐 {{ s.Resolution }}</span>
+              <span class="price">₹{{ s.RentalCost }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VEHICLES -->
+  <section class="mb-5">
+    <div class="section-header">
+      <h4 class="mb-3">🚗 Top Vehicles</h4>
+      <button class="view-link" (click)="viewMore('vehicles')">View full list →</button>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4" *ngFor="let v of vehicles">
+        <div class="custom-card">
+          <span class="status-dot green"></span>
+
+          <img
+            [src]="imageBaseUrl + v.image"
+            (error)="onImgError($event)"
+            class="card-img"
+            alt="Vehicle Image"
+          />
+
+          <div class="card-content">
+            <h4 class="card-title">{{ v.v_type }}</h4>
+            <p class="location-text">{{ v.v_city }}</p>
+            <p class="exact-location">📍 {{ v.State }}</p>
+
+            <div class="price-size">
+              <span>contact: {{ v.v_contact_num }}</span>
+              <span class="price">₹{{ v.v_cost }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POLLS -->
+  <section class="mb-5">
+    <div class="section-header">
+      <h4 class="mb-3">🗳️ Top Polls</h4>
+      <button class="view-link" (click)="viewMore('polls')">View full list →</button>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4" *ngFor="let p of polls">
+        <div class="custom-card">
+          <span class="status-dot green"></span>
+
+          <img
+            [src]="imageBaseUrl + p.image"
+            (error)="onImgError($event)"
+            class="card-img"
+            alt="Poll Image"
+          />
+
+          <div class="card-content">
+            <h4 class="card-title">{{ p.b_type }}</h4>
+            <p class="location-text">{{ p.b_city }}</p>
+            <p class="exact-location">📍 {{ p.b_location_name }}</p>
+
+            <div class="price-size">
+              <span>📐 {{ p.b_size }}</span>
+              <span class="price">₹{{ p.b_cost }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOCIETIES -->
+  <section class="mb-5">
+    <div class="section-header">
+      <h4 class="mb-3">🏘️ Top Societies</h4>
+      <button class="view-link" (click)="viewMore('societies')">View full list →</button>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4" *ngFor="let s of societies">
+        <div class="custom-card">
+          <span class="status-dot green"></span>
+
+          <img
+            [src]="imageBaseUrl + s.image"
+            (error)="onImgError($event)"
+            class="card-img"
+            alt="Society Image"
+          />
+
+          <div class="card-content">
+            <h4 class="card-title">{{ s.s_type }}</h4>
+            <p class="location-text">{{ s.s_city }}</p>
+            <p class="exact-location">📍 {{ s.s_name }}</p>
+
+            <div class="price-size">
+              <span>📐 {{ s.s_no_flats }}</span>
+              <span class="price">₹{{ s.actual_cost }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,47 @@
+<div class="container my-5">
+  <h3 class="mb-4">Featured {{ type | titlecase }}</h3>
+
+  <div class="row">
+    <div class="col-md-4" *ngFor="let item of items">
+      <div class="custom-card">
+        <span class="status-dot green"></span>
+
+        <img
+          [src]="imageBaseUrl + item.image"
+          (error)="onImgError($event)"
+          class="card-img"
+          alt="{{ type }} Image"
+        />
+
+        <div class="card-content">
+          <!-- Display fields dynamically based on type -->
+          <h4 class="card-title">
+            {{ item.h_name || item.ScreenName || item.v_type || item.b_type || item.s_type }}
+          </h4>
+
+          <p class="location-text">
+            {{ item.city || item.City || item.v_city || item.b_city || item.s_city }}
+          </p>
+
+          <p class="exact-location">
+            📍
+            {{ item.address || item.Location || item.State || item.b_location_name || item.s_name }}
+          </p>
+
+          <div class="price-size">
+            <span> 📐 {{ item.size || item.Resolution || item.b_size || item.s_no_flats }} </span>
+            <span class="price">
+              ₹{{
+                item.rental_cost ||
+                  item.RentalCost ||
+                  item.v_cost ||
+                  item.b_cost ||
+                  item.actual_cost
+              }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

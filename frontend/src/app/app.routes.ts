@@ -22,6 +22,7 @@ import { DashboardOverview } from './Services/dashboard-overview/dashboard-overv
 import { AuthCallback } from './pages/auth-callback/auth-callback';
 import { ScreenBoardDescript } from './pages/screen-board-descript/screen-board-descript';
 import { ScreenBoardCardList } from './pages/screen-board-card-list/screen-board-card-list';
+import { FeaturedList } from './pages/featured-list/featured-list';
 
 // 👇 New DashboardOverview component for default dashboard page
 
@@ -43,6 +44,7 @@ export const routes: Routes = [
   { path: "auth/callback", component: AuthCallback },
   { path: "screenBoardCardList", component: ScreenBoardCardList },
   { path: "screenBoardDescrpt/:id/:service_type", component: ScreenBoardDescript },
+  { path: 'featured/:type', component: FeaturedList },
 
 
   // ✅ Dashboard Layout with children

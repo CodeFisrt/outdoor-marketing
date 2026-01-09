@@ -9,10 +9,11 @@ import { HttpParams } from '@angular/common/http';
 
 import { CategoryCards } from '../category-cards/category-cards';
 import { SeoService } from '../../ApiServices/Seo-Service/seo-service';
+import { FeaturedCards } from "../featured-cards/featured-cards";
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, FormsModule, ScreenBoardCardList, CategoryCards],
+  imports: [CommonModule, FormsModule, ScreenBoardCardList, CategoryCards, FeaturedCards],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
