@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Search } from '../../SearchServices/search';
 import { FormsModule } from '@angular/forms';
 
@@ -35,7 +35,7 @@ export class ScreenBoardDescript implements OnInit {
     repeatService: 'No' // 'Yes' | 'No'
   };
 
-  constructor(private route: ActivatedRoute, private searchService: Search, private cdr: ChangeDetectorRef) { }
+  constructor(private route: ActivatedRoute, private router: Router, private searchService: Search, private cdr: ChangeDetectorRef) { }
 
   minDate: string = '';
 
@@ -111,6 +111,8 @@ export class ScreenBoardDescript implements OnInit {
       b.location = data.address;
       b.price = data.rental_cost;
       b.description = data.notes;
+      b.latitude = data.latitude;
+      b.longitude = data.longitude;
 
       b.attributes.push({ label: 'Size', value: data.size });
       b.attributes.push({ label: 'Owner', value: data.owner_name });
@@ -122,6 +124,8 @@ export class ScreenBoardDescript implements OnInit {
       b.price = data.expected_cost;
       b.description = data.remarks;
       b.district = data.s_city;
+      b.latitude = data.s_lat;
+      b.longitude = data.s_long;
 
       b.attributes.push({ label: 'Flats', value: data.s_no_flats });
       b.attributes.push({ label: 'Crowd', value: data.s_crowd });
@@ -134,6 +138,8 @@ export class ScreenBoardDescript implements OnInit {
       b.price = data.b_cost;
       b.description = data.remarks;
       b.district = data.b_city;
+      b.latitude = data.b_lat;
+      b.longitude = data.b_long;
 
       b.attributes.push({ label: 'Size', value: data.b_size });
       b.attributes.push({ label: 'Type', value: data.b_type });
@@ -145,6 +151,8 @@ export class ScreenBoardDescript implements OnInit {
       b.location = data.Location;
       b.price = data.RentalCost;
       b.description = data.Notes;
+      b.latitude = data.Latitude;
+      b.longitude = data.Longitude;
 
       b.attributes.push({ label: 'Resolution', value: data.Resolution });
       b.attributes.push({ label: 'Size', value: data.Size });
@@ -258,4 +266,11 @@ export class ScreenBoardDescript implements OnInit {
       }
     });
   }
+
+  // 3d view 
+
+  view3D(lat: number, lng: number) {
+    this.router.navigate(['/map-3d', lat, lng]);
+  }
+
 }

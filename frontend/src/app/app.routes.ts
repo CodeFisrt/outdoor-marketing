@@ -23,6 +23,7 @@ import { AuthCallback } from './pages/auth-callback/auth-callback';
 import { ScreenBoardDescript } from './pages/screen-board-descript/screen-board-descript';
 import { ScreenBoardCardList } from './pages/screen-board-card-list/screen-board-card-list';
 import { FeaturedList } from './pages/featured-list/featured-list';
+import { Map3dView } from './pages/map3d-view/map3d-view';
 
 // 👇 New DashboardOverview component for default dashboard page
 
@@ -45,6 +46,7 @@ export const routes: Routes = [
   { path: "screenBoardCardList", component: ScreenBoardCardList },
   { path: "screenBoardDescrpt/:id/:service_type", component: ScreenBoardDescript },
   { path: 'featured/:type', component: FeaturedList },
+  { path: 'map-3d/:lat/:lng', component: Map3dView },
 
 
   // ✅ Dashboard Layout with children
