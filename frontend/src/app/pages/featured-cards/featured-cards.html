@@ -3,7 +3,7 @@
   <section class="mb-5">
     <div class="section-header">
       <h4>🏢 Top Hoardings</h4>
-      <button class="view-link" (click)="viewMore('hoardings')">View full list →</button>
+      <button class="view-link" (click)="viewFullList('hoardings')">View full list →</button>
     </div>
 
     <div class="row">
@@ -26,6 +26,10 @@
             <div class="price-size">
               <span>📐 {{ h.size }}</span>
               <span class="price">₹{{ h.rental_cost }}</span>
+              <span>
+                <button class="view-btn" (click)="viewMore(h, 'hoardings')">View More</button></span
+              >
+              <!-- hoardings -->
             </div>
           </div>
         </div>
@@ -37,7 +41,7 @@
   <section class="mb-5">
     <div class="section-header">
       <h4 class="mb-3">📺 Top Screens</h4>
-      <button class="view-link" (click)="viewMore('screens')">View full list →</button>
+      <button class="view-link" (click)="viewFullList('screens')">View full list →</button>
     </div>
 
     <div class="row">
@@ -60,6 +64,12 @@
             <div class="price-size">
               <span>📐 {{ s.Resolution }}</span>
               <span class="price">₹{{ s.RentalCost }}</span>
+              <span>
+                <button class="view-btn" (click)="viewMore(s, 'outdoormarketingscreens')">
+                  View More
+                </button></span
+              >
+              <!-- outdoormarketingscreens -->
             </div>
           </div>
         </div>
@@ -71,7 +81,7 @@
   <section class="mb-5">
     <div class="section-header">
       <h4 class="mb-3">🚗 Top Vehicles</h4>
-      <button class="view-link" (click)="viewMore('vehicles')">View full list →</button>
+      <button class="view-link" (click)="viewFullList('vehicles')">View full list →</button>
     </div>
 
     <div class="row">
@@ -94,6 +104,12 @@
             <div class="price-size">
               <span>contact: {{ v.v_contact_num }}</span>
               <span class="price">₹{{ v.v_cost }}</span>
+              <span>
+                <button class="view-btn" (click)="viewMore(v, 'vehicle_marketing')">
+                  View More
+                </button></span
+              >
+              <!-- vehicle_marketing -->
             </div>
           </div>
         </div>
@@ -105,7 +121,7 @@
   <section class="mb-5">
     <div class="section-header">
       <h4 class="mb-3">🗳️ Top Polls</h4>
-      <button class="view-link" (click)="viewMore('polls')">View full list →</button>
+      <button class="view-link" (click)="viewFullList('polls')">View full list →</button>
     </div>
 
     <div class="row">
@@ -128,6 +144,12 @@
             <div class="price-size">
               <span>📐 {{ p.b_size }}</span>
               <span class="price">₹{{ p.b_cost }}</span>
+              <span>
+                <button class="view-btn" (click)="viewMore(p, 'balloon_marketing')">
+                  View More
+                </button></span
+              >
+              <!-- balloon_marketing -->
             </div>
           </div>
         </div>
@@ -139,7 +161,7 @@
   <section class="mb-5">
     <div class="section-header">
       <h4 class="mb-3">🏘️ Top Societies</h4>
-      <button class="view-link" (click)="viewMore('societies')">View full list →</button>
+      <button class="view-link" (click)="viewFullList('societies')">View full list →</button>
     </div>
 
     <div class="row">
@@ -162,6 +184,12 @@
             <div class="price-size">
               <span>📐 {{ s.s_no_flats }}</span>
               <span class="price">₹{{ s.actual_cost }}</span>
+              <span>
+                <button class="view-btn" (click)="viewMore(s, 'society_marketing')">
+                  View More
+                </button></span
+              >
+              <!-- society_marketing -->
             </div>
           </div>
         </div>
