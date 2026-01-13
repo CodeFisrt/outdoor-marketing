@@ -4,7 +4,20 @@
   <div class="row">
     <div class="col-md-4" *ngFor="let item of items">
       <div class="custom-card">
-        <span class="status-dot green"></span>
+        <span
+          class="status-dot"
+          [ngClass]="{
+            green: ['Available', 'Approved', 'Active'].includes(
+              item.Status || item.approval_status || item.status
+            ),
+            yellow: ['Occupied', 'Pending', 'Inactive'].includes(
+              item.Status || item.approval_status || item.status
+            ),
+            red: ['Under Maintenance', 'Rejected', 'Maintenance'].includes(
+              item.Status || item.approval_status || item.status
+            )
+          }"
+        ></span>
 
         <img
           [src]="imageBaseUrl + item.image"

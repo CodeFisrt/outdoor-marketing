@@ -5,11 +5,12 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Sign } from 'node:crypto';
 import { Signupservice } from '../../ApiServices/signupservice';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-sign-in',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf, HttpClientModule],
+  imports: [ReactiveFormsModule, NgIf, HttpClientModule, ToastrModule],
   templateUrl: './sign-in.html',
   styleUrl: './sign-in.css'
 })
@@ -24,7 +25,8 @@ export class SignIn {
     private fb: FormBuilder,
     private router: Router,
     private http: HttpClient,
-    private signupservice: Signupservice
+    private signupservice: Signupservice,
+    private toastr: ToastrService
   ) {
     this.signInForm = this.fb.group({
       emailId: ['', [Validators.required, Validators.email]],
@@ -77,7 +79,7 @@ export class SignIn {
       next: (res: any) => {
         const user = res.find((u: any) => u.userEmail === data.value.emailId && u.password === data.value.password);
         if (user) {
-          alert("Login Successful!");
+          this.toastr.success(`Login Successful!, Welcome Back  "${user.userName}"`);
           localStorage.setItem('role', user.role);
           this.router.navigateByUrl('/dashboard');
         }

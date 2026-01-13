@@ -33,7 +33,7 @@ export class HoardingFrom {
       h_name: ['', Validators.required],
       address: ['', Validators.required],
       city: ['', Validators.required],
-      state: ['', Validators.required],
+      State: ['', Validators.required],
       latitude: [''],
       longitude: [''],
       size: [''],

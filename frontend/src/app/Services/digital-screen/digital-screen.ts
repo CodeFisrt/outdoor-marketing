@@ -69,7 +69,6 @@ export class DigitalScreen implements OnInit {
         this.screenList = res.data;
         this.filteredList = res.data;
         this.cdr.detectChanges();  // ✔️ UI update
-        this.toaster.success("Screens Loaded Successfully");
       },
       error: (err) => {
         console.error(err);

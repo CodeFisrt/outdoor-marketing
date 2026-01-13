@@ -80,7 +80,6 @@ export class PollKiosk implements OnInit {
         this.balloons = data;
         this.filteredList = data;
         this.cd.detectChanges();  // 👈 FIX ExpressionChanged error
-        this.toastr.success("Data loaded successfully");
       },
       error: () => this.toastr.error("Failed to load balloons")
     });

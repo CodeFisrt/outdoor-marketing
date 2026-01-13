@@ -9,7 +9,14 @@
     <div class="row">
       <div class="col-md-4" *ngFor="let h of hoardings">
         <div class="custom-card">
-          <span class="status-dot green"></span>
+          <span
+            class="status-dot"
+            [ngClass]="{
+              green: h.status === 'Available',
+              yellow: h.status === 'Occupied',
+              red: h.status === 'Under Maintenance'
+            }"
+          ></span>
 
           <img
             [src]="imageBaseUrl + h.image"
@@ -26,9 +33,9 @@
             <div class="price-size">
               <span>📐 {{ h.size }}</span>
               <span class="price">₹{{ h.rental_cost }}</span>
-              <span>
-                <button class="view-btn" (click)="viewMore(h, 'hoardings')">View More</button></span
-              >
+            </div>
+            <div>
+              <button class="view-btn" (click)="viewMore(h, 'hoardings')">View More</button>
             </div>
           </div>
         </div>
@@ -46,7 +53,14 @@
     <div class="row">
       <div class="col-md-4" *ngFor="let s of screens">
         <div class="custom-card">
-          <span class="status-dot green"></span>
+          <span
+            class="status-dot"
+            [ngClass]="{
+              green: s.Status === 'Active',
+              yellow: s.Status === 'Inactive' || 'Pending',
+              red: s.Status === 'Maintenance'
+            }"
+          ></span>
 
           <img
             [src]="imageBaseUrl + s.image"
@@ -63,11 +77,11 @@
             <div class="price-size">
               <span>📐 {{ s.Resolution }}</span>
               <span class="price">₹{{ s.RentalCost }}</span>
-              <span>
-                <button class="view-btn" (click)="viewMore(s, 'outdoormarketingscreens')">
-                  View More
-                </button></span
-              >
+            </div>
+            <div>
+              <button class="view-btn" (click)="viewMore(s, 'outdoormarketingscreens')">
+                View More
+              </button>
             </div>
           </div>
         </div>
@@ -85,7 +99,6 @@
     <div class="row">
       <div class="col-md-4" *ngFor="let v of vehicles">
         <div class="custom-card">
-          <span class="status-dot green"></span>
 
           <img
             [src]="imageBaseUrl + v.image"
@@ -102,12 +115,11 @@
             <div class="price-size">
               <span>contact: {{ v.v_contact_num }}</span>
               <span class="price">₹{{ v.v_cost }}</span>
-              <span>
+            </div>
+              <div>
                 <button class="view-btn" (click)="viewMore(v, 'vehicle_marketing')">
                   View More
-                </button></span
-              >
-            </div>
+                </button></div>
           </div>
         </div>
       </div>
@@ -124,7 +136,6 @@
     <div class="row">
       <div class="col-md-4" *ngFor="let p of polls">
         <div class="custom-card">
-          <span class="status-dot green"></span>
 
           <img
             [src]="imageBaseUrl + p.image"
@@ -141,12 +152,11 @@
             <div class="price-size">
               <span>📐 {{ p.b_size }}</span>
               <span class="price">₹{{ p.b_cost }}</span>
-              <span>
+            </div>
+              <div>
                 <button class="view-btn" (click)="viewMore(p, 'balloon_marketing')">
                   View More
-                </button></span
-              >
-            </div>
+                </button></div>
           </div>
         </div>
       </div>
@@ -163,7 +173,14 @@
     <div class="row">
       <div class="col-md-4" *ngFor="let s of societies">
         <div class="custom-card">
-          <span class="status-dot green"></span>
+          <span
+            class="status-dot"
+            [ngClass]="{
+              green: s.approval_status === 'Approved',
+              yellow: s.approval_status === 'Pending',
+              red: s.approval_status === 'Rejected'
+            }"
+          ></span>
 
           <img
             [src]="imageBaseUrl + s.image"
@@ -180,11 +197,10 @@
             <div class="price-size">
               <span>📐 {{ s.s_no_flats }}</span>
               <span class="price">₹{{ s.actual_cost }}</span>
-              <span>
+              <div>
                 <button class="view-btn" (click)="viewMore(s, 'society_marketing')">
                   View More
-                </button></span
-              >
+                </button></div>
             </div>
           </div>
         </div>
