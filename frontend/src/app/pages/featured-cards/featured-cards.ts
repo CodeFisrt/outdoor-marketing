@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Featuredservice } from '../../ApiServices/featuredservice';
@@ -7,7 +7,7 @@ import { Featuredservice } from '../../ApiServices/featuredservice';
 @Component({
   selector: 'app-featured-cards',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, NgFor, HttpClientModule],
   templateUrl: './featured-cards.html',
   styleUrls: ['./featured-cards.css']
 })
@@ -45,7 +45,22 @@ export class FeaturedCards implements OnInit {
     img.src = this.fallbackImage;
   }
 
-  viewMore(type: string) {
+  viewFullList(type: string) {
     this.router.navigate(['/featured', type]);
   }
+
+  getBoardId(item: any) {
+    return item.h_id || item.b_id || item.ScreenID || item.v_id || item.s_id;
+  }
+
+  viewMore(item: any, type: string) {
+    const id = this.getBoardId(item);
+
+    if (id && type) {
+      this.router.navigate(['/screenBoardDescrpt', id, type]);
+    } else {
+      console.error('Missing ID or type', item, type);
+    }
+  }
+
 }

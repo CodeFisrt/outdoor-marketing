@@ -151,12 +151,16 @@
   z-index: 2;
 }
 
-.status-dot.green {
-  background-color: #28a745;
+.green {
+  background-color: #28a745; /* Available */
 }
 
-.status-dot.red {
-  background-color: #dc3545;
+.yellow {
+  background-color: #ffc107; /* Occupied */
+}
+
+.red {
+  background-color: #dc3545; /* Under Maintenance */
 }
 
 /* ===============================

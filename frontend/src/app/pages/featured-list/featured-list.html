@@ -4,7 +4,20 @@
   <div class="row">
     <div class="col-md-4" *ngFor="let item of items">
       <div class="custom-card">
-        <span class="status-dot green"></span>
+        <span
+          class="status-dot"
+          [ngClass]="{
+            green: ['Available', 'Approved', 'Active'].includes(
+              item.Status || item.approval_status || item.status
+            ),
+            yellow: ['Occupied', 'Pending', 'Inactive'].includes(
+              item.Status || item.approval_status || item.status
+            ),
+            red: ['Under Maintenance', 'Rejected', 'Maintenance'].includes(
+              item.Status || item.approval_status || item.status
+            )
+          }"
+        ></span>
 
         <img
           [src]="imageBaseUrl + item.image"
@@ -30,6 +43,7 @@
 
           <div class="price-size">
             <span> 📐 {{ item.size || item.Resolution || item.b_size || item.s_no_flats }} </span>
+
             <span class="price">
               ₹{{
                 item.rental_cost ||
@@ -38,6 +52,49 @@
                   item.b_cost ||
                   item.actual_cost
               }}
+            </span>
+
+            <span>
+              <!-- conditional buttons -->
+              <button
+                class="view-btn"
+                *ngIf="type === 'hoardings'"
+                (click)="viewMore(item, 'hoardings')"
+              >
+                View More
+              </button>
+
+              <button
+                class="view-btn"
+                *ngIf="type === 'screens'"
+                (click)="viewMore(item, 'outdoormarketingscreens')"
+              >
+                View More
+              </button>
+
+              <button
+                class="view-btn"
+                *ngIf="type === 'vehicles'"
+                (click)="viewMore(item, 'vehicle_marketing')"
+              >
+                View More
+              </button>
+
+              <button
+                class="view-btn"
+                *ngIf="type === 'polls'"
+                (click)="viewMore(item, 'balloon_marketing')"
+              >
+                View More
+              </button>
+
+              <button
+                class="view-btn"
+                *ngIf="type === 'societies'"
+                (click)="viewMore(item, 'society_marketing')"
+              >
+                View More
+              </button>
             </span>
           </div>
         </div>

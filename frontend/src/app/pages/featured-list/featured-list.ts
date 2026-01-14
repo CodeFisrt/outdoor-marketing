@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { CommonModule, NgFor } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Featuredservice } from '../..//ApiServices/featuredservice';
 
 @Component({
   selector: 'app-featured-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgFor],
   templateUrl: './featured-list.html',
   styleUrls: ['./featured-list.css']
 })
@@ -19,6 +19,7 @@ export class FeaturedList implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private featuredService: Featuredservice
   ) { }
 
@@ -36,5 +37,19 @@ export class FeaturedList implements OnInit {
     const img = event.target as HTMLImageElement;
     img.onerror = null;
     img.src = this.fallbackImage;
+  }
+
+  getBoardId(item: any) {
+    return item.h_id || item.b_id || item.ScreenID || item.v_id || item.s_id;
+  }
+
+  viewMore(item: any, type: string) {
+    const id = this.getBoardId(item);
+
+    if (id && type) {
+      this.router.navigate(['/screenBoardDescrpt', id, type]);
+    } else {
+      console.error('Missing ID or type', item, type);
+    }
   }
 }

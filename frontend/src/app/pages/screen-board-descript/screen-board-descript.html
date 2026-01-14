@@ -7,38 +7,63 @@
 <div class="full-page-container" *ngIf="!loading && board">
   <!-- Premium Card Container -->
   <div class="premium-details-card" *ngIf="currentSection === 'details'">
-
     <!-- Close/Back Button -->
     <!-- <button class="close-btn" (click)="goBack()">✖</button> -->
     <button class="back-btn" (click)="goBack()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path d="M19 12H5M12 19l-7-7 7-7" />
       </svg>
       Back
     </button>
 
     <div class="card-layout">
-
       <!-- Left Side: Hero Image -->
       <div class="image-section">
         <div class="image-wrapper">
-          <img [src]="board.image" [alt]="board.hoardingType" class="hero-image"
-            (error)="board.image = 'assets/billboardimg.jpg'">
-          <div class="status-badge"
-            [ngClass]="board.availability === 'Available' ? 'status-available' : 'status-booked'">
+          <img
+            [src]="board.image"
+            [alt]="board.hoardingType"
+            class="hero-image"
+            (error)="board.image = 'assets/billboardimg.jpg'"
+          />
+          <div
+            class="status-badge"
+            [ngClass]="board.availability === 'Available' ? 'status-available' : 'status-booked'"
+          >
             {{ board.availability }}
           </div>
+          <button
+            class="view-3d"
+            *ngIf="board.latitude || board.longitude"
+            (click)="view3D(board.latitude, board.longitude)"
+          >
+            <i class="bi bi-badge-3d"></i>
+            View in 3D
+          </button>
         </div>
       </div>
 
       <!-- Right Side: Content & Details -->
       <div class="content-section">
-
         <div class="header-info">
           <div class="service-tag">{{ board.district }}</div>
           <h1 class="main-title">{{ board.hoardingType }}</h1>
           <p class="location-sub">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
               <circle cx="12" cy="10" r="3"></circle>
             </svg>
@@ -100,19 +125,22 @@
 
         <!-- Action Buttons -->
         <div class="action-buttons">
-          <button class="btn-premium btn-book" *ngIf="board.availability === 'Available'" (click)="showSection('book')">
+          <button
+            class="btn-premium btn-book"
+            *ngIf="board.availability === 'Available'"
+            (click)="showSection('book')"
+          >
             Book Now
           </button>
-          <button class="btn-premium btn-schedule"
+          <button
+            class="btn-premium btn-schedule"
             *ngIf="board.availability === 'Available' || board.availability === 'Booked'"
-            (click)="showSection('schedule')">
+            (click)="showSection('schedule')"
+          >
             Schedule Visit
           </button>
-          <button class="btn-premium btn-bid" (click)="showSection('bidding')">
-            Place Bid
-          </button>
+          <button class="btn-premium btn-bid" (click)="showSection('bidding')">Place Bid</button>
         </div>
-
       </div>
     </div>
   </div>
@@ -122,7 +150,14 @@
   <!-- BOOK NOW SECTION -->
   <div *ngIf="currentSection === 'book'" class="sub-section-container">
     <button class="back-link" (click)="showSection('details')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path d="M19 12H5M12 19l-7-7 7-7" />
       </svg>
       Back to Details
@@ -131,7 +166,14 @@
     <div class="form-card animate-in">
       <div class="form-header">
         <div class="icon-bg">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
             <polyline points="14 2 14 8 20 8"></polyline>
             <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -150,12 +192,24 @@
         <label>Full Name</label>
         <div class="modern-input-group">
           <div class="input-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
               <circle cx="12" cy="7" r="4"></circle>
             </svg>
           </div>
-          <input type="text" class="modern-input" [(ngModel)]="bookingDetails.fullName" placeholder="John Doe">
+          <input
+            type="text"
+            class="modern-input"
+            [(ngModel)]="bookingDetails.fullName"
+            placeholder="John Doe"
+          />
         </div>
       </div>
 
@@ -164,26 +218,52 @@
           <label>Email Address</label>
           <div class="modern-input-group">
             <div class="input-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                ></path>
                 <polyline points="22,6 12,13 2,6"></polyline>
               </svg>
             </div>
-            <input type="email" class="modern-input" [(ngModel)]="bookingDetails.email" placeholder="john@example.com">
+            <input
+              type="email"
+              class="modern-input"
+              [(ngModel)]="bookingDetails.email"
+              placeholder="john@example.com"
+            />
           </div>
         </div>
         <div class="form-group">
           <label>Contact Number</label>
           <div class="modern-input-group">
             <div class="input-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
                 <path
-                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                </path>
+                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+                ></path>
               </svg>
             </div>
-            <input type="tel" class="modern-input" [(ngModel)]="bookingDetails.phone" placeholder="+91 98765 43210"
-              maxlength="10">
+            <input
+              type="tel"
+              class="modern-input"
+              [(ngModel)]="bookingDetails.phone"
+              placeholder="+91 98765 43210"
+              maxlength="10"
+            />
           </div>
         </div>
       </div>
@@ -192,13 +272,19 @@
       <div class="form-group">
         <label>Do you have the design/creative ready?</label>
         <div class="selection-cards">
-          <div class="selection-card" [class.selected]="bookingDetails.designReady === 'Yes'"
-            (click)="bookingDetails.designReady = 'Yes'">
+          <div
+            class="selection-card"
+            [class.selected]="bookingDetails.designReady === 'Yes'"
+            (click)="bookingDetails.designReady = 'Yes'"
+          >
             <div class="card-icon">🎨</div>
             <div class="card-text">Yes, I have it</div>
           </div>
-          <div class="selection-card" [class.selected]="bookingDetails.designReady === 'No'"
-            (click)="bookingDetails.designReady = 'No'">
+          <div
+            class="selection-card"
+            [class.selected]="bookingDetails.designReady === 'No'"
+            (click)="bookingDetails.designReady = 'No'"
+          >
             <div class="card-icon">❌</div>
             <div class="card-text">No, I don't</div>
           </div>
@@ -208,13 +294,19 @@
       <div class="form-group animate-slide-down" *ngIf="bookingDetails.designReady === 'No'">
         <label>Do you want our design team to create the design?</label>
         <div class="selection-cards">
-          <div class="selection-card" [class.selected]="bookingDetails.needDesignService === 'Yes'"
-            (click)="bookingDetails.needDesignService = 'Yes'">
+          <div
+            class="selection-card"
+            [class.selected]="bookingDetails.needDesignService === 'Yes'"
+            (click)="bookingDetails.needDesignService = 'Yes'"
+          >
             <div class="card-icon">🖌️</div>
             <div class="card-text">Yes, please</div>
           </div>
-          <div class="selection-card" [class.selected]="bookingDetails.needDesignService === 'No'"
-            (click)="bookingDetails.needDesignService = 'No'">
+          <div
+            class="selection-card"
+            [class.selected]="bookingDetails.needDesignService === 'No'"
+            (click)="bookingDetails.needDesignService = 'No'"
+          >
             <div class="card-icon">👤</div>
             <div class="card-text">No, I'll manage</div>
           </div>
@@ -227,30 +319,54 @@
           <label>Start Date</label>
           <div class="modern-input-group">
             <div class="input-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
             </div>
-            <input type="date" class="modern-input" [(ngModel)]="bookingDetails.startDate" [min]="minDate"
-              (change)="calculateTotalCost()">
+            <input
+              type="date"
+              class="modern-input"
+              [(ngModel)]="bookingDetails.startDate"
+              [min]="minDate"
+              (change)="calculateTotalCost()"
+            />
           </div>
         </div>
         <div class="form-group">
           <label>End Date</label>
           <div class="modern-input-group">
             <div class="input-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
             </div>
-            <input type="date" class="modern-input" [(ngModel)]="bookingDetails.endDate" [min]="minDate"
-              (change)="calculateTotalCost()">
+            <input
+              type="date"
+              class="modern-input"
+              [(ngModel)]="bookingDetails.endDate"
+              [min]="minDate"
+              (change)="calculateTotalCost()"
+            />
           </div>
         </div>
       </div>
@@ -267,7 +383,7 @@
         </div>
         <div class="total-row">
           <span>Total Estimated Cost</span>
-          <span class="total-amount">₹{{ totalCost | number:'1.0-0' }}</span>
+          <span class="total-amount">₹{{ totalCost | number : '1.0-0' }}</span>
         </div>
       </div>
 
@@ -275,19 +391,32 @@
       <div class="form-group">
         <label>Payment Method</label>
         <div class="selection-cards">
-          <div class="selection-card" [class.selected]="bookingDetails.paymentCompleted === 'Yes'"
-            (click)="bookingDetails.paymentCompleted = 'Yes'">
+          <div
+            class="selection-card"
+            [class.selected]="bookingDetails.paymentCompleted === 'Yes'"
+            (click)="bookingDetails.paymentCompleted = 'Yes'"
+          >
             <div class="card-icon">💳</div>
             <div class="card-text">Pay Now</div>
           </div>
-          <div class="selection-card" [class.selected]="bookingDetails.paymentCompleted === 'No'"
-            (click)="bookingDetails.paymentCompleted = 'No'">
+          <div
+            class="selection-card"
+            [class.selected]="bookingDetails.paymentCompleted === 'No'"
+            (click)="bookingDetails.paymentCompleted = 'No'"
+          >
             <div class="card-icon">⏳</div>
             <div class="card-text">Pay Later</div>
           </div>
         </div>
         <div class="alert-box warning" *ngIf="bookingDetails.paymentCompleted === 'No'">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="12" y1="8" x2="12" y2="12"></line>
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -310,7 +439,7 @@
       <!-- Terms -->
       <div class="form-group checkbox-group">
         <label class="custom-checkbox">
-          <input type="checkbox" [(ngModel)]="bookingDetails.agreedToTerms">
+          <input type="checkbox" [(ngModel)]="bookingDetails.agreedToTerms" />
           <span class="checkmark">
             <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
               <polyline points="20 6 9 17 4 12"></polyline>
@@ -320,11 +449,23 @@
         </label>
       </div>
 
-      <button class="btn-primary-action" (click)="submitBooking()"
+      <button
+        class="btn-primary-action"
+        (click)="submitBooking()"
         [disabled]="bookingDetails.paymentCompleted === 'No' || !bookingDetails.agreedToTerms"
-        [ngClass]="{'disabled-btn': bookingDetails.paymentCompleted === 'No' || !bookingDetails.agreedToTerms}">
+        [ngClass]="{
+          'disabled-btn': bookingDetails.paymentCompleted === 'No' || !bookingDetails.agreedToTerms
+        }"
+      >
         <span>Confirm Booking</span>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <path d="M5 12h14M12 5l7 7-7 7" />
         </svg>
       </button>
@@ -338,7 +479,7 @@
       <h3>⏳ Schedule a Visit</h3>
       <div class="form-group">
         <label>Select Date</label>
-        <input type="date">
+        <input type="date" />
       </div>
       <div class="form-group">
         <label>Time Slot</label>
@@ -356,10 +497,12 @@
     <button class="back-link" (click)="showSection('details')">← Back to Details</button>
     <div class="form-card">
       <h3>💰 Place Your Bid</h3>
-      <p class="bid-info">Current Price: <strong>₹ {{ board.price }}</strong></p>
+      <p class="bid-info">
+        Current Price: <strong>₹ {{ board.price }}</strong>
+      </p>
       <div class="form-group">
         <label>Your Bid Amount</label>
-        <input type="number" placeholder="Enter amount">
+        <input type="number" placeholder="Enter amount" />
       </div>
       <div class="form-group">
         <label>Message (Optional)</label>
@@ -368,5 +511,4 @@
       <button class="btn-primary-action btn-bid">Submit Bid</button>
     </div>
   </div>
-
 </div>

@@ -3,13 +3,20 @@
   <section class="mb-5">
     <div class="section-header">
       <h4>🏢 Top Hoardings</h4>
-      <button class="view-link" (click)="viewMore('hoardings')">View full list →</button>
+      <button class="view-link" (click)="viewFullList('hoardings')">View full list →</button>
     </div>
 
     <div class="row">
       <div class="col-md-4" *ngFor="let h of hoardings">
         <div class="custom-card">
-          <span class="status-dot green"></span>
+          <span
+            class="status-dot"
+            [ngClass]="{
+              green: h.status === 'Available',
+              yellow: h.status === 'Occupied',
+              red: h.status === 'Under Maintenance'
+            }"
+          ></span>
 
           <img
             [src]="imageBaseUrl + h.image"
@@ -27,6 +34,9 @@
               <span>📐 {{ h.size }}</span>
               <span class="price">₹{{ h.rental_cost }}</span>
             </div>
+            <div>
+              <button class="view-btn" (click)="viewMore(h, 'hoardings')">View More</button>
+            </div>
           </div>
         </div>
       </div>
@@ -37,13 +47,20 @@
   <section class="mb-5">
     <div class="section-header">
       <h4 class="mb-3">📺 Top Screens</h4>
-      <button class="view-link" (click)="viewMore('screens')">View full list →</button>
+      <button class="view-link" (click)="viewFullList('screens')">View full list →</button>
     </div>
 
     <div class="row">
       <div class="col-md-4" *ngFor="let s of screens">
         <div class="custom-card">
-          <span class="status-dot green"></span>
+          <span
+            class="status-dot"
+            [ngClass]="{
+              green: s.Status === 'Active',
+              yellow: s.Status === 'Inactive' || 'Pending',
+              red: s.Status === 'Maintenance'
+            }"
+          ></span>
 
           <img
             [src]="imageBaseUrl + s.image"
@@ -61,6 +78,11 @@
               <span>📐 {{ s.Resolution }}</span>
               <span class="price">₹{{ s.RentalCost }}</span>
             </div>
+            <div>
+              <button class="view-btn" (click)="viewMore(s, 'outdoormarketingscreens')">
+                View More
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -68,16 +90,15 @@
   </section>
 
   <!-- VEHICLES -->
-  <section class="mb-5">
+  <!-- <section class="mb-5">
     <div class="section-header">
       <h4 class="mb-3">🚗 Top Vehicles</h4>
-      <button class="view-link" (click)="viewMore('vehicles')">View full list →</button>
+      <button class="view-link" (click)="viewFullList('vehicles')">View full list →</button>
     </div>
 
     <div class="row">
       <div class="col-md-4" *ngFor="let v of vehicles">
         <div class="custom-card">
-          <span class="status-dot green"></span>
 
           <img
             [src]="imageBaseUrl + v.image"
@@ -95,23 +116,26 @@
               <span>contact: {{ v.v_contact_num }}</span>
               <span class="price">₹{{ v.v_cost }}</span>
             </div>
+              <div>
+                <button class="view-btn" (click)="viewMore(v, 'vehicle_marketing')">
+                  View More
+                </button></div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </section> -->
 
   <!-- POLLS -->
-  <section class="mb-5">
+  <!-- <section class="mb-5">
     <div class="section-header">
       <h4 class="mb-3">🗳️ Top Polls</h4>
-      <button class="view-link" (click)="viewMore('polls')">View full list →</button>
+      <button class="view-link" (click)="viewFullList('polls')">View full list →</button>
     </div>
 
     <div class="row">
       <div class="col-md-4" *ngFor="let p of polls">
         <div class="custom-card">
-          <span class="status-dot green"></span>
 
           <img
             [src]="imageBaseUrl + p.image"
@@ -129,23 +153,34 @@
               <span>📐 {{ p.b_size }}</span>
               <span class="price">₹{{ p.b_cost }}</span>
             </div>
+              <div>
+                <button class="view-btn" (click)="viewMore(p, 'balloon_marketing')">
+                  View More
+                </button></div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </section> -->
 
   <!-- SOCIETIES -->
-  <section class="mb-5">
+  <!-- <section class="mb-5">
     <div class="section-header">
       <h4 class="mb-3">🏘️ Top Societies</h4>
-      <button class="view-link" (click)="viewMore('societies')">View full list →</button>
+      <button class="view-link" (click)="viewFullList('societies')">View full list →</button>
     </div>
 
     <div class="row">
       <div class="col-md-4" *ngFor="let s of societies">
         <div class="custom-card">
-          <span class="status-dot green"></span>
+          <span
+            class="status-dot"
+            [ngClass]="{
+              green: s.approval_status === 'Approved',
+              yellow: s.approval_status === 'Pending',
+              red: s.approval_status === 'Rejected'
+            }"
+          ></span>
 
           <img
             [src]="imageBaseUrl + s.image"
@@ -162,10 +197,14 @@
             <div class="price-size">
               <span>📐 {{ s.s_no_flats }}</span>
               <span class="price">₹{{ s.actual_cost }}</span>
+              <div>
+                <button class="view-btn" (click)="viewMore(s, 'society_marketing')">
+                  View More
+                </button></div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </section> -->
 </div>
