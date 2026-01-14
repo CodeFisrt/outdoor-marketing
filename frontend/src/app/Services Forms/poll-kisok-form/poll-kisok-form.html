@@ -1,108 +1,64 @@
 <div class="container mt-5">
   <div class="card shadow-lg border-0">
-    <div
-      class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
-    >
-      <h5 class="mb-0">{{ editingId ? '✏️ Edit Balloon' : '➕ Add Balloon' }}</h5>
-      <button class="btn btn-light btn-sm" routerLink="/dashboard/poll-kiosk">
-        <i class="bi bi-arrow-left me-1"></i>Back
-      </button>
+    <div class="card-header bg-primary text-white d-flex justify-content-between">
+      <h5>{{ editingId ? '✏️ Edit Balloon' : '➕ Add Balloon' }}</h5>
+      <button class="btn btn-light btn-sm" routerLink="/dashboard/poll-kiosk">⬅️ Back</button>
     </div>
 
-    <div class="card-body p-4">
+    <div class="card-body">
       <form [formGroup]="balloonForm" (ngSubmit)="save()">
-        <!-- 🔹 Location Info -->
-        <h6 class="mb-3 text-primary">Location Info</h6>
+        <!-- LOCATION -->
+        <h6 class="text-primary mb-3">Location Info</h6>
         <div class="row g-3 mb-4">
           <div class="col-md-4">
-            <label class="form-label">Location Name</label>
-            <input
-              class="form-control"
-              formControlName="b_location_name"
-              placeholder="Enter location"
-            />
-            <small
-              class="text-danger"
-              *ngIf="
-                balloonForm.get('b_location_name')?.touched &&
-                balloonForm.get('b_location_name')?.invalid
-              "
-            >
-              Location name is required
+            <label class="form-label">Location Name *</label>
+            <input class="form-control" formControlName="b_location_name" />
+            <small class="text-danger" *ngIf="isInvalid('b_location_name')">
+              Min 3 characters required
             </small>
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">Area</label>
-            <input class="form-control" formControlName="b_area" placeholder="Enter area" />
-            <small
-              class="text-danger"
-              *ngIf="balloonForm.get('b_area')?.touched && balloonForm.get('b_area')?.invalid"
-            >
-              Area is required
-            </small>
+            <label class="form-label">Area *</label>
+            <input class="form-control" formControlName="b_area" />
+            <small class="text-danger" *ngIf="isInvalid('b_area')">Required</small>
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">City</label>
-            <input class="form-control" formControlName="b_city" placeholder="Enter city" />
-            <small
-              class="text-danger"
-              *ngIf="balloonForm.get('b_city')?.touched && balloonForm.get('b_city')?.invalid"
-            >
-              City is required
-            </small>
-          </div>
-
-          <div class="col-md-6">
-            <label class="form-label">Address</label>
-            <input class="form-control" formControlName="b_address" placeholder="Enter address" />
+            <label class="form-label">City *</label>
+            <input class="form-control" formControlName="b_city" />
+            <small class="text-danger" *ngIf="isInvalid('b_city')">Required</small>
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Latitude</label>
-            <input class="form-control" formControlName="b_lat" placeholder="e.g. 18.5204" />
-            <small
-              class="text-danger"
-              *ngIf="balloonForm.get('b_lat')?.touched && balloonForm.get('b_lat')?.invalid"
-            >
-              Latitude is required
-            </small>
+            <label class="form-label">Latitude *</label>
+            <input class="form-control" formControlName="b_lat" />
+            <small class="text-danger" *ngIf="isInvalid('b_lat')"> Invalid latitude </small>
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Longitude</label>
-            <input class="form-control" formControlName="b_long" placeholder="e.g. 73.8567" />
-            <small
-              class="text-danger"
-              *ngIf="balloonForm.get('b_long')?.touched && balloonForm.get('b_long')?.invalid"
-            >
-              Longitude is required
-            </small>
+            <label class="form-label">Longitude *</label>
+            <input class="form-control" formControlName="b_long" />
+            <small class="text-danger" *ngIf="isInvalid('b_long')"> Invalid longitude </small>
           </div>
         </div>
 
-        <!-- 🔹 Balloon Details -->
-        <h6 class="mb-3 text-primary">Balloon Details</h6>
+        <!-- DETAILS -->
+        <h6 class="text-primary mb-3">Balloon Details</h6>
         <div class="row g-3 mb-4">
           <div class="col-md-3">
-            <label class="form-label">Size</label>
+            <label class="form-label">Size *</label>
             <select class="form-select" formControlName="b_size">
               <option value="">--Select--</option>
               <option>10x20</option>
               <option>20x40</option>
               <option>30x60</option>
             </select>
-            <small
-              class="text-danger"
-              *ngIf="balloonForm.get('b_size')?.touched && balloonForm.get('b_size')?.invalid"
-            >
-              Select size
-            </small>
+            <small class="text-danger" *ngIf="isInvalid('b_size')">Required</small>
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Type</label>
+            <label class="form-label">Type *</label>
             <select class="form-select" formControlName="b_type">
               <option value="">--Select--</option>
               <option>Hoarding</option>
@@ -110,96 +66,46 @@
               <option>Billboard</option>
               <option>Digital Screen</option>
             </select>
-            <small
-              class="text-danger"
-              *ngIf="balloonForm.get('b_type')?.touched && balloonForm.get('b_type')?.invalid"
-            >
-              Select type
-            </small>
+            <small class="text-danger" *ngIf="isInvalid('b_type')">Required</small>
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Height (m)</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="b_height"
-              placeholder="Enter height"
-            />
+            <label class="form-label">Height (m) *</label>
+            <input type="number" class="form-control" formControlName="b_height" />
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Duration (days)</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="b_duration_days"
-              placeholder="Enter days"
-            />
+            <label class="form-label">Duration (days) *</label>
+            <input type="number" class="form-control" formControlName="b_duration_days" />
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Start Date</label>
+            <label class="form-label">Start Date *</label>
             <input type="date" class="form-control" formControlName="b_start_date" />
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">End Date</label>
+            <label class="form-label">End Date *</label>
             <input type="date" class="form-control" formControlName="b_end_date" />
           </div>
 
-          <div class="col-md-3">
-            <label class="form-label">Expected Crowd</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="expected_crowd"
-              placeholder="0"
-            />
-          </div>
-        </div>
-
-        <!-- 🔹 Contact Info -->
-        <h6 class="mb-3 text-primary">Contact Info</h6>
-        <div class="row g-3 mb-4">
-          <div class="col-md-4">
-            <label class="form-label">Contact Person</label>
-            <input
-              class="form-control"
-              formControlName="b_contact_person_name"
-              placeholder="Name"
-            />
-          </div>
-
-          <div class="col-md-4">
-            <label class="form-label">Contact Number</label>
-            <input
-              class="form-control"
-              formControlName="b_contact_num"
-              placeholder="10-digit number"
-            />
-            <small
-              class="text-danger"
-              *ngIf="
-                balloonForm.get('b_contact_num')?.touched &&
-                balloonForm.get('b_contact_num')?.invalid
-              "
-            >
-              Enter 10-digit number
+          <div class="col-12">
+            <small class="text-danger" *ngIf="hasFormError('dateRangeInvalid')">
+              End date must be after start date
             </small>
           </div>
         </div>
 
-        <!-- 🔹 Financial Info -->
-        <h6 class="mb-3 text-primary">Financial Info</h6>
+        <!-- FINANCIAL -->
+        <h6 class="text-primary mb-3">Financial</h6>
         <div class="row g-3 mb-4">
           <div class="col-md-4">
-            <label class="form-label">Cost</label>
-            <input type="number" class="form-control" formControlName="b_cost" placeholder="0" />
+            <label class="form-label">Cost *</label>
+            <input type="number" class="form-control" formControlName="b_cost" />
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Payment Status</label>
+            <label class="form-label">Payment Status *</label>
             <select class="form-select" formControlName="payment_status">
               <option value="">--Select--</option>
               <option>Paid</option>
@@ -207,47 +113,25 @@
               <option>Cancelled</option>
             </select>
           </div>
-
-          <div class="col-md-5">
-            <label class="form-label">Remarks</label>
-            <textarea
-              class="form-control"
-              formControlName="remarks"
-              rows="1"
-              placeholder="Any notes"
-            ></textarea>
-          </div>
         </div>
 
-        <div class="form-check mt-3">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            id="featured"
-            formControlName="featured"
-          />
-          <label class="form-check-label fw-semibold" for="featured"> ⭐ Set As Featured </label>
+        <div class="form-check mb-4">
+          <input class="form-check-input" type="checkbox" formControlName="featured" />
+          <label class="form-check-label">⭐ Set As Featured</label>
         </div>
 
-        <!-- 🔹 Actions -->
-        <div class="d-flex justify-content-end mt-4">
-          <button
-            class="btn btn-outline-secondary me-2"
-            type="button"
-            (click)="balloonForm.reset()"
-          >
-            <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+        <div class="d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-outline-secondary" (click)="resetForm()">
+            Reset
           </button>
-          <button class="btn btn-secondary me-2" type="button" (click)="balloonForm.reset()">
-            Cancel
-          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
           <button
+            type="submit"
             class="btn"
             [ngClass]="{ 'btn-success': !editingId, 'btn-warning': editingId }"
-            type="submit"
             [disabled]="balloonForm.invalid"
           >
-            {{ editingId ? 'Update Balloon' : 'Add Balloon' }}
+            {{ editingId ? 'Update' : 'Save' }}
           </button>
         </div>
       </form>

@@ -1,4 +1,3 @@
-<!-- 🚗 Vehicle Form -->
 <div class="card shadow-lg border-0 rounded-4">
   <div
     class="card-header bg-gradient bg-primary text-white d-flex justify-content-between align-items-center"
@@ -7,11 +6,7 @@
       <i class="bi bi-truck-front"></i>
       {{ vehicleForm.value.v_id ? ' Edit Vehicle' : ' Add Vehicle' }}
     </h4>
-    <button
-      class="btn btn-light btn-sm"
-      routerLink="/dashboard/vehicle-ads"
-      (click)="vehicleForm.reset()"
-    >
+    <button class="btn btn-light btn-sm" routerLink="/dashboard/vehicle-ads">
       <i class="bi bi-arrow-left me-1"></i>Back
     </button>
   </div>
@@ -24,149 +19,138 @@
       <div class="row g-3">
         <!-- Vehicle Type -->
         <div class="col-md-4">
-          <label class="form-label">Vehicle Type</label>
-          <input class="form-control" formControlName="v_type" placeholder="eg.Car / Van" />
-          @if(vehicleForm.controls['v_type'].touched && vehicleForm.controls['v_type'].invalid) {
-          <div class="text-danger">
-            <i class="bi bi-exclamation-circle"></i> Vehicle type is required
-          </div>
-          }
+          <label class="form-label">Vehicle Type *</label>
+          <input class="form-control" formControlName="v_type" placeholder="eg. Car / Van" />
+          <small class="text-danger" *ngIf="isInvalid('v_type')">Vehicle type is required</small>
         </div>
 
         <!-- Vehicle Number -->
         <div class="col-md-4">
-          <label class="form-label">Vehicle Number</label>
-          <input class="form-control" formControlName="v_number" placeholder="eg.MH12AB1234" />
-          @if(vehicleForm.controls['v_number'].touched &&
-          vehicleForm.controls['v_number'].hasError('required')) {
-          <div class="text-danger">
-            <i class="bi bi-exclamation-circle"></i> Vehicle number is required
-          </div>
-          } @if(vehicleForm.controls['v_number'].touched &&
-          vehicleForm.controls['v_number'].hasError('pattern')) {
-          <div class="text-danger">
-            <i class="bi bi-exclamation-triangle"></i> Format must be like MH12AB1234
-          </div>
-          }
+          <label class="form-label">Vehicle Number *</label>
+          <input class="form-control" formControlName="v_number" placeholder="eg. MH12AB1234" />
+          <small
+            class="text-danger"
+            *ngIf="isInvalid('v_number') && vehicleForm.get('v_number')?.hasError('required')"
+          >
+            Vehicle number is required
+          </small>
+          <small
+            class="text-danger"
+            *ngIf="
+              vehicleForm.get('v_number')?.hasError('pattern') &&
+              (submitted || vehicleForm.get('v_number')?.touched)
+            "
+          >
+            Format must be like MH12AB1234
+          </small>
         </div>
 
         <!-- City -->
         <div class="col-md-4">
-          <label class="form-label">City</label>
-          <input class="form-control" formControlName="v_city" placeholder="eg.Pune" />
-          @if(vehicleForm.controls['v_city'].touched && vehicleForm.controls['v_city'].invalid) {
-          <div class="text-danger"><i class="bi bi-exclamation-circle"></i> City is required</div>
-          }
+          <label class="form-label">City *</label>
+          <input class="form-control" formControlName="v_city" placeholder="eg. Pune" />
+          <small class="text-danger" *ngIf="isInvalid('v_city')">City is required</small>
         </div>
 
         <!-- Area -->
         <div class="col-md-6">
-          <label class="form-label">Area</label>
-          <input class="form-control" formControlName="v_area" placeholder="eg.MG Road" />
-          @if(vehicleForm.controls['v_area'].touched && vehicleForm.controls['v_area'].invalid) {
-          <div class="text-danger"><i class="bi bi-exclamation-circle"></i> Area is required</div>
-          }
+          <label class="form-label">Area *</label>
+          <input class="form-control" formControlName="v_area" placeholder="eg. MG Road" />
+          <small class="text-danger" *ngIf="isInvalid('v_area')">Area is required</small>
         </div>
 
-        <!-- Start Date -->
+        <!-- Start / End Dates -->
         <div class="col-md-3">
-          <label class="form-label">Start Date</label>
+          <label class="form-label">Start Date *</label>
           <input type="date" class="form-control" formControlName="v_start_date" />
-          @if(vehicleForm.controls['v_start_date'].touched &&
-          vehicleForm.controls['v_start_date'].invalid) {
-          <div class="text-danger">
-            <i class="bi bi-exclamation-circle"></i> Start date is required
-          </div>
-          }
+          <small class="text-danger" *ngIf="isInvalid('v_start_date')"
+            >Start date is required</small
+          >
         </div>
-
-        <!-- End Date -->
         <div class="col-md-3">
-          <label class="form-label">End Date</label>
+          <label class="form-label">End Date *</label>
           <input type="date" class="form-control" formControlName="v_end_date" />
-          @if(vehicleForm.controls['v_end_date'].touched &&
-          vehicleForm.controls['v_end_date'].invalid) {
-          <div class="text-danger">
-            <i class="bi bi-exclamation-circle"></i> End date is required
-          </div>
-          }
+          <small class="text-danger" *ngIf="isInvalid('v_end_date')">End date is required</small>
         </div>
-
-        <!-- Duration -->
         <div class="col-md-3">
           <label class="form-label">Duration (days)</label>
-          <input class="form-control bg-light" formControlName="v_duration_days" readonly />
+          <input
+            type="number"
+            class="form-control bg-light"
+            formControlName="v_duration_days"
+            readonly
+          />
+        </div>
+        <div class="col-12">
+          <small class="text-danger" *ngIf="hasFormError('dateRangeInvalid')">
+            End date must be after start date
+          </small>
         </div>
 
         <!-- Expected Crowd -->
         <div class="col-md-3">
-          <label class="form-label">Expected Crowd</label>
+          <label class="form-label">Expected Crowd *</label>
           <input
-            class="form-control"
             type="number"
+            class="form-control"
             formControlName="expected_crowd"
             placeholder="eg.5000"
           />
-          @if(vehicleForm.controls['expected_crowd'].touched &&
-          vehicleForm.controls['expected_crowd'].invalid) {
-          <div class="text-danger">
-            <i class="bi bi-exclamation-circle"></i> Enter a valid crowd size
-          </div>
-          }
+          <small class="text-danger" *ngIf="isInvalid('expected_crowd')"
+            >Enter a valid crowd size</small
+          >
         </div>
 
         <!-- Contact Person -->
         <div class="col-md-4">
-          <label class="form-label">Contact Person</label>
+          <label class="form-label">Contact Person *</label>
           <input
             class="form-control"
             formControlName="v_contact_person_name"
-            placeholder="eg.Rajesh Kumar"
+            placeholder="eg. Rajesh Kumar"
           />
-          @if(vehicleForm.controls['v_contact_person_name'].touched &&
-          vehicleForm.controls['v_contact_person_name'].invalid) {
-          <div class="text-danger">
-            <i class="bi bi-exclamation-circle"></i> Contact person is required
-          </div>
-          }
+          <small class="text-danger" *ngIf="isInvalid('v_contact_person_name')"
+            >Contact person is required</small
+          >
         </div>
 
         <!-- Contact Number -->
         <div class="col-md-4">
-          <label class="form-label">Contact Number</label>
+          <label class="form-label">Contact Number *</label>
           <input class="form-control" formControlName="v_contact_num" placeholder="eg.9876543210" />
-          @if(vehicleForm.controls['v_contact_num'].touched &&
-          vehicleForm.controls['v_contact_num'].hasError('required')) {
-          <div class="text-danger">
-            <i class="bi bi-exclamation-circle"></i> Contact number is required
-          </div>
-          } @if(vehicleForm.controls['v_contact_num'].touched &&
-          vehicleForm.controls['v_contact_num'].hasError('pattern')) {
-          <div class="text-danger">
-            <i class="bi bi-exclamation-triangle"></i> Must be a valid 10-digit mobile number
-          </div>
-          }
+          <small
+            class="text-danger"
+            *ngIf="
+              isInvalid('v_contact_num') && vehicleForm.get('v_contact_num')?.hasError('required')
+            "
+            >Contact number is required</small
+          >
+          <small
+            class="text-danger"
+            *ngIf="
+              vehicleForm.get('v_contact_num')?.hasError('pattern') &&
+              (submitted || vehicleForm.get('v_contact_num')?.touched)
+            "
+          >
+            Must be a valid 10-digit mobile number
+          </small>
         </div>
 
         <!-- Cost -->
         <div class="col-md-4">
-          <label class="form-label">Cost (₹)</label>
+          <label class="form-label">Cost (₹) *</label>
           <input
-            class="form-control"
             type="number"
+            class="form-control"
             formControlName="v_cost"
             placeholder="eg.15000"
           />
-          @if(vehicleForm.controls['v_cost'].touched && vehicleForm.controls['v_cost'].invalid) {
-          <div class="text-danger">
-            <i class="bi bi-exclamation-circle"></i> Cost must be greater than 0
-          </div>
-          }
+          <small class="text-danger" *ngIf="isInvalid('v_cost')">Cost must be greater than 0</small>
         </div>
 
         <!-- Payment Status -->
         <div class="col-md-4">
-          <label class="form-label">Payment Status</label>
+          <label class="form-label">Payment Status *</label>
           <select class="form-select" formControlName="payment_status">
             <option value="Paid">✅ Paid</option>
             <option value="Pending">⏳ Pending</option>
@@ -180,20 +164,29 @@
             class="form-control"
             formControlName="remarks"
             rows="2"
-            placeholder="eg.Promo campaign near malls"
+            placeholder="eg. Promo campaign near malls"
           ></textarea>
+        </div>
+
+        <!-- Featured on new line -->
+        <div class="col-12 mt-3">
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="featured"
+              formControlName="featured"
+            />
+            <label class="form-check-label fw-semibold" for="featured"> ⭐ Set As Featured </label>
+          </div>
         </div>
       </div>
 
-      <div class="form-check mt-3">
-        <input class="form-check-input" type="checkbox" id="featured" formControlName="featured" />
-        <label class="form-check-label fw-semibold" for="featured"> ⭐ Set As Featured </label>
-      </div>
-
-      <div class="d-flex justify-content-end mt-3">
-        <button class="btn btn-light btn-sm" (click)="vehicleForm.reset()">
-          <i class="bi bi-arrow-repeat"></i>Reset
+      <div class="d-flex justify-content-end mt-3 gap-2">
+        <button type="button" class="btn btn-light btn-sm" (click)="resetForm()">
+          <i class="bi bi-arrow-repeat"></i> Reset
         </button>
+        <button type="button" class="btn btn-secondary btn-sm" (click)="cancel()">Cancel</button>
         <button type="submit" class="btn btn-success px-4" [disabled]="vehicleForm.invalid">
           <i class="bi" [ngClass]="vehicleForm.value.v_id ? 'bi-save' : 'bi-plus-circle'"></i>
           {{ vehicleForm.value.v_id ? ' Update Vehicle' : ' Add Vehicle' }}

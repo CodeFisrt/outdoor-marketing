@@ -4,176 +4,140 @@
       class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
     >
       <h5 class="mb-0">{{ societyForm.value.s_id ? '✏️ Edit Society' : '➕ Add Society' }}</h5>
-      <button class="btn btn-light btn-sm" routerLink="/dashboard/wall-painting">
-        <i class="bi bi-arrow-left me-1"></i>Back
-      </button>
+      <button class="btn btn-light btn-sm" routerLink="/dashboard/wall-painting">⬅️ Back</button>
     </div>
 
     <div class="card-body p-4">
       <form [formGroup]="societyForm" (ngSubmit)="societyForm.value.s_id ? update() : add()">
-        <!-- 🔹 Society Info -->
+        <!-- SOCIETY INFO -->
         <h6 class="mb-3 text-primary">Society Info</h6>
         <div class="row g-3 mb-4">
           <div class="col-md-4">
-            <label class="form-label">Society Name</label>
+            <label class="form-label">Society Name *</label>
             <input class="form-control" formControlName="s_name" placeholder="Enter society name" />
-            <small
-              class="text-danger"
-              *ngIf="societyForm.get('s_name')?.touched && societyForm.get('s_name')?.invalid"
-            >
-              Society name is required
-            </small>
+            <small class="text-danger" *ngIf="isInvalid('s_name')">Min 3 chars required</small>
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">City</label>
+            <label class="form-label">City *</label>
             <input class="form-control" formControlName="s_city" placeholder="Enter city" />
-            <small
-              class="text-danger"
-              *ngIf="societyForm.get('s_city')?.touched && societyForm.get('s_city')?.invalid"
-            >
-              City is required
-            </small>
+            <small class="text-danger" *ngIf="isInvalid('s_city')">Required</small>
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">Area</label>
+            <label class="form-label">Area *</label>
             <input class="form-control" formControlName="s_area" placeholder="Enter area" />
-            <small
-              class="text-danger"
-              *ngIf="societyForm.get('s_area')?.touched && societyForm.get('s_area')?.invalid"
-            >
-              Area is required
-            </small>
+            <small class="text-danger" *ngIf="isInvalid('s_area')">Required</small>
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Pincode</label>
+            <label class="form-label">Pincode *</label>
             <input class="form-control" formControlName="s_pincode" placeholder="6-digit pincode" />
-            <small
-              class="text-danger"
-              *ngIf="societyForm.get('s_pincode')?.touched && societyForm.get('s_pincode')?.invalid"
+            <small class="text-danger" *ngIf="isInvalid('s_pincode')"
+              >Enter valid 6-digit pincode</small
             >
-              Enter valid 6-digit pincode
-            </small>
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">No. of Flats</label>
+            <label class="form-label">No. of Flats *</label>
             <input type="number" class="form-control" formControlName="s_no_flats" min="1" />
-            <small
-              class="text-danger"
-              *ngIf="
-                societyForm.get('s_no_flats')?.touched && societyForm.get('s_no_flats')?.invalid
-              "
-            >
-              Enter flats (min 1)
-            </small>
+            <small class="text-danger" *ngIf="isInvalid('s_no_flats')">Min 1 flat required</small>
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Type</label>
+            <label class="form-label">Type *</label>
             <select class="form-select" formControlName="s_type">
               <option value="">--Select--</option>
               <option value="Residential">Residential</option>
               <option value="Commercial">Commercial</option>
             </select>
-            <small
-              class="text-danger"
-              *ngIf="societyForm.get('s_type')?.touched && societyForm.get('s_type')?.invalid"
-            >
-              Select type
-            </small>
+            <small class="text-danger" *ngIf="isInvalid('s_type')">Required</small>
           </div>
         </div>
 
-        <!-- 🔹 Contact Info -->
+        <!-- CONTACT INFO -->
         <h6 class="mb-3 text-primary">Contact Info</h6>
         <div class="row g-3 mb-4">
           <div class="col-md-4">
-            <label class="form-label">Contact Person</label>
+            <label class="form-label">Contact Person *</label>
             <input
               class="form-control"
               formControlName="s_contact_person_name"
               placeholder="Name"
             />
-            <small
-              class="text-danger"
-              *ngIf="
-                societyForm.get('s_contact_person_name')?.touched &&
-                societyForm.get('s_contact_person_name')?.invalid
-              "
-            >
-              Required
-            </small>
+            <small class="text-danger" *ngIf="isInvalid('s_contact_person_name')">Required</small>
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">Contact Number</label>
+            <label class="form-label">Contact Number *</label>
             <input
               class="form-control"
               formControlName="s_contact_num"
               placeholder="10-digit number"
             />
-            <small
-              class="text-danger"
-              *ngIf="
-                societyForm.get('s_contact_num')?.touched &&
-                societyForm.get('s_contact_num')?.invalid
-              "
+            <small class="text-danger" *ngIf="isInvalid('s_contact_num')"
+              >Enter 10-digit number</small
             >
-              Enter 10-digit number
-            </small>
           </div>
         </div>
 
-        <!-- 🔹 Event Info -->
+        <!-- EVENT INFO -->
         <h6 class="mb-3 text-primary">Event Info</h6>
         <div class="row g-3 mb-4">
           <div class="col-md-4">
-            <label class="form-label">Event Type</label>
+            <label class="form-label">Event Type *</label>
             <input
               class="form-control"
               formControlName="s_event_type"
               placeholder="Type of event"
             />
+            <small class="text-danger" *ngIf="isInvalid('s_event_type')">Required</small>
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Event Date</label>
+            <label class="form-label">Event Date *</label>
             <input type="date" class="form-control" formControlName="event_date" />
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Event Time</label>
+            <label class="form-label">Event Time *</label>
             <input type="time" class="form-control" formControlName="event_time" />
           </div>
 
           <div class="col-md-6">
-            <label class="form-label">Address</label>
+            <label class="form-label">Address *</label>
             <input class="form-control" formControlName="s_address" placeholder="Enter address" />
+            <small class="text-danger" *ngIf="isInvalid('s_address')">Required</small>
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Latitude</label>
+            <label class="form-label">Latitude *</label>
             <input class="form-control" formControlName="s_lat" placeholder="e.g. 18.5204" />
+            <small class="text-danger" *ngIf="isInvalid('s_lat')">Invalid latitude</small>
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Longitude</label>
+            <label class="form-label">Longitude *</label>
             <input class="form-control" formControlName="s_long" placeholder="e.g. 73.8567" />
+            <small class="text-danger" *ngIf="isInvalid('s_long')">Invalid longitude</small>
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Expected Crowd</label>
+            <label class="form-label">Expected Crowd *</label>
             <input type="number" class="form-control" formControlName="s_crowd" min="1" />
+          </div>
+
+          <div class="col-12">
+            <small class="text-danger" *ngIf="hasFormError('dateRangeInvalid')">
+              Follow-up date must be after event date
+            </small>
           </div>
         </div>
 
-        <!-- 🔹 Approval & Status -->
+        <!-- APPROVAL & COST -->
         <div class="row g-3 mb-4">
           <div class="col-md-3">
-            <label class="form-label">Approval Status</label>
+            <label class="form-label">Approval Status *</label>
             <select class="form-select" formControlName="approval_status">
               <option value="Pending">Pending</option>
               <option value="Approved">Approved</option>
@@ -182,7 +146,7 @@
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Event Status</label>
+            <label class="form-label">Event Status *</label>
             <select class="form-select" formControlName="event_status">
               <option value="Scheduled">Scheduled</option>
               <option value="Ongoing">Ongoing</option>
@@ -192,69 +156,59 @@
           </div>
 
           <div class="col-md-3">
-            <label class="form-label">Expected Cost</label>
-            <input type="number" class="form-control" formControlName="expected_cost" />
+            <label class="form-label">Expected Cost *</label>
+            <input type="number" class="form-control" formControlName="expected_cost" min="1" />
           </div>
 
           <div class="col-md-3">
             <label class="form-label">Actual Cost</label>
-            <input type="number" class="form-control" formControlName="actual_cost" />
+            <input type="number" class="form-control" formControlName="actual_cost" min="0" />
           </div>
         </div>
 
-        <!-- 🔹 Responsible & Follow-up -->
+        <!-- RESPONSIBLE & FOLLOW-UP -->
         <div class="row g-3 mb-4">
           <div class="col-md-4">
-            <label class="form-label">Responsible Person</label>
+            <label class="form-label">Responsible Person *</label>
             <input class="form-control" formControlName="responsible_person" />
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">Follow-up Date</label>
+            <label class="form-label">Follow-up Date *</label>
             <input type="date" class="form-control" formControlName="follow_up_date" />
           </div>
         </div>
 
-        <!-- 🔹 Remarks -->
+        <!-- REMARKS -->
         <div class="mb-4">
           <label class="form-label">Remarks</label>
-          <textarea
-            class="form-control"
-            formControlName="remarks"
-            rows="2"
-            placeholder="Additional notes"
-          ></textarea>
+          <textarea class="form-control" formControlName="remarks" rows="2"></textarea>
         </div>
 
-        <div class="form-check mt-3">
+        <!-- FEATURED ON NEW LINE -->
+        <div class="form-check mb-4">
           <input
             class="form-check-input"
             type="checkbox"
             id="featured"
             formControlName="featured"
           />
-          <label class="form-check-label fw-semibold" for="featured"> ⭐ Set As Featured </label>
+          <label class="form-check-label fw-semibold" for="featured">⭐ Set As Featured</label>
         </div>
 
-        <!-- 🔹 Buttons -->
-        <div class="d-flex justify-content-end">
-          <button
-            class="btn btn-outline-secondary me-2"
-            type="button"
-            (click)="societyForm.reset()"
-          >
+        <!-- BUTTONS -->
+        <div class="d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-outline-secondary" (click)="resetForm()">
             Reset
           </button>
-          <button class="btn btn-secondary me-2" type="button" routerLink="/societies">
-            Cancel
-          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
           <button
+            type="submit"
             class="btn"
             [ngClass]="{
               'btn-success': !societyForm.value.s_id,
               'btn-warning': societyForm.value.s_id
             }"
-            type="submit"
             [disabled]="societyForm.invalid"
           >
             {{ societyForm.value.s_id ? 'Update' : 'Add' }}

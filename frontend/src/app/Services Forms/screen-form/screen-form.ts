@@ -1,22 +1,28 @@
 import { CommonModule, NgClass, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Route, Router, RouterLink } from '@angular/router';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { SeoService } from '../../ApiServices/Seo-Service/seo-service';
-import { features } from 'node:process';
-import { log } from 'node:console';
 
 @Component({
   selector: 'app-screen-form',
-  imports: [NgClass, ReactiveFormsModule, CommonModule, RouterLink],
+  imports: [NgClass, ReactiveFormsModule, CommonModule, RouterLink, NgIf],
   templateUrl: './screen-form.html',
   styleUrl: './screen-form.css'
 })
 export class ScreenForm {
   screenForm!: FormGroup;
   selectedScreenId: number = 0; // 0 = new screen, otherwise edit
+  submitted = false;
 
   constructor(
     private router: Router,
@@ -30,18 +36,13 @@ export class ScreenForm {
   ngOnInit(): void {
     this.initForm();
 
-    //to react activated route id
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
-
-      // ✅ if id missing, treat as add
       this.selectedScreenId = idParam ? +idParam : 0;
 
-      // ✅ Edit mode load
       if (this.selectedScreenId !== 0) {
         this.loadScreenData(this.selectedScreenId);
       } else {
-        // ✅ Add mode defaults (optional but safe)
         this.screenForm.reset({
           Status: 'Active',
           RentalCost: 0,
@@ -50,7 +51,6 @@ export class ScreenForm {
         });
       }
 
-      // ✅ SEO after id set
       this.seo.updateSeo({
         title: 'Outdoor Advertising & Billboard Booking Platform in India',
         description: 'Find and book outdoor advertising like billboards, digital screens, vehicle and street ads across India with location-based search.',
@@ -64,105 +64,156 @@ export class ScreenForm {
     });
   }
 
-  // Initialize the form
+  // ================= FORM INIT =================
   initForm() {
-    this.screenForm = this.fb.group({
-      ScreenName: ['', Validators.required],
-      Location: ['', Validators.required],
-      City: ['', Validators.required],
-      State: ['', Validators.required],
-      Latitude: [null, Validators.required],
-      Longitude: [null, Validators.required],
-      ScreenType: ['', Validators.required],
-      Size: ['', Validators.required],
-      Resolution: ['', Validators.required],
-      OwnerName: ['', Validators.required],
-      ContactPerson: ['', Validators.required],
-      ContactNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      OnboardingDate: ['', Validators.required],
-      Status: ['Active', Validators.required],
-      RentalCost: [0, Validators.required],
-      ContractStartDate: ['', Validators.required],
-      ContractEndDate: ['', Validators.required],
-      PowerBackup: [false],
-      InternetConnectivity: ['', Validators.required],
-      Notes: [''],
-      featured: [false]
-    });
+    this.screenForm = this.fb.group(
+      {
+        ScreenName: ['', [Validators.required, Validators.minLength(3)]],
+        Location: ['', Validators.required],
+        City: ['', Validators.required],
+        State: ['', Validators.required],
+        Latitude: [null, [Validators.required, this.latitudeValidator]],
+        Longitude: [null, [Validators.required, this.longitudeValidator]],
+        ScreenType: ['', Validators.required],
+        Size: ['', Validators.required],
+        Resolution: ['', Validators.required],
+        OwnerName: ['', Validators.required],
+        ContactPerson: ['', Validators.required],
+        ContactNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+        OnboardingDate: ['', Validators.required],
+        Status: ['Active', Validators.required],
+        RentalCost: [0, [Validators.required, Validators.min(0)]],
+        ContractStartDate: ['', Validators.required],
+        ContractEndDate: ['', Validators.required],
+        PowerBackup: [false],
+        InternetConnectivity: ['', Validators.required],
+        Notes: [''],
+        featured: [false]
+      },
+      {
+        validators: [
+          this.dateRangeValidator('OnboardingDate', 'ContractEndDate', 'screenDateRangeInvalid'),
+          this.dateRangeValidator('ContractStartDate', 'ContractEndDate', 'contractDateRangeInvalid')
+        ]
+      }
+    );
   }
 
-  //load Edit
+  // ================= VALIDATION HELPERS =================
+  isInvalid(controlName: string): boolean {
+    const c = this.screenForm.get(controlName);
+    return !!(c && c.invalid && (c.touched || this.submitted));
+  }
+
+  hasFormError(errorKey: string): boolean {
+    return !!(
+      this.screenForm.errors &&
+      this.screenForm.errors[errorKey] &&
+      (this.submitted || this.anyDateTouched())
+    );
+  }
+
+  private anyDateTouched(): boolean {
+    const fields = ['OnboardingDate', 'ContractStartDate', 'ContractEndDate'];
+    return fields.some(f => this.screenForm.get(f)?.touched);
+  }
+
+  latitudeValidator(control: AbstractControl): ValidationErrors | null {
+    const n = Number(control.value);
+    if (isNaN(n) || n < -90 || n > 90) return { latInvalid: true };
+    return null;
+  }
+
+  longitudeValidator(control: AbstractControl): ValidationErrors | null {
+    const n = Number(control.value);
+    if (isNaN(n) || n < -180 || n > 180) return { lngInvalid: true };
+    return null;
+  }
+
+  dateRangeValidator(startKey: string, endKey: string, errorKey: string) {
+    return (group: AbstractControl): ValidationErrors | null => {
+      const startVal = group.get(startKey)?.value;
+      const endVal = group.get(endKey)?.value;
+
+      if (!startVal || !endVal) return null;
+
+      const s = new Date(startVal);
+      const e = new Date(endVal);
+
+      if (isNaN(s.getTime()) || isNaN(e.getTime())) return { [errorKey]: true };
+      if (e < s) return { [errorKey]: true };
+      return null;
+    };
+  }
+
+  // ================= LOAD DATA =================
   loadScreenData(id: number) {
-    debugger;
-
     this.http.get<any>(`http://localhost:8080/screens/${id}`).subscribe({
-      next: (res) => {
-        // ✅ IMPORTANT FIX: handle API response {data: {...}} or direct object
+      next: res => {
         const data = res?.data ?? res;
-
         this.screenForm.patchValue({
           ...data,
-          OnboardingDate: data?.OnboardingDate ? data.OnboardingDate.split('T')[0] : data?.OnboardingDate,
-          ContractStartDate: data?.ContractStartDate ? data.ContractStartDate.split('T')[0] : data?.ContractStartDate,
-          ContractEndDate: data?.ContractEndDate ? data.ContractEndDate.split('T')[0] : data?.ContractEndDate,
-          featured: data?.featured === 1 || data?.featured === true
+          OnboardingDate: data.OnboardingDate?.split('T')[0],
+          ContractStartDate: data.ContractStartDate?.split('T')[0],
+          ContractEndDate: data.ContractEndDate?.split('T')[0],
+          featured: data.featured === 1 || data.featured === true
         });
-
-        console.log("Loaded Screen Data:", data);
         this.toaster.success("Screen data loaded ✅");
       },
-      error: (err) => {
+      error: err => {
         console.error(err);
-        this.toaster.error("Failed to load screen details");
+        this.toaster.error("Failed to load screen details ❌");
       }
     });
   }
 
-  // Save new screen or update existing
+  // ================= SAVE =================
   addOrUpdateScreen() {
-    const payload = {
-      ...this.screenForm.value,
-      featured: this.screenForm.value.featured ? 1 : 0
-    };
+    this.submitted = true;
+
+    if (this.screenForm.invalid) {
+      this.screenForm.markAllAsTouched();
+      return;
+    }
+
+    const payload = { ...this.screenForm.value, featured: this.screenForm.value.featured ? 1 : 0 };
 
     if (this.selectedScreenId === 0) {
-      // Create new screen
       this.http.post("http://localhost:8080/screens/", payload).subscribe({
-        next: (res: any) => {
-          this.toaster.success("New Screen Added Successfully");
+        next: () => {
+          this.toaster.success("New Screen Added Successfully ✅");
+          this.resetForm();
           this.router.navigateByUrl("/dashboard/digitalscreen");
-          this.screenForm.reset();
         },
-        error: (err) => {
+        error: err => {
           console.error(err);
-          this.toaster.error("Error Creating Screen");
+          this.toaster.error("Error Creating Screen ❌");
         }
       });
     } else {
-      // Update existing screen
       this.http.put(`http://localhost:8080/screens/${this.selectedScreenId}`, payload).subscribe({
-        next: (res: any) => {
-          this.toaster.success("Screen Updated Successfully");
+        next: () => {
+          this.toaster.success("Screen Updated Successfully ✅");
+          this.resetForm();
           this.router.navigateByUrl("/dashboard/digitalscreen");
-          this.screenForm.reset();
-          this.selectedScreenId = 0; // reset to create mode
+          this.selectedScreenId = 0;
         },
-        error: (err) => {
+        error: err => {
           console.error(err);
-          this.toaster.error("Error Updating Screen");
+          this.toaster.error("Error Updating Screen ❌");
         }
       });
     }
   }
 
+  // ================= RESET / CANCEL =================
   resetForm() {
-    // ✅ In edit mode, reload data (so old data shows again)
     if (this.selectedScreenId !== 0) {
       this.loadScreenData(this.selectedScreenId);
+      this.submitted = false;
       return;
     }
 
-    // ✅ In add mode, clear
     this.screenForm.reset({
       Status: 'Active',
       RentalCost: 0,
@@ -170,5 +221,6 @@ export class ScreenForm {
       featured: false
     });
     this.selectedScreenId = 0;
+    this.submitted = false;
   }
 }

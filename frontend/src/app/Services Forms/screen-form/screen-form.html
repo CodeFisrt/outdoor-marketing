@@ -1,108 +1,97 @@
 <div class="container mt-4">
-  <!-- Form Card -->
   <div class="card shadow-lg border-0 rounded-3">
-    <!-- Header with Back Btn -->
     <div
       class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
     >
-      <h5 class="mb-0">
+      <h5>
         <i class="bi bi-tv me-2"></i>
         {{ selectedScreenId === 0 ? '➕ Add Digital Screen' : '✏️ Edit Digital Screen' }}
       </h5>
-      <button
-        class="btn btn-light btn-sm d-flex align-items-center"
-        routerLink="/dashboard/digitalscreen"
-      >
+      <button class="btn btn-light btn-sm" routerLink="/dashboard/digitalscreen">
         <i class="bi bi-arrow-left me-1"></i> Back
       </button>
     </div>
 
     <div class="card-body">
       <form [formGroup]="screenForm" (ngSubmit)="addOrUpdateScreen()">
-        <!-- Basic Info -->
-        <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3">
-          <i class="bi bi-info-circle me-1"></i> Basic Information
-        </h6>
-        <div class="row">
-          <div class="col-md-4 mb-3">
-            <label class="form-label">Screen Name</label>
+        <!-- BASIC INFO -->
+        <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3">Basic Information</h6>
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Screen Name *</label>
             <input type="text" class="form-control" formControlName="ScreenName" />
-            <div
-              *ngIf="screenForm.get('ScreenName')?.touched && screenForm.get('ScreenName')?.invalid"
-              class="text-danger mt-1"
-            >
-              Screen Name is required.
-            </div>
+            <small class="text-danger" *ngIf="isInvalid('ScreenName')">Required, min 3 chars</small>
           </div>
-
-          <div class="col-md-4 mb-3">
-            <label class="form-label">Location</label>
+          <div class="col-md-4">
+            <label class="form-label">Location *</label>
             <input type="text" class="form-control" formControlName="Location" />
+            <small class="text-danger" *ngIf="isInvalid('Location')">Required</small>
           </div>
-
-          <div class="col-md-4 mb-3">
-            <label class="form-label">City</label>
+          <div class="col-md-4">
+            <label class="form-label">City *</label>
             <input type="text" class="form-control" formControlName="City" />
+            <small class="text-danger" *ngIf="isInvalid('City')">Required</small>
           </div>
-          <div class="col-md-4 mb-3">
-            <label class="form-label">State</label>
+          <div class="col-md-4">
+            <label class="form-label">State *</label>
             <input type="text" class="form-control" formControlName="State" />
+            <small class="text-danger" *ngIf="isInvalid('State')">Required</small>
           </div>
         </div>
 
-        <!-- Technical Details -->
-        <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3 mt-4">
-          <i class="bi bi-cpu me-1"></i> Technical Details
-        </h6>
-        <div class="row">
-          <div class="col-md-4 mb-3">
-            <label class="form-label">Latitude</label>
+        <!-- TECHNICAL DETAILS -->
+        <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3 mt-4">Technical Details</h6>
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Latitude *</label>
             <input type="number" class="form-control" formControlName="Latitude" />
+            <small class="text-danger" *ngIf="isInvalid('Latitude')">-90 to 90 required</small>
           </div>
-          <div class="col-md-4 mb-3">
-            <label class="form-label">Longitude</label>
+          <div class="col-md-4">
+            <label class="form-label">Longitude *</label>
             <input type="number" class="form-control" formControlName="Longitude" />
+            <small class="text-danger" *ngIf="isInvalid('Longitude')">-180 to 180 required</small>
           </div>
-          <div class="col-md-4 mb-3">
-            <label class="form-label">Resolution</label>
+          <div class="col-md-4">
+            <label class="form-label">Resolution *</label>
             <input type="text" class="form-control" formControlName="Resolution" />
+            <small class="text-danger" *ngIf="isInvalid('Resolution')">Required</small>
           </div>
         </div>
 
-        <!-- Ownership -->
-        <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3 mt-4">
-          <i class="bi bi-person-badge me-1"></i> Ownership & Contact
-        </h6>
-        <div class="row">
-          <div class="col-md-4 mb-3">
-            <label class="form-label">Owner Name</label>
+        <!-- OWNERSHIP -->
+        <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3 mt-4">Ownership & Contact</h6>
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Owner Name *</label>
             <input type="text" class="form-control" formControlName="OwnerName" />
+            <small class="text-danger" *ngIf="isInvalid('OwnerName')">Required</small>
           </div>
-          <div class="col-md-4 mb-3">
-            <label class="form-label">Contact Person</label>
+          <div class="col-md-4">
+            <label class="form-label">Contact Person *</label>
             <input type="text" class="form-control" formControlName="ContactPerson" />
+            <small class="text-danger" *ngIf="isInvalid('ContactPerson')">Required</small>
           </div>
-          <div class="col-md-4 mb-3">
-            <label class="form-label">Contact Number</label>
+          <div class="col-md-4">
+            <label class="form-label">Contact Number *</label>
             <input type="text" class="form-control" formControlName="ContactNumber" />
+            <small class="text-danger" *ngIf="isInvalid('ContactNumber')">10-digit required</small>
           </div>
         </div>
 
-        <!-- Contract & Cost -->
-        <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3 mt-4">
-          <i class="bi bi-file-earmark-text me-1"></i> Contract & Cost
-        </h6>
-        <div class="row">
-          <div class="col-md-4 mb-3">
-            <label class="form-label">Onboarding Date</label>
+        <!-- CONTRACT & COST -->
+        <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3 mt-4">Contract & Cost</h6>
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Onboarding Date *</label>
             <input type="date" class="form-control" formControlName="OnboardingDate" />
           </div>
-          <div class="col-md-4 mb-3">
-            <label class="form-label">Rental Cost (₹)</label>
+          <div class="col-md-4">
+            <label class="form-label">Rental Cost (₹) *</label>
             <input type="number" class="form-control" formControlName="RentalCost" />
           </div>
-          <div class="col-md-4 mb-3">
-            <label class="form-label">Status</label>
+          <div class="col-md-4">
+            <label class="form-label">Status *</label>
             <select class="form-select" formControlName="Status">
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
@@ -112,41 +101,54 @@
           </div>
         </div>
 
-        <!-- Extra -->
-        <div class="row mt-4">
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Internet Connectivity</label>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Contract Start Date *</label>
+            <input type="date" class="form-control" formControlName="ContractStartDate" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Contract End Date *</label>
+            <input type="date" class="form-control" formControlName="ContractEndDate" />
+          </div>
+        </div>
+
+        <small class="text-danger mb-3 d-block" *ngIf="hasFormError('screenDateRangeInvalid')">
+          End date must be after Onboarding / Contract Start
+        </small>
+
+        <!-- EXTRA -->
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Internet Connectivity *</label>
             <input type="text" class="form-control" formControlName="InternetConnectivity" />
           </div>
-          <div class="col-md-6 mb-3">
+          <div class="col-md-6">
             <label class="form-label">Notes</label>
             <textarea class="form-control" rows="2" formControlName="Notes"></textarea>
           </div>
         </div>
 
-        <div class="form-check mt-3">
+        <!-- FEATURED ON NEW LINE -->
+        <div class="form-check mt-3 mb-4">
           <input
             class="form-check-input"
             type="checkbox"
             id="featured"
             formControlName="featured"
           />
-          <label class="form-check-label fw-semibold" for="featured"> ⭐ Set As Featured </label>
+          <label class="form-check-label fw-semibold" for="featured">⭐ Set As Featured</label>
         </div>
 
-        <!-- Buttons -->
-        <div class="mt-4 d-flex gap-2">
+        <!-- BUTTONS -->
+        <div class="d-flex gap-2">
           <button
             type="submit"
-            [ngClass]="selectedScreenId === 0 ? 'btn btn-success' : 'btn btn-warning'"
+            class="btn"
+            [ngClass]="selectedScreenId === 0 ? 'btn-success' : 'btn-warning'"
           >
-            <i class="bi" [ngClass]="selectedScreenId === 0 ? 'bi-save' : 'bi-pencil-square'"></i>
-            {{ selectedScreenId === 0 ? ' Save Screen' : ' Update Screen' }}
+            {{ selectedScreenId === 0 ? 'Save Screen' : 'Update Screen' }}
           </button>
-
-          <button type="button" class="btn btn-secondary" (click)="resetForm()">
-            <i class="bi bi-arrow-repeat"></i> Reset
-          </button>
+          <button type="button" class="btn btn-secondary" (click)="resetForm()">Reset</button>
         </div>
       </form>
     </div>
