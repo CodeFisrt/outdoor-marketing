@@ -45,9 +45,11 @@
             <th class="text-center">Actions</th>
           </tr>
         </thead>
+
         <tbody>
-          <tr *ngFor="let screen of filteredList; let i = index">
-            <td>{{ i + 1 }}</td>
+          <!-- ✅ Use paginatedList -->
+          <tr *ngFor="let screen of paginatedList; let i = index">
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
             <td><i class="bi bi-display me-1 text-primary"></i> {{ screen.ScreenName }}</td>
             <td><i class="bi bi-geo-alt me-1 text-danger"></i> {{ screen.City }}</td>
             <td>₹ {{ screen.RentalCost }}</td>
@@ -63,8 +65,8 @@
                 {{ screen.Status }}
               </span>
             </td>
+
             <td class="text-center">
-              <!-- Edit Button -->
               <button
                 class="btn btn-sm btn-outline-primary me-2 d-inline-flex align-items-center"
                 (click)="editScreen(screen.ScreenID)"
@@ -72,7 +74,6 @@
                 <i class="bi bi-pencil-square me-1"></i> Edit
               </button>
 
-              <!-- Delete Button -->
               <button
                 class="btn btn-sm btn-outline-danger d-inline-flex align-items-center"
                 (click)="deleteScreen(screen.ScreenID)"
@@ -82,15 +83,72 @@
             </td>
           </tr>
 
-          <!-- Empty State -->
-          <!-- <tr *ngIf="screenList.length === 0">
+          <!-- ✅ Empty State -->
+          <tr *ngIf="paginatedList.length === 0">
             <td colspan="6" class="text-center text-muted py-3">
               <i class="bi bi-info-circle me-2"></i> No screens available
             </td>
-          </tr> -->
+          </tr>
         </tbody>
       </table>
-      <ngx-skeleton-loader count="15" appearance="line"></ngx-skeleton-loader>
+
+      <!-- <ngx-skeleton-loader count="15" appearance="line"></ngx-skeleton-loader> -->
+
+      <!-- ✅ Pagination UI (Your style) -->
+      <div
+        class="d-flex flex-wrap justify-content-between align-items-center mt-3 py-2 px-2"
+        *ngIf="filteredList.length > 0"
+      >
+        <!-- Showing info -->
+        <div class="text-muted small">
+          Showing <b>{{ showingFrom }}</b> – <b>{{ showingTo }}</b> of
+          <b>{{ filteredList.length }}</b>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <!-- Page size -->
+          <select
+            class="form-select form-select-sm"
+            style="width: 90px"
+            [(ngModel)]="pageSize"
+            (change)="changePageSize(pageSize)"
+          >
+            <option [ngValue]="5">5</option>
+            <option [ngValue]="10">10</option>
+            <option [ngValue]="20">20</option>
+            <option [ngValue]="50">50</option>
+          </select>
+
+          <!-- Prev -->
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="prevPage()"
+            [disabled]="currentPage === 1"
+          >
+            ◀ Prev
+          </button>
+
+          <!-- Page Numbers (Limited window, not all) -->
+          <button
+            *ngFor="let p of pageNumbers"
+            class="btn btn-sm"
+            [ngClass]="p === currentPage ? 'btn-primary' : 'btn-outline-secondary'"
+            (click)="goToPage(p)"
+          >
+            {{ p }}
+          </button>
+
+          <!-- Next -->
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages"
+          >
+            Next ▶
+          </button>
+        </div>
+      </div>
+      <!-- ✅ Pagination UI End -->
     </div>
   </div>
 </div>

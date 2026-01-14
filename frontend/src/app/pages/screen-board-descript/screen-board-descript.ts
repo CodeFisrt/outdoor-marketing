@@ -3,6 +3,8 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Search } from '../../SearchServices/search';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
 
 @Component({
   selector: 'app-screen-board-descript',
@@ -35,7 +37,12 @@ export class ScreenBoardDescript implements OnInit {
     repeatService: 'No' // 'Yes' | 'No'
   };
 
-  constructor(private route: ActivatedRoute, private searchService: Search, private cdr: ChangeDetectorRef) { }
+  constructor(
+    private route: ActivatedRoute, 
+    private searchService: Search, 
+    private cdr: ChangeDetectorRef,
+    private sanitizer: DomSanitizer //add for map url
+  ) { }
 
   minDate: string = '';
 
@@ -75,8 +82,13 @@ export class ScreenBoardDescript implements OnInit {
     });
   }
 
+// mapUrl: any;
+mapUrl!: SafeResourceUrl;
+
+
   normalizeData(data: any, type: string) {
     let b: any = { ...data };
+    
 
     // Image handling
     if (data.image) {
@@ -159,6 +171,35 @@ export class ScreenBoardDescript implements OnInit {
     b.availability = b.status || b.Status || 'Available';
     b.contactName = data.contact_person || data.v_contact_person_name || data.s_contact_person_name || data.b_contact_person_name || data.ContactPerson;
     b.contactNum = data.contact_number || data.v_contact_num || data.s_contact_num || data.b_contact_num || data.ContactNumber;
+
+
+
+
+
+
+    // 🌍 Latitude & Longitude (ALL SERVICES)
+b.lat =
+  data.b_lat ||
+  data.h_lat ||
+  data.Latitude ||
+  data.latitude;
+
+b.lng =
+  data.b_long ||
+  data.h_long ||
+  data.Longitude ||
+  data.longitude;
+
+// 🗺️ Google Map Embed (SAFE)
+if (b.lat && b.lng) {
+  const url = `https://www.google.com/maps?q=${b.lat},${b.lng}&z=16&output=embed`;
+  this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+}
+
+
+
+
+
 
     return b;
   }

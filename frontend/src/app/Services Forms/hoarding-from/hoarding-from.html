@@ -20,104 +20,269 @@
           <!-- Hoarding Name -->
           <div class="col-md-6 mb-3">
             <label class="form-label"> Hoarding Name <span class="text-danger">*</span> </label>
-            <input type="text" class="form-control" formControlName="h_name" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="h_name"
+              [ngClass]="{ 'is-invalid': isInvalid('h_name') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('h_name')">
+              Hoarding Name is required.
+            </div>
           </div>
 
           <!-- Address -->
           <div class="col-md-6 mb-3">
             <label class="form-label"> Address <span class="text-danger">*</span> </label>
-            <input type="text" class="form-control" formControlName="address" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="address"
+              [ngClass]="{ 'is-invalid': isInvalid('address') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('address')">
+              Address is required.
+            </div>
           </div>
 
           <!-- City -->
           <div class="col-md-6 mb-3">
-            <label class="form-label">City</label>
-            <input type="text" class="form-control" formControlName="city" />
+            <label class="form-label">City <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="city"
+              [ngClass]="{ 'is-invalid': isInvalid('city') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('city')">
+              City is required.
+            </div>
           </div>
 
           <!-- State -->
           <div class="col-md-6 mb-3">
-            <label class="form-label">State</label>
-            <input type="text" class="form-control" formControlName="state" />
+            <label class="form-label">State <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="state"
+              [ngClass]="{ 'is-invalid': isInvalid('state') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('state')">
+              State is required.
+            </div>
           </div>
 
           <!-- Contact Number -->
           <div class="col-md-6 mb-3">
-            <label class="form-label">Contact Number</label>
-            <input type="text" class="form-control" formControlName="contact_number" />
+            <label class="form-label">Contact Number <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="contact_number"
+              [ngClass]="{ 'is-invalid': isInvalid('contact_number') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('contact_number')">
+              <span *ngIf="hoardingForm.get('contact_number')?.errors?.['required']">
+                Contact number is required.
+              </span>
+              <span *ngIf="hoardingForm.get('contact_number')?.errors?.['pattern']">
+                Enter valid 10 digit mobile number.
+              </span>
+            </div>
           </div>
 
           <!-- Rental Cost -->
           <div class="col-md-6 mb-3">
-            <label class="form-label">Rental Cost</label>
-            <input type="number" class="form-control" formControlName="rental_cost" />
+            <label class="form-label">Rental Cost <span class="text-danger">*</span></label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="rental_cost"
+              [ngClass]="{ 'is-invalid': isInvalid('rental_cost') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('rental_cost')">
+              <span *ngIf="hoardingForm.get('rental_cost')?.errors?.['required']">
+                Rental cost is required.
+              </span>
+              <span *ngIf="hoardingForm.get('rental_cost')?.errors?.['min']">
+                Rental cost must be 0 or more.
+              </span>
+            </div>
           </div>
 
           <!-- Latitude -->
           <div class="col-md-6 mb-3">
-            <label class="form-label">Latitude</label>
-            <input type="text" class="form-control" formControlName="latitude" />
+            <label class="form-label">Latitude <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="latitude"
+              [ngClass]="{ 'is-invalid': isInvalid('latitude') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('latitude')">
+              <span *ngIf="hoardingForm.get('latitude')?.errors?.['required']">Latitude is required.</span>
+              <span *ngIf="hoardingForm.get('latitude')?.errors?.['latInvalid']">Latitude must be between -90 and 90.</span>
+            </div>
           </div>
 
           <!-- Longitude -->
           <div class="col-md-6 mb-3">
-            <label class="form-label">Longitude</label>
-            <input type="text" class="form-control" formControlName="longitude" />
+            <label class="form-label">Longitude <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="longitude"
+              [ngClass]="{ 'is-invalid': isInvalid('longitude') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('longitude')">
+              <span *ngIf="hoardingForm.get('longitude')?.errors?.['required']">Longitude is required.</span>
+              <span *ngIf="hoardingForm.get('longitude')?.errors?.['lngInvalid']">Longitude must be between -180 and 180.</span>
+            </div>
           </div>
 
           <!-- Size -->
           <div class="col-md-6 mb-3">
-            <label class="form-label">Size</label>
-            <input type="text" class="form-control" formControlName="size" />
+            <label class="form-label">Size <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="size"
+              [ngClass]="{ 'is-invalid': isInvalid('size') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('size')">
+              Size is required.
+            </div>
           </div>
 
           <!-- Owner Name -->
           <div class="col-md-6 mb-3">
-            <label class="form-label">Owner Name</label>
-            <input type="text" class="form-control" formControlName="owner_name" />
+            <label class="form-label">Owner Name <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="owner_name"
+              [ngClass]="{ 'is-invalid': isInvalid('owner_name') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('owner_name')">
+              Owner name is required.
+            </div>
           </div>
 
           <!-- Contact Person -->
           <div class="col-md-6 mb-3">
-            <label class="form-label">Contact Person</label>
-            <input type="text" class="form-control" formControlName="contact_person" />
+            <label class="form-label">Contact Person <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="contact_person"
+              [ngClass]="{ 'is-invalid': isInvalid('contact_person') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('contact_person')">
+              Contact person is required.
+            </div>
           </div>
 
           <!-- Status -->
           <div class="col-md-6 mb-3">
-            <label class="form-label">Status</label>
-            <select class="form-select" formControlName="status">
+            <label class="form-label">Status <span class="text-danger">*</span></label>
+            <select
+              class="form-select"
+              formControlName="status"
+              [ngClass]="{ 'is-invalid': isInvalid('status') }"
+            >
               <option value="Available">Available</option>
               <option value="Occupied">Occupied</option>
               <option value="Under Maintenance">Under Maintenance</option>
             </select>
+            <div class="invalid-feedback" *ngIf="isInvalid('status')">
+              Status is required.
+            </div>
           </div>
 
           <!-- Dates -->
           <div class="col-md-6 mb-3">
-            <label class="form-label">Ad Start Date</label>
-            <input type="date" class="form-control" formControlName="ad_start_date" />
+            <label class="form-label">Ad Start Date <span class="text-danger">*</span></label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="ad_start_date"
+              [ngClass]="{ 'is-invalid': isInvalid('ad_start_date') || hasFormError('adDateRangeInvalid') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('ad_start_date')">
+              Ad start date is required.
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="!isInvalid('ad_start_date') && hasFormError('adDateRangeInvalid')">
+              Ad End Date must be same or after Ad Start Date.
+            </div>
           </div>
 
           <div class="col-md-6 mb-3">
-            <label class="form-label">Ad End Date</label>
-            <input type="date" class="form-control" formControlName="ad_end_date" />
+            <label class="form-label">Ad End Date <span class="text-danger">*</span></label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="ad_end_date"
+              [ngClass]="{ 'is-invalid': isInvalid('ad_end_date') || hasFormError('adDateRangeInvalid') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('ad_end_date')">
+              Ad end date is required.
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="!isInvalid('ad_end_date') && hasFormError('adDateRangeInvalid')">
+              Ad End Date must be same or after Ad Start Date.
+            </div>
           </div>
 
           <div class="col-md-6 mb-3">
-            <label class="form-label">Contract Start Date</label>
-            <input type="date" class="form-control" formControlName="contract_start_date" />
+            <label class="form-label">Contract Start Date <span class="text-danger">*</span></label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="contract_start_date"
+              [ngClass]="{ 'is-invalid': isInvalid('contract_start_date') || hasFormError('contractDateRangeInvalid') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('contract_start_date')">
+              Contract start date is required.
+            </div>
+            <div
+              class="invalid-feedback d-block"
+              *ngIf="!isInvalid('contract_start_date') && hasFormError('contractDateRangeInvalid')"
+            >
+              Contract End Date must be same or after Contract Start Date.
+            </div>
           </div>
 
           <div class="col-md-6 mb-3">
-            <label class="form-label">Contract End Date</label>
-            <input type="date" class="form-control" formControlName="contract_end_date" />
+            <label class="form-label">Contract End Date <span class="text-danger">*</span></label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="contract_end_date"
+              [ngClass]="{ 'is-invalid': isInvalid('contract_end_date') || hasFormError('contractDateRangeInvalid') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('contract_end_date')">
+              Contract end date is required.
+            </div>
+            <div
+              class="invalid-feedback d-block"
+              *ngIf="!isInvalid('contract_end_date') && hasFormError('contractDateRangeInvalid')"
+            >
+              Contract End Date must be same or after Contract Start Date.
+            </div>
           </div>
 
           <!-- Notes -->
           <div class="col-12 mb-3">
-            <label class="form-label">Notes</label>
-            <textarea rows="3" class="form-control" formControlName="notes"></textarea>
+            <label class="form-label">Notes <span class="text-danger">*</span></label>
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="notes"
+              [ngClass]="{ 'is-invalid': isInvalid('notes') }"
+            ></textarea>
+            <div class="invalid-feedback" *ngIf="isInvalid('notes')">
+              Notes is required.
+            </div>
           </div>
         </div>
 
@@ -134,7 +299,7 @@
 
         <!-- Buttons -->
         <div class="d-flex justify-content-between mt-4">
-          <button class="btn btn-light btn-sm" (click)="resetForm()">Reset</button>
+          <button type="button" class="btn btn-light btn-sm" (click)="resetForm()">Reset</button>
 
           <div class="d-flex gap-2">
             <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>

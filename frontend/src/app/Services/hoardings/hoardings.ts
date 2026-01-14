@@ -10,7 +10,7 @@ import { FeaturedCards } from "../../pages/featured-cards/featured-cards";
 
 @Component({
   selector: 'app-hoardings',
-  imports: [CommonModule, RouterLink, FormsModule, NgxSkeletonLoaderComponent],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './hoardings.html',
   styleUrl: './hoardings.css'
 })
@@ -20,6 +20,12 @@ export class Hoardings {
   filteredList: Hoarding[] = [];
   searchTerm: string = "";
   ngifCount: number = 0;
+
+  // ✅ Pagination (ADDED)
+  pageSize: number = 10;
+  currentPage: number = 1;
+  pagedList: Hoarding[] = [];
+  totalPages: number = 1;
 
   constructor(
     private http: HttpClient,
@@ -41,6 +47,10 @@ export class Hoardings {
           this.hoardingList = res;
           this.filteredList = res;
 
+          // ✅ Pagination update (ADDED)
+          this.currentPage = 1;
+          this.buildPagination();
+
           this.cd.detectChanges();  // 🔥 Forces immediate UI refresh
         },
         error: () => {
@@ -59,6 +69,10 @@ export class Hoardings {
       h.state?.toLowerCase().includes(term) ||
       h.status?.toLowerCase().includes(term)
     );
+
+    // ✅ Pagination update after search (ADDED)
+    this.currentPage = 1;
+    this.buildPagination();
   }
 
   // 🔍 Search triggered by icon click (ADDED)
@@ -66,6 +80,76 @@ export class Hoardings {
     this.filterHoardings(); // reuse existing logic
   }
 
+  // ✅ Build pagination whenever filteredList changes (ADDED)
+  private buildPagination() {
+    const total = this.filteredList?.length || 0;
+
+    this.totalPages = Math.max(1, Math.ceil(total / this.pageSize));
+
+    if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+    if (this.currentPage < 1) this.currentPage = 1;
+
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+
+    this.pagedList = this.filteredList.slice(start, end);
+
+    this.cd.detectChanges();
+  }
+
+  // ✅ Page buttons list (frappe-like compact) (ADDED)
+  get pageNumbers(): number[] {
+    const total = this.totalPages;
+    const current = this.currentPage;
+
+    const pages: number[] = [];
+    const start = Math.max(1, current - 2);
+    const end = Math.min(total, current + 2);
+
+    for (let i = start; i <= end; i++) pages.push(i);
+
+    if (pages[0] !== 1) pages.unshift(1);
+    if (pages[pages.length - 1] !== total) pages.push(total);
+
+    return Array.from(new Set(pages));
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.buildPagination();
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.buildPagination();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.buildPagination();
+    }
+  }
+
+  changePageSize(size: number) {
+    this.pageSize = +size;
+    this.currentPage = 1;
+    this.buildPagination();
+  }
+
+  // ✅ helper for "Showing X–Y of Z" (ADDED)
+  get showingFrom(): number {
+    if (!this.filteredList.length) return 0;
+    return (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get showingTo(): number {
+    const to = this.currentPage * this.pageSize;
+    return Math.min(to, this.filteredList.length);
+  }
 
   // ✏️ Edit record
   edit(id: number) {

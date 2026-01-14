@@ -48,13 +48,17 @@
             <th class="text-center">Actions</th>
           </tr>
         </thead>
+
         <tbody>
-          <tr *ngFor="let h of filteredList; let i = index">
-            <td>{{ i + 1 }}</td>
+          <!-- ✅ Pagination applied here -->
+          <tr *ngFor="let h of pagedList; let i = index">
+            <!-- ✅ Proper row number across pages -->
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
             <td>{{ h.h_name }}</td>
             <td>{{ h.city }}</td>
             <!-- <td>{{ h.state }}</td> -->
             <td>₹ {{ h.rental_cost }}</td>
+
             <td>
               <span
                 class="badge"
@@ -89,7 +93,66 @@
           </tr>
         </tbody>
       </table>
-      <ngx-skeleton-loader count="15" appearance="line"></ngx-skeleton-loader>
+
+      <!-- ✅ Pagination UI (ADDED) -->
+      <div
+        class="d-flex flex-wrap justify-content-between align-items-center mt-3 py-2 px-2"
+        *ngIf="filteredList.length > 0"
+      >
+        <!-- Showing info -->
+        <div class="text-muted small">
+          Showing <b>{{ showingFrom }}</b> – <b>{{ showingTo }}</b> of
+          <b>{{ filteredList.length }}</b>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <!-- Page size -->
+          <select
+            class="form-select form-select-sm"
+            style="width: 90px"
+            [(ngModel)]="pageSize"
+            (change)="changePageSize(pageSize)"
+          >
+            <option [ngValue]="5">5</option>
+            <option [ngValue]="10">10</option>
+            <option [ngValue]="20">20</option>
+            <option [ngValue]="50">50</option>
+          </select>
+
+          <!-- Prev -->
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="prevPage()"
+            [disabled]="currentPage === 1"
+          >
+            ◀ Prev
+          </button>
+
+          <!-- Page Numbers -->
+          <button
+            *ngFor="let p of pageNumbers"
+            class="btn btn-sm"
+            [ngClass]="p === currentPage ? 'btn-primary' : 'btn-outline-secondary'"
+            (click)="goToPage(p)"
+          >
+            {{ p }}
+          </button>
+
+          <!-- Next -->
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages"
+          >
+            Next ▶
+          </button>
+        </div>
+
+
+      </div>
+
+      <!-- <ngx-skeleton-loader count="15" appearance="line"></ngx-skeleton-loader> -->
+
       <!-- No Data -->
       <div *ngIf="filteredList.length === 0" class="text-center py-4 text-muted">
         <!-- <i class="bi bi-emoji-frown fs-2"></i>

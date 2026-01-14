@@ -8,7 +8,6 @@ import { SeoService } from '../../ApiServices/Seo-Service/seo-service';
 import { features } from 'node:process';
 import { log } from 'node:console';
 
-
 @Component({
   selector: 'app-screen-form',
   imports: [NgClass, ReactiveFormsModule, CommonModule, RouterLink],
@@ -18,7 +17,7 @@ import { log } from 'node:console';
 export class ScreenForm {
   screenForm!: FormGroup;
   selectedScreenId: number = 0; // 0 = new screen, otherwise edit
-  ;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -30,28 +29,40 @@ export class ScreenForm {
 
   ngOnInit(): void {
     this.initForm();
+
     //to react activated route id
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
-      if (idParam) {
-        this.selectedScreenId = +idParam;
-        if (this.selectedScreenId !== 0) {
-          this.loadScreenData(this.selectedScreenId);
-        }
-      }
-    });
-    this.seo.updateSeo({
-      title: 'Outdoor Advertising & Billboard Booking Platform in India',
-      description: 'Find and book outdoor advertising like billboards, digital screens, vehicle and street ads across India with location-based search.',
-      keywords: 'outdoor advertising, billboard advertising, digital screen advertising, hoarding ads, vehicle branding, street advertising, outdoor media booking, billboard booking platform, advertising in India',
-      canonical: 'https://adonstreet.com/dashboard/digitalscreen/edit/' + this.selectedScreenId,
-      robots: 'NOINDEX, NOFOLLOW',
-      author: 'CodingEra',
-      publisher: 'Adonstreet',
-      lang: 'en-IN'
-    })
-  }
 
+      // ✅ if id missing, treat as add
+      this.selectedScreenId = idParam ? +idParam : 0;
+
+      // ✅ Edit mode load
+      if (this.selectedScreenId !== 0) {
+        this.loadScreenData(this.selectedScreenId);
+      } else {
+        // ✅ Add mode defaults (optional but safe)
+        this.screenForm.reset({
+          Status: 'Active',
+          RentalCost: 0,
+          PowerBackup: false,
+          featured: false
+        });
+      }
+
+      // ✅ SEO after id set
+      this.seo.updateSeo({
+        title: 'Outdoor Advertising & Billboard Booking Platform in India',
+        description: 'Find and book outdoor advertising like billboards, digital screens, vehicle and street ads across India with location-based search.',
+        keywords: 'outdoor advertising, billboard advertising, digital screen advertising, hoarding ads, vehicle branding, street advertising, outdoor media booking, billboard booking platform, advertising in India',
+        canonical: 'https://adonstreet.com/dashboard/digitalscreen/edit/' + this.selectedScreenId,
+        robots: 'NOINDEX, NOFOLLOW',
+        author: 'CodingEra',
+        publisher: 'Adonstreet',
+        lang: 'en-IN'
+      });
+    });
+  }
 
   // Initialize the form
   initForm() {
@@ -79,29 +90,36 @@ export class ScreenForm {
       featured: [false]
     });
   }
+
   //load Edit
   loadScreenData(id: number) {
     debugger;
+
     this.http.get<any>(`http://localhost:8080/screens/${id}`).subscribe({
-      next: (data) => {
+      next: (res) => {
+        // ✅ IMPORTANT FIX: handle API response {data: {...}} or direct object
+        const data = res?.data ?? res;
+
         this.screenForm.patchValue({
           ...data,
-          OnboardingDate: data.OnboardingDate?.split('T')[0],
-          ContractStartDate: data.ContractStartDate?.split('T')[0],
-          ContractEndDate: data.ContractEndDate?.split('T')[0],
-          featured: data.featured === 1
+          OnboardingDate: data?.OnboardingDate ? data.OnboardingDate.split('T')[0] : data?.OnboardingDate,
+          ContractStartDate: data?.ContractStartDate ? data.ContractStartDate.split('T')[0] : data?.ContractStartDate,
+          ContractEndDate: data?.ContractEndDate ? data.ContractEndDate.split('T')[0] : data?.ContractEndDate,
+          featured: data?.featured === 1 || data?.featured === true
         });
-        console.log(data);
+
+        console.log("Loaded Screen Data:", data);
+        this.toaster.success("Screen data loaded ✅");
       },
-      error: () => {
-        this.toaster.error("Failed to load vehicle details");
+      error: (err) => {
+        console.error(err);
+        this.toaster.error("Failed to load screen details");
       }
     });
   }
 
   // Save new screen or update existing
   addOrUpdateScreen() {
-    // const payload = this.screenForm.value;
     const payload = {
       ...this.screenForm.value,
       featured: this.screenForm.value.featured ? 1 : 0
@@ -112,7 +130,7 @@ export class ScreenForm {
       this.http.post("http://localhost:8080/screens/", payload).subscribe({
         next: (res: any) => {
           this.toaster.success("New Screen Added Successfully");
-          this.router.navigateByUrl("/dashboard/digitalscreen")
+          this.router.navigateByUrl("/dashboard/digitalscreen");
           this.screenForm.reset();
         },
         error: (err) => {
@@ -125,7 +143,7 @@ export class ScreenForm {
       this.http.put(`http://localhost:8080/screens/${this.selectedScreenId}`, payload).subscribe({
         next: (res: any) => {
           this.toaster.success("Screen Updated Successfully");
-          this.router.navigateByUrl("/dashboard/digitalscreen")
+          this.router.navigateByUrl("/dashboard/digitalscreen");
           this.screenForm.reset();
           this.selectedScreenId = 0; // reset to create mode
         },
@@ -138,9 +156,19 @@ export class ScreenForm {
   }
 
   resetForm() {
-    this.screenForm.reset();
+    // ✅ In edit mode, reload data (so old data shows again)
+    if (this.selectedScreenId !== 0) {
+      this.loadScreenData(this.selectedScreenId);
+      return;
+    }
+
+    // ✅ In add mode, clear
+    this.screenForm.reset({
+      Status: 'Active',
+      RentalCost: 0,
+      PowerBackup: false,
+      featured: false
+    });
     this.selectedScreenId = 0;
   }
-
-
 }

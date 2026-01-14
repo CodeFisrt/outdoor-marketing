@@ -72,7 +72,7 @@
     position: absolute;
     top: 20px;
     left: 20px;
-    z-index: 10;
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -146,7 +146,7 @@
 }
 
 .header-info {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.1rem;
 }
 
 .service-tag {
@@ -155,9 +155,9 @@
     color: #3b82f6;
     font-weight: 600;
     font-size: 0.85rem;
-    padding: 4px 12px;
+    padding: 4px 10px;
     border-radius: 6px;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
     text-transform: uppercase;
 }
 
@@ -180,7 +180,7 @@
 
 .price-box {
     margin-bottom: 2rem;
-    padding-bottom: 1rem;
+    padding-bottom: 0.6rem;
     border-bottom: 1px solid #e5e7eb;
 }
 
@@ -219,7 +219,7 @@
 }
 
 .attr-val {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #1f2937;
     font-weight: 600;
 }
