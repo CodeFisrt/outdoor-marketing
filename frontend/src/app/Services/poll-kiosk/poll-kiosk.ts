@@ -4,12 +4,10 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { Router, RouterLink } from '@angular/router';
-import { NgxSkeletonLoaderComponent } from "ngx-skeleton-loader";
-
 @Component({
   selector: 'app-poll-kiosk',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink, NgxSkeletonLoaderComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './poll-kiosk.html',
   styleUrls: ['./poll-kiosk.css']
 })
@@ -17,6 +15,13 @@ export class PollKiosk implements OnInit {
 
   balloons: any[] = [];
   filteredList: any[] = [];
+
+  // ✅ PAGINATION (ADDED – SAME AS HOARDINGS)
+  pageSize: number = 10;
+  currentPage: number = 1;
+  totalPages: number = 1;
+  pagedList: any[] = [];
+
   balloonForm!: FormGroup;
   searchTerm: string = "";
   editingId: number | null = null;
@@ -28,7 +33,7 @@ export class PollKiosk implements OnInit {
     private http: HttpClient,
     private toastr: ToastrService,
     private router: Router,
-    private cd: ChangeDetectorRef   // 👈 FIX change detection
+    private cd: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -62,15 +67,19 @@ export class PollKiosk implements OnInit {
     });
   }
 
-  // 🔍 Filter Search
+  // 🔍 Search filter
   filterBallons() {
     const t = this.searchTerm.toLowerCase();
+
     this.filteredList = this.balloons.filter(b =>
       b.b_location_name.toLowerCase().includes(t) ||
       b.b_city.toLowerCase().includes(t) ||
       b.b_type.toLowerCase().includes(t) ||
-      String(b.b_cost).toLowerCase().includes(t)
+      String(b.b_cost).includes(t)
     );
+
+    this.currentPage = 1;
+    this.buildPagination();
   }
 
   // ✅ Load all records
@@ -79,49 +88,87 @@ export class PollKiosk implements OnInit {
       next: (data) => {
         this.balloons = data;
         this.filteredList = data;
-        this.cd.detectChanges();  // 👈 FIX ExpressionChanged error
+        this.currentPage = 1;
+        this.buildPagination();
+        this.cd.detectChanges();
       },
       error: () => this.toastr.error("Failed to load balloons")
     });
   }
 
-  // ✅ Save / Update data
-  saveBalloon() {
-    const payload = this.balloonForm.value;
+  // ✅ PAGINATION CORE (SAME LOGIC)
+  private buildPagination() {
+    const total = this.filteredList.length;
 
-    // ➤ Add New
-    if (this.editingId === null) {
-      this.http.post(this.apiUrl, payload).subscribe({
-        next: () => {
-          this.toastr.success("Balloon added successfully");
-          this.loadBalloons();
-          this.resetForm();
-        },
-        error: () => this.toastr.error("Failed to add balloon")
-      });
-    }
-    // ➤ Update Existing
-    else {
-      this.http.put(`${this.apiUrl}/${this.editingId}`, payload).subscribe({
-        next: () => {
-          this.toastr.success("Balloon updated successfully");
-          this.loadBalloons();
-          this.resetForm();
-          this.editingId = null;
-        },
-        error: () => this.toastr.error("Failed to update record")
-      });
+    this.totalPages = Math.max(1, Math.ceil(total / this.pageSize));
+
+    if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+    if (this.currentPage < 1) this.currentPage = 1;
+
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+
+    this.pagedList = this.filteredList.slice(start, end);
+
+    this.cd.detectChanges();
+  }
+
+  get pageNumbers(): number[] {
+    const pages: number[] = [];
+    const start = Math.max(1, this.currentPage - 2);
+    const end = Math.min(this.totalPages, this.currentPage + 2);
+
+    for (let i = start; i <= end; i++) pages.push(i);
+
+    if (pages[0] !== 1) pages.unshift(1);
+    if (pages[pages.length - 1] !== this.totalPages) pages.push(this.totalPages);
+
+    return Array.from(new Set(pages));
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.buildPagination();
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.buildPagination();
     }
   }
 
-  // ✅ Load data for edit
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.buildPagination();
+    }
+  }
+
+  changePageSize(size: number) {
+    this.pageSize = +size;
+    this.currentPage = 1;
+    this.buildPagination();
+  }
+
+  get showingFrom(): number {
+    if (!this.filteredList.length) return 0;
+    return (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get showingTo(): number {
+    return Math.min(this.currentPage * this.pageSize, this.filteredList.length);
+  }
+
+  // ✏️ Edit
   edit(balloonId: number) {
     this.editingId = balloonId;
     this.router.navigateByUrl("/dashboard/poll-Kisok-Form/" + balloonId);
     this.toastr.info("Editing balloon data");
   }
 
-  // ✅ Delete record
+  // ❌ Delete
   delete(id: number) {
     if (!confirm("Are you sure you want to delete?")) return;
 
@@ -134,7 +181,6 @@ export class PollKiosk implements OnInit {
     });
   }
 
-  // ✅ Reset form
   resetForm() {
     this.balloonForm.reset();
     this.editingId = null;

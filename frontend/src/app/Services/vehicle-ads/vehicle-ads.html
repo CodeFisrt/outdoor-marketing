@@ -1,26 +1,16 @@
 <div class="container mt-4">
-  <!-- Header + Add New Btn -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="d-flex justify-content-between align-items-center mb-4">
     <h3 class="fw-bold"><i class="bi bi-truck-front"></i> Vehicle Management</h3>
-    <div class="input-group w-25 me-3">
-      <!-- 🔍 Search Icon Button (ADDED) -->
 
+    <div class="input-group w-25 me-3">
       <input
         type="text"
         class="form-control"
-        placeholder="Search hoardings..."
+        placeholder="Search vehicles..."
         [(ngModel)]="searchTerm"
         (input)="filterVehicle()"
       />
-
-      <button
-        class="btn btn-outline-secondary"
-        type="button"
-        (click)="applySearch()"
-        title="Search"
-      >
-        🔍
-      </button>
+      <button class="btn btn-outline-secondary" type="button" (click)="applySearch()">🔍</button>
     </div>
 
     <a
@@ -31,17 +21,12 @@
     </a>
   </div>
 
-  <!-- 📋 Vehicle List -->
-  <div class="card shadow-lg rounded-3 mt-4 border-0">
-    <div class="card-header bg-white text-dark d-flex align-items-center">
-      <i class="bi bi-list-check me-2"></i>
-      <h5 class="mb-0">Vehicle List</h5>
-    </div>
+  <div class="card shadow-lg rounded-4">
     <div class="card-body p-0">
-      <table class="table table-hover table-striped align-middle mb-0">
-        <thead class="table-primary">
+      <table class="table table-bordered table-striped table-hover align-middle shadow-sm mb-0">
+        <thead class="table-primary text-center">
           <tr>
-            <th>ID</th>
+            <th>#</th>
             <th>Type</th>
             <th>Number</th>
             <th>City</th>
@@ -51,44 +36,86 @@
           </tr>
         </thead>
         <tbody>
-          @for(v of vehicleList; track v.v_id) {
-          <tr>
-            <td>{{ v.v_id }}</td>
+          <tr *ngFor="let v of paginatedList; let i = index">
+            <td class="text-center">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
             <td><i class="bi bi-truck"></i> {{ v.v_type }}</td>
             <td>{{ v.v_number }}</td>
             <td><i class="bi bi-geo-alt"></i> {{ v.v_city }}</td>
-            <td>₹ {{ v.v_cost }}</td>
+            <td class="text-end">₹ {{ v.v_cost }}</td>
             <td>
               <span
-                class="badge px-3 py-2 fs-6"
+                class="badge"
                 [ngClass]="{
                   'bg-success': v.payment_status === 'Paid',
                   'bg-warning text-dark': v.payment_status === 'Pending'
                 }"
+                >{{ v.payment_status }}</span
               >
-                {{ v.payment_status }}
-              </span>
             </td>
             <td class="text-center">
-              <button class="btn btn-sm btn-outline-primary me-2" (click)="editVehicle(v.v_id)">
-                <i class="bi bi-pencil-square"></i> Edit
+              <button class="btn btn-outline-primary btn-sm me-2" (click)="editVehicle(v.v_id)">
+                Edit
               </button>
-              <button class="btn btn-sm btn-outline-danger" (click)="deleteVehicle(v.v_id)">
-                <i class="bi bi-trash"></i> Delete
+              <button class="btn btn-outline-danger btn-sm" (click)="deleteVehicle(v.v_id)">
+                Delete
               </button>
             </td>
           </tr>
-          }
-          <!-- @if(vehicleList.length === 0) {
-          <tr>
-            <td colspan="7" class="text-center text-muted py-3">
-              <i class="bi bi-info-circle"></i> No vehicles available
-            </td>
-          </tr>
-          } -->
         </tbody>
       </table>
-      <ngx-skeleton-loader count="15" appearance="line"></ngx-skeleton-loader>
+
+      <!-- Pagination and Page Size -->
+      <div
+        class="d-flex flex-wrap justify-content-between align-items-center mt-3 py-2 px-2"
+        *ngIf="filteredList.length > 0"
+      >
+        <div class="text-muted small">
+          Showing <b>{{ showingFrom }}</b> – <b>{{ showingTo }}</b> of
+          <b>{{ filteredList.length }}</b>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <select
+            class="form-select form-select-sm"
+            style="width: 90px"
+            [(ngModel)]="pageSize"
+            (change)="changePageSize(pageSize)"
+          >
+            <option [ngValue]="5">5</option>
+            <option [ngValue]="10">10</option>
+            <option [ngValue]="20">20</option>
+            <option [ngValue]="50">50</option>
+          </select>
+
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="prevPage()"
+            [disabled]="currentPage === 1"
+          >
+            ◀ Prev
+          </button>
+
+          <button
+            *ngFor="let p of pageNumbers"
+            class="btn btn-sm"
+            [ngClass]="p === currentPage ? 'btn-primary' : 'btn-outline-secondary'"
+            (click)="goToPage(p)"
+          >
+            {{ p }}
+          </button>
+
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages"
+          >
+            Next ▶
+          </button>
+        </div>
+      </div>
+      <div *ngIf="filteredList.length === 0" class="text-center py-4 text-muted">
+        No vehicles found.
+      </div>
     </div>
   </div>
 </div>

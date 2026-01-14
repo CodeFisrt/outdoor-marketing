@@ -1,47 +1,47 @@
 <div class="container mt-4">
-  <!-- Add New Button -->
+  <!-- Header & Search -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>🏢 Societies</h3>
 
-    <!-- 🔍 Search Bar -->
-    <input
-      type="text"
-      class="form-control w-25 me-3"
-      placeholder="🔍 Search WallPaint..."
-      [(ngModel)]="searchTerm"
-      (input)="filterSocities()"
-    />
+    <div class="input-group w-25 me-3">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search WallPaint..."
+        [(ngModel)]="searchTerm"
+        (input)="filterSocities()"
+      />
+      <button class="btn btn-outline-secondary" (click)="applySearch()">🔍</button>
+    </div>
 
     <button class="btn btn-primary" routerLink="/dashboard/wall-Paints-Form/0">
       <i class="bi bi-plus-circle"></i> Add New
     </button>
   </div>
 
-  <!-- 📋 Society List -->
+  <!-- Table Card -->
   <div class="card shadow-lg">
-    <div class="card-header bg-white text-dark"><h5>Societies</h5></div>
     <div class="card-body p-0">
-      <table class="table table-striped mb-0">
-        <thead class="table-primary">
+      <table class="table table-hover mb-0">
+        <thead class="table-primary text-center">
           <tr>
-            <th>ID</th>
+            <th>#</th>
             <th>Society</th>
             <th>City</th>
             <th>Flats</th>
             <th>Cost</th>
             <th>Status</th>
-            <th class="text-center">Actions</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          @for (s of filteredList; track s.s_id) {
-          <tr>
-            <td>{{ s.s_id }}</td>
+          <tr *ngFor="let s of pagedList; let i = index">
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
             <td>{{ s.s_name }}</td>
             <td><i class="bi bi-geo-alt"></i> {{ s.s_city }}</td>
             <td>{{ s.s_no_flats }}</td>
-            <td>{{ s.expected_cost }}</td>
-            <td>
+            <td>₹ {{ s.expected_cost }}</td>
+            <td class="text-center">
               <span
                 class="badge"
                 [ngClass]="{
@@ -62,15 +62,63 @@
               </button>
             </td>
           </tr>
-          }
-          <!-- @if (filteredList.length === 0) {
-          <tr>
+
+          <!-- No Data -->
+          <tr *ngIf="filteredList.length === 0">
             <td colspan="7" class="text-center text-muted">No records found</td>
           </tr>
-          } -->
         </tbody>
       </table>
-      <ngx-skeleton-loader count="15" appearance="line"></ngx-skeleton-loader>
+
+      <!-- Pagination -->
+      <div
+        class="d-flex justify-content-between align-items-center mt-3 py-2 px-2"
+        *ngIf="filteredList.length > 0"
+      >
+        <div class="text-muted small">
+          Showing <b>{{ showingFrom }}</b> – <b>{{ showingTo }}</b> of
+          <b>{{ filteredList.length }}</b>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <select
+            class="form-select form-select-sm"
+            style="width: 90px"
+            [(ngModel)]="pageSize"
+            (change)="changePageSize(pageSize)"
+          >
+            <option [ngValue]="5">5</option>
+            <option [ngValue]="10">10</option>
+            <option [ngValue]="20">20</option>
+            <option [ngValue]="50">50</option>
+          </select>
+
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="prevPage()"
+            [disabled]="currentPage === 1"
+          >
+            ◀ Prev
+          </button>
+
+          <button
+            *ngFor="let p of pageNumbers"
+            class="btn btn-sm"
+            [ngClass]="p === currentPage ? 'btn-primary' : 'btn-outline-secondary'"
+            (click)="goToPage(p)"
+          >
+            {{ p }}
+          </button>
+
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages"
+          >
+            Next ▶
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

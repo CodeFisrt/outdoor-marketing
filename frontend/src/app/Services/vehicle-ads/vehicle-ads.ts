@@ -5,21 +5,27 @@ import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Vehicle } from '../../Model/model';
 import { CommonModule, NgClass } from '@angular/common';
-import { NgxSkeletonLoaderComponent } from "ngx-skeleton-loader";
 
 @Component({
   selector: 'app-vehicle-ads',
-  imports: [NgClass, FormsModule, CommonModule, ReactiveFormsModule, RouterLink, NgxSkeletonLoaderComponent],
+  imports: [NgClass, FormsModule, CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './vehicle-ads.html',
-  styleUrl: './vehicle-ads.css'
+  styleUrls: ['./vehicle-ads.css']
 })
 export class VehicleAds {
 
   vehicleList: Vehicle[] = [];
-  vehicleForm!: FormGroup;                 // declared
-  apiUrl = "http://localhost:8080/vehicles";
-  filteredList: any[] = [];
+  filteredList: Vehicle[] = [];
+  paginatedList: Vehicle[] = [];
   searchTerm: string = "";
+
+  vehicleForm!: FormGroup;
+  apiUrl = "http://localhost:8080/vehicles";
+
+  // Pagination
+  pageSize = 10;
+  currentPage = 1;
+  totalPages = 1;
 
   constructor(
     private router: Router,
@@ -30,8 +36,7 @@ export class VehicleAds {
   ) { }
 
   ngOnInit() {
-
-    // ✅✅✅ FIX 1: FORM INITIALIZATION (THIS WAS MISSING)
+    // Init form
     this.vehicleForm = this.fb.group({
       v_id: [0],
       v_type: ['', Validators.required],
@@ -50,65 +55,113 @@ export class VehicleAds {
       featured: [false]
     });
 
-    // existing logic (kept exactly)
-    this.getAllVechile();
+    // Load vehicles
+    this.getAllVehicle();
 
-    // existing logic (kept exactly)
-    setTimeout(() => {
-      this.vehicleForm.valueChanges.subscribe(() => {
-        this.calculateDuration();
-        this.cdr.detectChanges();
-      });
+    // Auto duration calc
+    this.vehicleForm.valueChanges.subscribe(() => {
+      this.calculateDuration();
+      this.cdr.detectChanges();
     });
   }
 
+  // ========================
+  // FILTER / SEARCH
+  // ========================
   filterVehicle() {
     const term = this.searchTerm.toLowerCase();
-    this.filteredList = this.vehicleList.filter(s =>
-      s.v_type.toLowerCase().includes(term) ||
-      s.v_number.toString().includes(term) ||
-      s.v_city.toLowerCase().includes(term) ||
-      s.v_cost.toString().includes(term)
+    this.filteredList = this.vehicleList.filter(v =>
+      v.v_type.toLowerCase().includes(term) ||
+      v.v_number.toString().includes(term) ||
+      v.v_city.toLowerCase().includes(term) ||
+      v.v_cost.toString().includes(term)
     );
 
+    this.currentPage = 1;
+    this.buildPagination();
+  }
+
+  applySearch() {
+    this.filterVehicle();
+  }
+
+  // ========================
+  // PAGINATION LOGIC
+  // ========================
+  buildPagination() {
+    const total = this.filteredList.length;
+    this.totalPages = Math.max(1, Math.ceil(total / this.pageSize));
+
+    if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+    if (this.currentPage < 1) this.currentPage = 1;
+
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+
+    this.paginatedList = this.filteredList.slice(start, end);
     this.cdr.detectChanges();
   }
 
-  // 🔍 Search triggered by icon click (ADDED)
-  applySearch() {
-    this.filterVehicle(); // reuse existing logic
+  get pageNumbers(): number[] {
+    const total = this.totalPages;
+    const current = this.currentPage;
+    const pages: number[] = [];
+    const start = Math.max(1, current - 2);
+    const end = Math.min(total, current + 2);
+    for (let i = start; i <= end; i++) pages.push(i);
+    if (pages[0] !== 1) pages.unshift(1);
+    if (pages[pages.length - 1] !== total) pages.push(total);
+    return Array.from(new Set(pages));
   }
 
-  calculateDuration() {
-    const start = this.vehicleForm.get('v_start_date')?.value;
-    const end = this.vehicleForm.get('v_end_date')?.value;
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.buildPagination();
+  }
 
-    if (start && end) {
-      const s = new Date(start);
-      const e = new Date(end);
-      const diff = Math.ceil(
-        (e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24)
-      ) + 1;
-
-      this.vehicleForm.get('v_duration_days')?.setValue(
-        diff > 0 ? diff : 0,
-        { emitEvent: false }
-      );
-
-      this.cdr.detectChanges();
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.buildPagination();
     }
   }
 
-  // READ
-  getAllVechile() {
-    this.http.get<Vehicle[]>(this.apiUrl).subscribe((res: any) => {
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.buildPagination();
+    }
+  }
+
+  changePageSize(size: number) {
+    this.pageSize = +size;
+    this.currentPage = 1;
+    this.buildPagination();
+  }
+
+  get showingFrom() {
+    if (!this.filteredList.length) return 0;
+    return (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get showingTo() {
+    const to = this.currentPage * this.pageSize;
+    return Math.min(to, this.filteredList.length);
+  }
+
+  // ========================
+  // CRUD METHODS
+  // ========================
+  getAllVehicle() {
+    this.http.get<Vehicle[]>(this.apiUrl).subscribe(res => {
       this.vehicleList = res;
       this.filteredList = res;
-      this.cdr.detectChanges();
+      this.currentPage = 1;
+      this.buildPagination();
     });
   }
 
-  // CREATE
   addVehicle() {
     if (this.vehicleForm.invalid) {
       this.vehicleForm.markAllAsTouched();
@@ -118,13 +171,11 @@ export class VehicleAds {
 
     this.http.post(this.apiUrl, this.vehicleForm.value).subscribe(() => {
       this.toaster.success("Vehicle added successfully");
-      this.getAllVechile();
+      this.getAllVehicle();
       this.vehicleForm.reset();
-      this.cdr.detectChanges();
     });
   }
 
-  // UPDATE
   updateVehicle() {
     if (this.vehicleForm.invalid) {
       this.vehicleForm.markAllAsTouched();
@@ -132,32 +183,36 @@ export class VehicleAds {
       return;
     }
 
-    this.http.put(
-      `${this.apiUrl}/${this.vehicleForm.value.v_id}`,
-      this.vehicleForm.value
-    ).subscribe(() => {
-      this.toaster.success("Vehicle updated successfully");
-      this.getAllVechile();
-      this.vehicleForm.reset();
-      this.cdr.detectChanges();
-    });
+    this.http.put(`${this.apiUrl}/${this.vehicleForm.value.v_id}`, this.vehicleForm.value)
+      .subscribe(() => {
+        this.toaster.success("Vehicle updated successfully");
+        this.getAllVehicle();
+        this.vehicleForm.reset();
+      });
   }
 
-  // DELETE
   deleteVehicle(id: number) {
     if (confirm("Are you sure to delete?")) {
       this.http.delete(`${this.apiUrl}/${id}`).subscribe(() => {
         this.toaster.success("Vehicle deleted successfully");
-        this.getAllVechile();
-        this.cdr.detectChanges();
+        this.getAllVehicle();
       });
     }
   }
 
-  // EDIT
   editVehicle(vehicleId: number) {
     this.router.navigateByUrl("/dashboard/vehicle-Ads-Form/" + vehicleId);
     this.toaster.info("Edit Vehicle data loaded into form");
-    this.cdr.detectChanges();
   }
+
+  calculateDuration() {
+    const start = this.vehicleForm.get('v_start_date')?.value;
+    const end = this.vehicleForm.get('v_end_date')?.value;
+
+    if (start && end) {
+      const diff = Math.ceil((new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      this.vehicleForm.get('v_duration_days')?.setValue(diff > 0 ? diff : 0, { emitEvent: false });
+    }
+  }
+
 }

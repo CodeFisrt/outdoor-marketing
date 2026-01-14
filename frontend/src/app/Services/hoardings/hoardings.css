@@ -174,13 +174,6 @@ h2 {
   font-size: 0.95rem;
 }
 
-/* =========================
-   SKELETON LOADER
-========================= */
-ngx-skeleton-loader {
-  margin: 20px;
-}
-
 .btn-outline-secondary {
   border-radius: 12px 12px 12px 12px;
   border: solid;

@@ -1,0 +1,120 @@
+.container {
+  max-width: 1400px;
+}
+
+/* Header & Search */
+h3 {
+  letter-spacing: 0.4px;
+}
+.input-group {
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+.input-group .form-control {
+  border: none;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+}
+.input-group .form-control:focus {
+  box-shadow: none;
+}
+.input-group .btn {
+  border: none;
+  padding: 0 16px;
+  font-size: 1rem;
+  background: #f4f6fb;
+  transition: 0.2s;
+}
+.input-group .btn:hover {
+  background: #e7ebf7;
+}
+
+/* Add Button */
+.btn-primary {
+  border-radius: 12px;
+  padding: 10px 18px;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(13, 110, 253, 0.25);
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(13, 110, 253, 0.35);
+}
+
+/* Table Card */
+.card {
+  border-radius: 18px;
+  overflow: hidden;
+}
+.card-body {
+  padding: 0;
+}
+
+/* Table */
+.table {
+  margin-bottom: 0;
+  border-collapse: separate;
+  border-spacing: 0 12px;
+}
+.table thead th {
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  border: none;
+}
+.table tbody tr {
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+.table tbody tr:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
+}
+.table tbody td {
+  padding: 12px;
+  vertical-align: middle;
+  border: none;
+}
+
+/* Badges */
+.badge {
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+/* Buttons */
+.btn-outline-primary,
+.btn-outline-danger {
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.25s ease;
+}
+.btn-outline-primary:hover {
+  background: #5c6ac4;
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(92, 106, 196, 0.35);
+  transform: translateY(-1px);
+}
+.btn-outline-danger:hover {
+  background: #e5533d;
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(229, 83, 61, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Pagination */
+.btn-outline-secondary {
+  border-radius: 12px;
+  padding: 0 16px;
+  font-size: 1rem;
+  background: #f4f6fb;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}

@@ -3,7 +3,6 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>🎈 Balloons</h3>
 
-    <!-- 🔍 Search Bar -->
     <input
       type="text"
       class="form-control w-25 me-3"
@@ -20,11 +19,12 @@
   <!-- 📋 Balloons List -->
   <div class="card shadow-lg">
     <div class="card-header bg-white text-dark"><h5>All Balloons</h5></div>
+
     <div class="card-body p-0">
       <table class="table table-striped mb-0">
         <thead class="table-primary">
           <tr>
-            <th>ID</th>
+            <th>#</th>
             <th>Location</th>
             <th>City</th>
             <th>Type</th>
@@ -33,10 +33,11 @@
             <th class="text-center">Actions</th>
           </tr>
         </thead>
+
         <tbody>
-          @for (b of filteredList; track b.b_id) {
+          @for (b of pagedList; track b.b_id; let i = $index) {
           <tr>
-            <td>{{ b.b_id }}</td>
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
             <td>{{ b.b_location_name }}</td>
             <td><i class="bi bi-geo-alt"></i> {{ b.b_city }}</td>
             <td>{{ b.b_type }}</td>
@@ -63,14 +64,58 @@
             </td>
           </tr>
           }
-          <!-- @if (balloons.length === 0) {
-          <tr>
-            <td colspan="7" class="text-center text-muted">No records found</td>
-          </tr>
-          } -->
         </tbody>
       </table>
-      <ngx-skeleton-loader count="15" appearance="line"></ngx-skeleton-loader>
+
+      <!-- ✅ PAGINATION UI -->
+      <div
+        class="d-flex justify-content-between align-items-center px-3 py-2"
+        *ngIf="filteredList.length > 0"
+      >
+        <div class="text-muted small">
+          Showing <b>{{ showingFrom }}</b> – <b>{{ showingTo }}</b> of
+          <b>{{ filteredList.length }}</b>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <select
+            class="form-select form-select-sm"
+            style="width: 90px"
+            [(ngModel)]="pageSize"
+            (change)="changePageSize(pageSize)"
+          >
+            <option [ngValue]="5">5</option>
+            <option [ngValue]="10">10</option>
+            <option [ngValue]="20">20</option>
+            <option [ngValue]="50">50</option>
+          </select>
+
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="prevPage()"
+            [disabled]="currentPage === 1"
+          >
+            ◀ Prev
+          </button>
+
+          <button
+            *ngFor="let p of pageNumbers"
+            class="btn btn-sm"
+            [ngClass]="p === currentPage ? 'btn-primary' : 'btn-outline-secondary'"
+            (click)="goToPage(p)"
+          >
+            {{ p }}
+          </button>
+
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages"
+          >
+            Next ▶
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

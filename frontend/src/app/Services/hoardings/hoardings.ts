@@ -5,7 +5,6 @@ import { Hoarding } from '../../Model/model';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgxSkeletonLoaderComponent } from "ngx-skeleton-loader";
 import { FeaturedCards } from "../../pages/featured-cards/featured-cards";
 
 @Component({

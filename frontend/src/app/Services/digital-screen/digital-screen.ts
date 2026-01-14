@@ -6,7 +6,6 @@ import { ToastrService } from 'ngx-toastr';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgxSkeletonLoaderComponent } from "ngx-skeleton-loader";
 
 @Component({
   selector: 'app-digital-screen',
