@@ -1,0 +1,280 @@
+<div class="container mt-4">
+  <div class="card shadow-lg">
+    <div class="card-header bg-primary text-white d-flex justify-content-between">
+      <h5 class="mb-0">
+        {{ userId ? '✏️ Edit User' : '➕ Add User' }}
+      </h5>
+
+      <button
+        type="button"
+        class="btn text-dark btn-outline-secondary"
+        routerLink="/dashboard/users-list"
+      >
+        ⬅️ Back to List
+      </button>
+    </div>
+
+    <div class="card-body">
+      <form [formGroup]="userForm" (ngSubmit)="save()">
+        <div class="row">
+
+          <!-- Role -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Role <span class="text-danger">*</span></label>
+            <select
+              class="form-select"
+              formControlName="role"
+              [ngClass]="{ 'is-invalid': isInvalid('role') }"
+            >
+              <option value="">-- Select Role --</option>
+              <option value="agency">Agency</option>
+              <option value="screenOwner">Screen Owner</option>
+              <option value="guest">Guest</option>
+            </select>
+            <div class="invalid-feedback" *ngIf="isInvalid('role')">
+              Role is required.
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Status <span class="text-danger">*</span></label>
+            <select
+              class="form-select"
+              formControlName="status"
+              [ngClass]="{ 'is-invalid': isInvalid('status') }"
+            >
+              <option value="active">Active</option>
+              <option value="blocked">Blocked</option>
+            </select>
+            <div class="invalid-feedback" *ngIf="isInvalid('status')">
+              Status is required.
+            </div>
+          </div>
+
+          <!-- Name -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Full Name <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userName"
+              [ngClass]="{ 'is-invalid': isInvalid('userName') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('userName')">
+              Full Name is required.
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Email <span class="text-danger">*</span></label>
+            <input
+              type="email"
+              class="form-control"
+              formControlName="userEmail"
+              [ngClass]="{ 'is-invalid': isInvalid('userEmail') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('userEmail')">
+              <span *ngIf="userForm.get('userEmail')?.errors?.['required']">
+                Email is required.
+              </span>
+              <span *ngIf="userForm.get('userEmail')?.errors?.['email']">
+                Enter valid email address.
+              </span>
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Password <span class="text-danger">*</span></label>
+            <input
+              type="password"
+              class="form-control"
+              formControlName="password"
+              [ngClass]="{ 'is-invalid': isInvalid('password') }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('password')">
+              <span *ngIf="userForm.get('password')?.errors?.['required']">
+                Password is required.
+              </span>
+              <span *ngIf="userForm.get('password')?.errors?.['minlength']">
+                Password must be at least 6 characters.
+              </span>
+            </div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Confirm Password <span class="text-danger">*</span></label>
+            <input
+              type="password"
+              class="form-control"
+              formControlName="confirmPassword"
+              [ngClass]="{
+                'is-invalid': isInvalid('confirmPassword') || hasFormError('passwordMismatch')
+              }"
+            />
+            <div class="invalid-feedback" *ngIf="isInvalid('confirmPassword')">
+              Confirm password is required.
+            </div>
+            <div
+              class="invalid-feedback d-block"
+              *ngIf="!isInvalid('confirmPassword') && hasFormError('passwordMismatch')"
+            >
+              Password and Confirm Password must match.
+            </div>
+          </div>
+
+          <!-- ===========================
+               Role-wise fields (same structure)
+               =========================== -->
+
+          <!-- Agency -->
+          <ng-container *ngIf="selectedRole === 'agency'">
+            <div class="col-12 mt-2">
+              <h6 class="fw-bold text-secondary mb-2">Agency Details</h6>
+              <hr class="mt-0" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Agency Name <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="agencyName"
+                [ngClass]="{ 'is-invalid': isInvalid('agencyName') }"
+              />
+              <div class="invalid-feedback" *ngIf="isInvalid('agencyName')">
+                Agency Name is required.
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Phone <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="agencyPhone"
+                [ngClass]="{ 'is-invalid': isInvalid('agencyPhone') }"
+              />
+              <div class="invalid-feedback" *ngIf="isInvalid('agencyPhone')">
+                Phone is required.
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">City <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="agencyCity"
+                [ngClass]="{ 'is-invalid': isInvalid('agencyCity') }"
+              />
+              <div class="invalid-feedback" *ngIf="isInvalid('agencyCity')">
+                City is required.
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Screen Owner -->
+          <ng-container *ngIf="selectedRole === 'screenOwner'">
+            <div class="col-12 mt-2">
+              <h6 class="fw-bold text-secondary mb-2">Screen Owner Details</h6>
+              <hr class="mt-0" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Company / Owner Name <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="ownerCompanyName"
+                [ngClass]="{ 'is-invalid': isInvalid('ownerCompanyName') }"
+              />
+              <div class="invalid-feedback" *ngIf="isInvalid('ownerCompanyName')">
+                Company/Owner Name is required.
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Phone <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="ownerPhone"
+                [ngClass]="{ 'is-invalid': isInvalid('ownerPhone') }"
+              />
+              <div class="invalid-feedback" *ngIf="isInvalid('ownerPhone')">
+                Phone is required.
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Address <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="ownerAddress"
+                [ngClass]="{ 'is-invalid': isInvalid('ownerAddress') }"
+              />
+              <div class="invalid-feedback" *ngIf="isInvalid('ownerAddress')">
+                Address is required.
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">City <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="ownerCity"
+                [ngClass]="{ 'is-invalid': isInvalid('ownerCity') }"
+              />
+              <div class="invalid-feedback" *ngIf="isInvalid('ownerCity')">
+                City is required.
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Guest (optional fields) -->
+          <ng-container *ngIf="selectedRole === 'guest'">
+            <div class="col-12 mt-2">
+              <h6 class="fw-bold text-secondary mb-2">Guest Details (Optional)</h6>
+              <hr class="mt-0" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Phone</label>
+              <input type="text" class="form-control" formControlName="guestPhone" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">City</label>
+              <input type="text" class="form-control" formControlName="guestCity" />
+            </div>
+          </ng-container>
+
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="button" class="btn btn-light btn-sm" (click)="resetForm()">Reset</button>
+
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+
+            <button
+              type="submit"
+              [ngClass]="userId ? 'btn btn-warning' : 'btn btn-success'"
+              [disabled]="userForm.invalid"
+            >
+              {{ userId ? 'Update ✏️' : 'Save ✅' }}
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

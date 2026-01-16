@@ -21,7 +21,7 @@ export class WallPainting {
   searchTerm: string = "";
 
   // ✅ Pagination
-  pageSize: number = 10;
+  pageSize: number = 5;
   currentPage: number = 1;
   totalPages: number = 1;
 

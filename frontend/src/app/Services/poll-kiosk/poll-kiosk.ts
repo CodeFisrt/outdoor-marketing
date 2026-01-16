@@ -17,7 +17,7 @@ export class PollKiosk implements OnInit {
   filteredList: any[] = [];
 
   // ✅ PAGINATION (ADDED – SAME AS HOARDINGS)
-  pageSize: number = 10;
+  pageSize: number = 5;
   currentPage: number = 1;
   totalPages: number = 1;
   pagedList: any[] = [];

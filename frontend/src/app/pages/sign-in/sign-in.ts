@@ -16,6 +16,8 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 })
 export class SignIn {
 
+  
+
   signInForm: FormGroup;
   errorMessage: string = '';
   loading = false;
@@ -34,6 +36,7 @@ export class SignIn {
     });
   }
 
+  
   // onSubmit() {
   //   if (this.signInForm.invalid) {
   //     this.errorMessage = 'Please enter valid credentials.';
@@ -73,19 +76,60 @@ export class SignIn {
   //   });
   // }
 
-  onSubmit(data: any) {
-    debugger
-    this.signupservice.signIn().subscribe({
-      next: (res: any) => {
-        const user = res.find((u: any) => u.userEmail === data.value.emailId && u.password === data.value.password);
-        if (user) {
-          this.toastr.success(`Login Successful!, Welcome Back  "${user.userName}"`);
-          localStorage.setItem('role', user.role);
-          this.router.navigateByUrl('/dashboard');
-        }
-      }
-    });
+  // onSubmit(data: any) {
+  //   debugger
+  //   this.signupservice.signIn().subscribe({
+  //     next: (res: any) => {
+  //       const user = res.find((u: any) => u.userEmail === data.value.emailId && u.password === data.value.password);
+  //       if (user) {
+  //         this.toastr.success(`Login Successful!, Welcome Back  "${user.userName}"`);
+  //         localStorage.setItem('role', user.role);
+  //         this.router.navigateByUrl('/dashboard');
+  //       }
+  //     }
+  //   });
+  // }
+
+
+
+
+    onSubmit(data: any) {
+  if (data.invalid) {
+    this.toastr.error("Please enter valid email & password");
+    return;
   }
+
+  this.signupservice.signIn().subscribe({
+    next: (res: any) => {
+      const user = res.find((u: any) =>
+        u.userEmail === data.value.emailId && u.password === data.value.password
+      );
+
+      if (user) {
+        this.toastr.success(`Login Successful!, Welcome Back "${user.userName}"`);
+
+        // ✅ IMPORTANT: store auth info (guard/interceptor needs token)
+        localStorage.setItem('token', 'loggedin');              // temporary token
+        localStorage.setItem('userEmail', user.userEmail);      // header display
+        localStorage.setItem('userName', user.userName);        // header display
+        localStorage.setItem('role', user.role || 'admin');
+
+        // ✅ go dashboard
+        this.router.navigateByUrl('/dashboard');
+      } else {
+        this.toastr.error("Invalid Email or Password");
+      }
+    },
+    error: () => {
+      this.toastr.error("Login failed. Please try again.");
+    }
+  });
+}
+
+
+
+
+
 
   openGmailLogin() {
     const googleAuthUrl =
@@ -130,4 +174,8 @@ export class SignIn {
 
     window.open(twitterAuthUrl, 'twitterLogin', 'width=500,height=600');
   }
+
+  
+
+
 }

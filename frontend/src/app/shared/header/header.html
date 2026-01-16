@@ -61,10 +61,37 @@
             </div>
 
             <!-- Right Side Buttons -->
-            <div class="d-flex gap-3">
-              <a routerLink="/signin" class="btn btn-outline-light fw-bold btn-sm">Sign In</a>
+            <!-- <div class="d-flex gap-3">
+              <a routerLink="/signin" class="btn btn-outline-light fw-bold btn-sm">Sign In</a> -->
               <!-- <button class="btn btn-danger btn-sm btnlog" (click)="logout()">🚪 Logout</button> -->
-            </div>
+            <!-- </div> -->
+
+
+
+            <!-- Right Side Buttons -->
+<div class="d-flex gap-3 align-items-center">
+
+  <!-- ✅ Logged IN -->
+  <ng-container *ngIf="isLoggedIn; else loggedOut">
+    <a routerLink="/dashboard" class="d-flex align-items-center gap-2 text-white text-decoration-none">
+      <!-- <img src="/assets/logo.svg" alt="Admin" style="width:28px;height:28px;border-radius:6px;" /> -->
+      <i class="bi bi-person-circle"></i>
+      <span class="fw-semibold">{{ adminName }}</span>
+    </a>
+
+    <button class="btn btn-danger btn-sm" (click)="logout()">Logout</button>
+  </ng-container>
+
+  <!-- ✅ Logged OUT -->
+  <ng-template #loggedOut>
+    <a routerLink="/signin" class="btn btn-outline-light fw-bold btn-sm">Sign In</a>
+  </ng-template>
+
+</div>
+
+            
+
+
           </div>
         </nav>
       </div>

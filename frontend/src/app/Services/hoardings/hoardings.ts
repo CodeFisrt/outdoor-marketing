@@ -21,7 +21,7 @@ export class Hoardings {
   ngifCount: number = 0;
 
   // ✅ Pagination (ADDED)
-  pageSize: number = 10;
+  pageSize: number = 5;
   currentPage: number = 1;
   pagedList: Hoarding[] = [];
   totalPages: number = 1;
