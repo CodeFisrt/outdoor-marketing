@@ -9,36 +9,40 @@ import { Router } from '@angular/router';
   styleUrl: './auth-callback.css'
 })
 export class AuthCallback implements OnInit {
-    constructor(
+  constructor(
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: any
   ) {}
 
   ngOnInit(): void {
-    // 🛑 This ensures code runs ONLY in browser, NOT in SSR
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
+    if (!isPlatformBrowser(this.platformId)) return;
 
-    // Safe to use window here
     const fragment = new URLSearchParams(window.location.hash.substring(1));
     const accessToken = fragment.get('access_token');
 
     if (accessToken) {
-       // 2. Get user email from Google API
+
+      // ✅ IMPORTANT: guard checks this key
+      localStorage.setItem('token', accessToken);
+
       fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
         headers: { Authorization: `Bearer ${accessToken}` }
       })
         .then(res => res.json())
         .then(user => {
-            
-           // user.email → contains Google account email
           localStorage.setItem('userEmail', user.email);
 
-          // redirect to dashboard
+          // ✅ now dashboard will open because token exists
           this.router.navigate(['/dashboard']);
+        })
+        .catch(() => {
+          // if Google call fails, clear and go signin
+          localStorage.removeItem('token');
+          localStorage.removeItem('userEmail');
+          this.router.navigate(['/signin']);
         });
+    } else {
+      this.router.navigate(['/signin']);
     }
   }
-
 }

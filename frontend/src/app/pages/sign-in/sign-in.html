@@ -17,7 +17,7 @@
       <h3 class="text-center text-primary mb-4 fw-semibold">Sign In</h3>
 
       <!-- ✅ Bind form -->
-      <form [formGroup]="signInForm">
+      <form [formGroup]="signInForm" (ngSubmit)="onSubmit(signInForm)">
         <div class="mb-3">
           <label for="email" class="form-label">Email</label>
           <input formControlName="emailId" type="email" id="emailId" class="form-control rounded-2 shadow-sm" />
@@ -48,7 +48,8 @@
         </div>
 
         <div class="text-center">
-          <button type="submit" class="btn btn-primary px-4" (click)="onSubmit(signInForm)">Sign In</button>
+          <!-- <button type="submit" class="btn btn-primary px-4" (click)="onSubmit(signInForm)">Sign In</button> -->
+           <button type="submit" class="btn btn-primary px-4">Sign In</button>
         </div>
       </form>
     </div>

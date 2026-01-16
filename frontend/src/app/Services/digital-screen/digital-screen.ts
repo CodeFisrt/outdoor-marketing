@@ -22,7 +22,7 @@ export class DigitalScreen implements OnInit {
   selectedScreenId: number = 0;
 
   // ✅ Pagination
-  pageSize: number = 10;
+  pageSize: number = 5;
   currentPage: number = 1;
   totalPages: number = 1;
   paginatedList: Screen[] = [];
@@ -83,8 +83,8 @@ export class DigitalScreen implements OnInit {
         this.currentPage = 1;
         this.applyPagination();
 
-        this.cdr.detectChanges();
-        this.toaster.success("Screens Loaded Successfully");
+        // this.cdr.detectChanges();
+        // this.toaster.success("Screens Loaded Successfully");
       },
       error: (err) => {
         console.error(err);
@@ -206,7 +206,7 @@ export class DigitalScreen implements OnInit {
   editScreen(screenId: number) {
     debugger;
     this.router.navigateByUrl("/dashboard/screen-Form/" + screenId);
-    this.toaster.info("Edit screen data loaded into form");
+    // this.toaster.info("Edit screen data loaded into form");
   }
 
   resetForm() {

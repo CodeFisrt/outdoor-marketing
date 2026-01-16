@@ -23,7 +23,7 @@ export class VehicleAds {
   apiUrl = "http://localhost:8080/vehicles";
 
   // Pagination
-  pageSize = 10;
+  pageSize = 5;
   currentPage = 1;
   totalPages = 1;
 

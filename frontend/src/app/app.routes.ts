@@ -25,6 +25,12 @@ import { ScreenBoardCardList } from './pages/screen-board-card-list/screen-board
 import { FeaturedList } from './pages/featured-list/featured-list';
 import { Map3dView } from './pages/map3d-view/map3d-view';
 
+
+import { UsersList } from './pages/user-management/users-list/users-list';
+import { AddUserForm } from './pages/user-management/add-user-form/add-user-form';
+import { roleGuard } from './guards/role.guard';
+import { authGuard } from './guards/auth.guard';
+
 // 👇 New DashboardOverview component for default dashboard page
 
 
@@ -53,6 +59,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: Dashboard,
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'overview', pathMatch: 'full' },
       // your charts & stats
@@ -67,6 +74,9 @@ export const routes: Routes = [
       { path: 'vehicle-Ads-Form/:id', component: VehicleAdsForm },
       { path: 'wall-Paints-Form/:id', component: WallpaintsFrom },
       { path: 'hoarding-form/:id', component: HoardingFrom },
+      { path: 'users-list', component: UsersList},
+      { path: 'users/add', component: AddUserForm},
+
     ]
   },
 
