@@ -40,9 +40,7 @@
               formControlName="address"
               [ngClass]="{ 'is-invalid': isInvalid('address') }"
             />
-            <div class="invalid-feedback" *ngIf="isInvalid('address')">
-              Address is required.
-            </div>
+            <div class="invalid-feedback" *ngIf="isInvalid('address')">Address is required.</div>
           </div>
 
           <!-- City -->
@@ -54,9 +52,7 @@
               formControlName="city"
               [ngClass]="{ 'is-invalid': isInvalid('city') }"
             />
-            <div class="invalid-feedback" *ngIf="isInvalid('city')">
-              City is required.
-            </div>
+            <div class="invalid-feedback" *ngIf="isInvalid('city')">City is required.</div>
           </div>
 
           <!-- State -->
@@ -68,9 +64,7 @@
               formControlName="State"
               [ngClass]="{ 'is-invalid': isInvalid('State') }"
             />
-            <div class="invalid-feedback" *ngIf="isInvalid('State')">
-              State is required.
-            </div>
+            <div class="invalid-feedback" *ngIf="isInvalid('State')">State is required.</div>
           </div>
 
           <!-- Contact Number -->
@@ -121,8 +115,12 @@
               [ngClass]="{ 'is-invalid': isInvalid('latitude') }"
             />
             <div class="invalid-feedback" *ngIf="isInvalid('latitude')">
-              <span *ngIf="hoardingForm.get('latitude')?.errors?.['required']">Latitude is required.</span>
-              <span *ngIf="hoardingForm.get('latitude')?.errors?.['latInvalid']">Latitude must be between -90 and 90.</span>
+              <span *ngIf="hoardingForm.get('latitude')?.errors?.['required']"
+                >Latitude is required.</span
+              >
+              <span *ngIf="hoardingForm.get('latitude')?.errors?.['latInvalid']"
+                >Latitude must be between -90 and 90.</span
+              >
             </div>
           </div>
 
@@ -136,8 +134,12 @@
               [ngClass]="{ 'is-invalid': isInvalid('longitude') }"
             />
             <div class="invalid-feedback" *ngIf="isInvalid('longitude')">
-              <span *ngIf="hoardingForm.get('longitude')?.errors?.['required']">Longitude is required.</span>
-              <span *ngIf="hoardingForm.get('longitude')?.errors?.['lngInvalid']">Longitude must be between -180 and 180.</span>
+              <span *ngIf="hoardingForm.get('longitude')?.errors?.['required']"
+                >Longitude is required.</span
+              >
+              <span *ngIf="hoardingForm.get('longitude')?.errors?.['lngInvalid']"
+                >Longitude must be between -180 and 180.</span
+              >
             </div>
           </div>
 
@@ -150,9 +152,7 @@
               formControlName="size"
               [ngClass]="{ 'is-invalid': isInvalid('size') }"
             />
-            <div class="invalid-feedback" *ngIf="isInvalid('size')">
-              Size is required.
-            </div>
+            <div class="invalid-feedback" *ngIf="isInvalid('size')">Size is required.</div>
           </div>
 
           <!-- Owner Name -->
@@ -195,9 +195,7 @@
               <option value="Occupied">Occupied</option>
               <option value="Under Maintenance">Under Maintenance</option>
             </select>
-            <div class="invalid-feedback" *ngIf="isInvalid('status')">
-              Status is required.
-            </div>
+            <div class="invalid-feedback" *ngIf="isInvalid('status')">Status is required.</div>
           </div>
 
           <!-- Dates -->
@@ -207,12 +205,17 @@
               type="date"
               class="form-control"
               formControlName="ad_start_date"
-              [ngClass]="{ 'is-invalid': isInvalid('ad_start_date') || hasFormError('adDateRangeInvalid') }"
+              [ngClass]="{
+                'is-invalid': isInvalid('ad_start_date') || hasFormError('adDateRangeInvalid')
+              }"
             />
             <div class="invalid-feedback" *ngIf="isInvalid('ad_start_date')">
               Ad start date is required.
             </div>
-            <div class="invalid-feedback d-block" *ngIf="!isInvalid('ad_start_date') && hasFormError('adDateRangeInvalid')">
+            <div
+              class="invalid-feedback d-block"
+              *ngIf="!isInvalid('ad_start_date') && hasFormError('adDateRangeInvalid')"
+            >
               Ad End Date must be same or after Ad Start Date.
             </div>
           </div>
@@ -223,12 +226,17 @@
               type="date"
               class="form-control"
               formControlName="ad_end_date"
-              [ngClass]="{ 'is-invalid': isInvalid('ad_end_date') || hasFormError('adDateRangeInvalid') }"
+              [ngClass]="{
+                'is-invalid': isInvalid('ad_end_date') || hasFormError('adDateRangeInvalid')
+              }"
             />
             <div class="invalid-feedback" *ngIf="isInvalid('ad_end_date')">
               Ad end date is required.
             </div>
-            <div class="invalid-feedback d-block" *ngIf="!isInvalid('ad_end_date') && hasFormError('adDateRangeInvalid')">
+            <div
+              class="invalid-feedback d-block"
+              *ngIf="!isInvalid('ad_end_date') && hasFormError('adDateRangeInvalid')"
+            >
               Ad End Date must be same or after Ad Start Date.
             </div>
           </div>
@@ -239,7 +247,10 @@
               type="date"
               class="form-control"
               formControlName="contract_start_date"
-              [ngClass]="{ 'is-invalid': isInvalid('contract_start_date') || hasFormError('contractDateRangeInvalid') }"
+              [ngClass]="{
+                'is-invalid':
+                  isInvalid('contract_start_date') || hasFormError('contractDateRangeInvalid')
+              }"
             />
             <div class="invalid-feedback" *ngIf="isInvalid('contract_start_date')">
               Contract start date is required.
@@ -258,7 +269,10 @@
               type="date"
               class="form-control"
               formControlName="contract_end_date"
-              [ngClass]="{ 'is-invalid': isInvalid('contract_end_date') || hasFormError('contractDateRangeInvalid') }"
+              [ngClass]="{
+                'is-invalid':
+                  isInvalid('contract_end_date') || hasFormError('contractDateRangeInvalid')
+              }"
             />
             <div class="invalid-feedback" *ngIf="isInvalid('contract_end_date')">
               Contract end date is required.
@@ -280,9 +294,7 @@
               formControlName="notes"
               [ngClass]="{ 'is-invalid': isInvalid('notes') }"
             ></textarea>
-            <div class="invalid-feedback" *ngIf="isInvalid('notes')">
-              Notes is required.
-            </div>
+            <div class="invalid-feedback" *ngIf="isInvalid('notes')">Notes is required.</div>
           </div>
         </div>
 
@@ -296,6 +308,7 @@
           />
           <label class="form-check-label fw-semibold" for="featured"> ⭐ Set As Featured </label>
         </div>
+        <app-case-study-form></app-case-study-form>
 
         <!-- Buttons -->
         <div class="d-flex justify-content-between mt-4">

@@ -1,18 +1,17 @@
-<div class="map-wrapper">
-  <!-- LEFT TOOLBAR -->
-  <div class="map-toolbar left">
-    <button (click)="switchMode()">
-      {{ currentMode === 'vector' ? 'Vector' : 'Satellite' }}
+<div class="map3d-container">
+  <!-- Toolbar -->
+  <div class="map-toolbar">
+    <button class="btn btn-sm btn-outline-primary" (click)="resetView()" title="Reset View">
+      🔄 Reset
     </button>
-    <button (click)="resetView()">Reset</button>
+    <button class="btn btn-sm btn-outline-secondary" (click)="rotateLeft()" title="Rotate Left">
+      ⬅️
+    </button>
+    <button class="btn btn-sm btn-outline-secondary" (click)="rotateRight()" title="Rotate Right">
+      ➡️
+    </button>
   </div>
 
-  <!-- RIGHT TOOLBAR (30° CONTROLS) -->
-  <div class="map-toolbar right">
-    <button (click)="rotate360()">⟳ 360°</button>
-    <button (click)="rotateLeft()">⟲ 30°</button>
-    <button (click)="rotateRight()">⟳ 30°</button>
-  </div>
-
-  <div id="map3d"></div>
+  <!-- Map Container -->
+  <div id="map3d" class="map3d"></div>
 </div>

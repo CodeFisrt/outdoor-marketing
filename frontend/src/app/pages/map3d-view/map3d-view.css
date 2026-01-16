@@ -1,45 +1,44 @@
-.map-wrapper {
+/* Container wrapper */
+.map3d-container {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 100vh; /* full viewport height */
+  display: flex;
+  flex-direction: column;
 }
 
-#map3d {
+/* Map itself */
+.map3d {
+  flex: 1;
   width: 100%;
   height: 100%;
 }
 
-/* COMMON TOOLBAR STYLES */
+/* Toolbar styles */
 .map-toolbar {
   position: absolute;
   top: 15px;
-  z-index: 10;
+  left: 15px;
   display: flex;
   gap: 8px;
+  z-index: 999;
 }
 
-/* LEFT SIDE CONTROLS */
-.map-toolbar.left {
-  left: 15px;
-}
-
-/* RIGHT SIDE CONTROLS */
-.map-toolbar.right {
-  right: 55px;
-}
-
-/* BUTTON STYLES */
 .map-toolbar button {
-  padding: 6px 12px;
+  padding: 6px 10px;
   border-radius: 6px;
-  border: none;
+  font-size: 0.85rem;
   cursor: pointer;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  font-size: 13px;
-  white-space: nowrap;
+  transition: all 0.2s ease;
 }
 
 .map-toolbar button:hover {
-  background: rgba(0, 0, 0, 0.85);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Optional: make map markers pop a bit */
+.maplibregl-marker {
+  border: 2px solid white;
+  border-radius: 50%;
 }

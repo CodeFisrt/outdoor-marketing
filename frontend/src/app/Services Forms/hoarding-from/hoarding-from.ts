@@ -14,10 +14,11 @@ import { ToastrService } from 'ngx-toastr';
 import { SeoService } from '../../ApiServices/Seo-Service/seo-service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { log } from 'node:console';
+import { CaseStudyFormComponent } from "../case-study-form/case-study-form";
 
 @Component({
   selector: 'app-hoarding-from',
-  imports: [RouterLink, ReactiveFormsModule, NgClass, NgIf, MatCheckboxModule],
+  imports: [RouterLink, ReactiveFormsModule, NgClass, NgIf, MatCheckboxModule, CaseStudyFormComponent],
   templateUrl: './hoarding-from.html',
   styleUrl: './hoarding-from.css'
 })
@@ -33,7 +34,7 @@ export class HoardingFrom {
     private route: ActivatedRoute,
     private toastr: ToastrService,
     private seo: SeoService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.hoardingForm = this.fb.group(
@@ -82,7 +83,7 @@ export class HoardingFrom {
     });
   }
 
-    // ✅ ADD THIS HERE (inside class)
+  // ✅ ADD THIS HERE (inside class)
   private resetToDefaults() {
     this.hoardingForm.reset({
       status: 'Available',
@@ -175,7 +176,7 @@ export class HoardingFrom {
   }
 
   loadHoardingsData(id: number) {
-    
+
     this.http.get(`http://localhost:8080/hoardings/${id}`).subscribe({
       next: (data: any) => {
         this.hoardingForm.patchValue({
@@ -206,7 +207,7 @@ export class HoardingFrom {
       featured: this.hoardingForm.value.featured ? 1 : 0
     };
 
-    
+
     console.log(payLoad);
 
     if (this.hoardingId) {
@@ -247,25 +248,25 @@ export class HoardingFrom {
   //   this.submitted = false;
   // }
 
-    cancel() {
-  // ✅ In edit mode, keep old data on form
-  if (this.hoardingId) return;
+  cancel() {
+    // ✅ In edit mode, keep old data on form
+    if (this.hoardingId) return;
 
-  // ✅ In add mode, clear form
-  this.resetToDefaults();
-}
-
-resetForm() {
-  // ✅ In edit mode, reload existing data
-  if (this.hoardingId) {
-    this.loadHoardingsData(this.hoardingId);
-    this.submitted = false;
-    return;
+    // ✅ In add mode, clear form
+    this.resetToDefaults();
   }
 
-  // ✅ In add mode, clear form
-  this.resetToDefaults();
-}
+  resetForm() {
+    // ✅ In edit mode, reload existing data
+    if (this.hoardingId) {
+      this.loadHoardingsData(this.hoardingId);
+      this.submitted = false;
+      return;
+    }
+
+    // ✅ In add mode, clear form
+    this.resetToDefaults();
+  }
 
 
 

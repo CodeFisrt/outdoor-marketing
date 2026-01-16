@@ -1,0 +1,153 @@
+<div class="case-study-wrapper">
+  <h2>Hoarding Case Study</h2>
+
+  <div [formGroup]="caseStudyForm" novalidate>
+    <div class="form-row">
+      <label>Client Name :</label>
+      <input type="text" formControlName="clientName" placeholder="e.g., ABC Retail Pvt. Ltd." />
+    </div>
+
+    <div class="form-row">
+      <label>Campaign Objective :</label>
+      <textarea
+        formControlName="campaignObjective"
+        placeholder="e.g., Increase brand visibility and drive footfall to nearby stores during festive season"
+      ></textarea>
+    </div>
+
+    <div class="form-row">
+      <label>Area Name :</label>
+      <input type="text" formControlName="areaName" placeholder="e.g., MG Road Junction" />
+    </div>
+
+    <div class="form-row">
+      <label>City :</label>
+      <input type="text" formControlName="city" placeholder="e.g., Bengaluru" />
+    </div>
+
+    <div class="form-row">
+      <label>Total Crowd (5 km Radius) :</label>
+      <input
+        type="text"
+        formControlName="crowdFootfall"
+        placeholder="e.g., Approx. 3.5 – 4 lakh people per day"
+      />
+    </div>
+
+    <div class="form-row">
+      <label>Nearby Companies :</label>
+      <textarea
+        formControlName="nearbyCompanies"
+        placeholder="e.g., Infosys SEZ, Tech Park Offices, Orion Mall, Metro Station"
+      ></textarea>
+    </div>
+
+    <div class="form-row">
+      <label>Distance from Main Road :</label>
+      <input
+        type="text"
+        formControlName="boardDistance"
+        placeholder="e.g., 6–8 meters from main carriageway"
+      />
+    </div>
+
+    <div class="form-row">
+      <label>Road Type :</label>
+      <input
+        type="text"
+        formControlName="roadType"
+        placeholder="e.g., 6-lane arterial road with signal junction"
+      />
+    </div>
+
+    <div class="form-row">
+      <label>Traffic Count :</label>
+      <input
+        type="text"
+        formControlName="trafficCount"
+        placeholder="e.g., 1.2 lakh vehicles per day"
+      />
+    </div>
+
+    <div class="form-row">
+      <label>Night Visibility :</label>
+      <input
+        type="text"
+        formControlName="nightVisibility"
+        placeholder="e.g., Excellent visibility till midnight"
+      />
+    </div>
+
+    <div class="form-row">
+      <label>Illumination Type :</label>
+      <input
+        type="text"
+        formControlName="illuminationType"
+        placeholder="e.g., High-lux LED flood lights on both sides"
+      />
+    </div>
+
+    <div class="form-row">
+      <label>Previous Ads :</label>
+      <textarea
+        formControlName="previousAds"
+        placeholder="e.g., Automobile brand launch, FMCG awareness campaign"
+      ></textarea>
+    </div>
+
+    <div class="form-row">
+      <label>Board Size :</label>
+      <input type="text" formControlName="boardSize" placeholder="e.g., 40 ft × 20 ft" />
+    </div>
+
+    <div class="form-row">
+      <label>Campaign Duration :</label>
+      <input type="text" formControlName="campaignDuration" placeholder="e.g., 45 days" />
+    </div>
+
+    <div class="form-row">
+      <label>Results :</label>
+      <textarea
+        formControlName="results"
+        placeholder="e.g., 24% increase in store walk-ins and 38% brand recall lift"
+      ></textarea>
+    </div>
+
+    <div class="form-row">
+      <label>Conclusion :</label>
+      <textarea
+        formControlName="conclusion"
+        placeholder="e.g., The hoarding delivered strong visibility and measurable business impact due to strategic location"
+      ></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" (click)="generatePDF()">Generate PDF</button>
+    </div>
+  </div>
+
+  <!-- PDF ACTIONS -->
+  <div class="pdf-actions" *ngIf="showPdfActions">
+    <button type="button" class="view" (click)="viewPDF()">View PDF</button>
+    <button
+      *ngIf="signupservice.canDownloadPdf()"
+      type="button"
+      class="download"
+      (click)="downloadPDF()"
+    >
+      Download PDF
+    </button>
+    <button type="button" *ngIf="!signupservice.canDownloadPdf()" routerLink="/signin">
+      Login to download PDF
+    </button>
+  </div>
+
+  <!-- PDF PREVIEW -->
+  <div class="pdf-preview-panel" *ngIf="showPreview && safePdfUrl">
+    <div class="pdf-preview-header">
+      <span>PDF Preview</span>
+      <button type="button" (click)="closePreview()">Close</button>
+    </div>
+    <iframe [src]="safePdfUrl"></iframe>
+  </div>
+</div>
