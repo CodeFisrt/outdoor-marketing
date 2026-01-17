@@ -1,1 +1,176 @@
-<p>guest-dashboard works!</p>
+<div class="dashboard-shell">
+
+  <!-- TOPBAR -->
+  <!-- <div class="topbar">
+    <div class="brand">
+      <img src="assets/logo.png" alt="Logo" onerror="this.style.display='none'">
+      <span>Adonstreets</span>
+    </div>
+
+    <div class="topbar-nav d-none d-md-flex">
+      <a href="javascript:void(0)">Home</a>
+      <a href="javascript:void(0)">Our Work</a>
+      <a href="javascript:void(0)">Services</a>
+      <a href="javascript:void(0)">Blog</a>
+      <a href="javascript:void(0)">Contact Us</a>
+    </div>
+
+    <div class="topbar-right">
+      <div class="user-pill">
+        <img src="assets/m2.png" alt="avatar">
+        <div class="d-flex flex-column" style="line-height: 1.1;">
+          <small style="opacity:.85;">Guest</small>
+          <strong>{{ userName }}</strong>
+        </div>
+      </div>
+      <button class="btn btn-danger btn-sm px-3" (click)="logout()">Logout</button>
+    </div>
+  </div> -->
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <a class="side-item active" href="javascript:void(0)">
+        <i class="bi bi-speedometer2"></i> Dashboard
+      </a>
+
+      <a class="side-item" href="javascript:void(0)">
+        <i class="bi bi-search"></i> Browse Screens
+      </a>
+
+      <a class="side-item" href="javascript:void(0)">
+        <i class="bi bi-calendar-check"></i> Book Screen
+      </a>
+
+      <a class="side-item" href="javascript:void(0)">
+        <i class="bi bi-envelope-paper"></i> My Requests
+      </a>
+
+      <div class="side-footer">
+        <a class="side-item" href="javascript:void(0)" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <h2 class="page-title">📊 Guest Dashboard</h2>
+      <div class="page-subtitle">
+        Browse screens and request bookings (limited access).
+        <span class="ms-2 text-muted">({{ guestCity }} • {{ guestPhone }})</span>
+      </div>
+
+      <!-- STATS -->
+      <div class="row g-3 mb-3">
+        <div class="col-md-3">
+          <div class="stat-card text-center">
+            <div class="stat-title">Total Screens</div>
+            <div class="stat-value text-primary">{{ stats.totalScreens }}</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card text-center">
+            <div class="stat-title">Trending City</div>
+            <div class="stat-value text-success">{{ stats.trendingCity }}</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card text-center">
+            <div class="stat-title">Avg. Price/Day</div>
+            <div class="stat-value text-info">{{ stats.avgPricePerDay }}</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card text-center">
+            <div class="stat-title">My Requests</div>
+            <div class="stat-value text-danger">{{ stats.myEnquiries }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANELS -->
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="panel">
+            <div class="panel-head">📈 Popular Screens (Demo)</div>
+            <div class="panel-body">
+              <img src="assets/demo-chart.png" class="img-fluid rounded" alt="Chart">
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="panel">
+            <div class="panel-head">📝 Browse Screens (Demo)</div>
+            <div class="panel-body">
+              <table class="table table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>#</th>
+                    <th>Screen</th>
+                    <th>City</th>
+                    <th>Size</th>
+                    <th>Price/Day</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let s of browseScreens; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td class="fw-semibold">{{ s.name }}</td>
+                    <td>{{ s.city }}</td>
+                    <td>{{ s.size }}</td>
+                    <td>{{ s.pricePerDay }}</td>
+                    <td>
+                      <span class="badge-soft"
+                        [ngClass]="{
+                          'badge-green': s.status === 'Open',
+                          'badge-yellow': s.status === 'Limited'
+                        }">
+                        {{ s.status }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <hr class="my-3">
+
+              <div class="fw-bold mb-2">My Booking Requests (Demo)</div>
+              <table class="table table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>#</th>
+                    <th>Request</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let r of myRequests; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td class="fw-semibold">{{ r.screen }}</td>
+                    <td>{{ r.date }}</td>
+                    <td>
+                      <span class="badge-soft"
+                        [ngClass]="{
+                          'badge-green': r.status === 'Approved',
+                          'badge-yellow': r.status === 'Pending',
+                          'badge-red': r.status === 'Rejected'
+                        }">
+                        {{ r.status }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
