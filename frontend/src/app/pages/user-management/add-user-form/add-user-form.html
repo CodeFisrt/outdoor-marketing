@@ -1,3 +1,4 @@
+<!-- add-user-form.html -->
 <div class="container mt-4">
   <div class="card shadow-lg">
     <div class="card-header bg-primary text-white d-flex justify-content-between">
@@ -25,6 +26,7 @@
               class="form-select"
               formControlName="role"
               [ngClass]="{ 'is-invalid': isInvalid('role') }"
+              [disabled]="!!userId"
             >
               <option value="">-- Select Role --</option>
               <option value="agency">Agency</option>
@@ -85,9 +87,12 @@
             </div>
           </div>
 
-          <!-- Password -->
+          <!-- Password (optional in edit) -->
           <div class="col-md-6 mb-3">
-            <label class="form-label">Password <span class="text-danger">*</span></label>
+            <label class="form-label">
+              Password <span class="text-danger" *ngIf="!userId">*</span>
+              <small class="text-muted" *ngIf="userId">(leave blank to keep same)</small>
+            </label>
             <input
               type="password"
               class="form-control"
@@ -104,9 +109,11 @@
             </div>
           </div>
 
-          <!-- Confirm Password -->
+          <!-- Confirm Password (optional in edit) -->
           <div class="col-md-6 mb-3">
-            <label class="form-label">Confirm Password <span class="text-danger">*</span></label>
+            <label class="form-label">
+              Confirm Password <span class="text-danger" *ngIf="!userId">*</span>
+            </label>
             <input
               type="password"
               class="form-control"
@@ -126,10 +133,6 @@
             </div>
           </div>
 
-          <!-- ===========================
-               Role-wise fields (same structure)
-               =========================== -->
-
           <!-- Agency -->
           <ng-container *ngIf="selectedRole === 'agency'">
             <div class="col-12 mt-2">
@@ -139,12 +142,8 @@
 
             <div class="col-md-6 mb-3">
               <label class="form-label">Agency Name <span class="text-danger">*</span></label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="agencyName"
-                [ngClass]="{ 'is-invalid': isInvalid('agencyName') }"
-              />
+              <input type="text" class="form-control" formControlName="agencyName"
+                [ngClass]="{ 'is-invalid': isInvalid('agencyName') }" />
               <div class="invalid-feedback" *ngIf="isInvalid('agencyName')">
                 Agency Name is required.
               </div>
@@ -152,12 +151,8 @@
 
             <div class="col-md-6 mb-3">
               <label class="form-label">Phone <span class="text-danger">*</span></label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="agencyPhone"
-                [ngClass]="{ 'is-invalid': isInvalid('agencyPhone') }"
-              />
+              <input type="text" class="form-control" formControlName="agencyPhone"
+                [ngClass]="{ 'is-invalid': isInvalid('agencyPhone') }" />
               <div class="invalid-feedback" *ngIf="isInvalid('agencyPhone')">
                 Phone is required.
               </div>
@@ -165,12 +160,8 @@
 
             <div class="col-md-6 mb-3">
               <label class="form-label">City <span class="text-danger">*</span></label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="agencyCity"
-                [ngClass]="{ 'is-invalid': isInvalid('agencyCity') }"
-              />
+              <input type="text" class="form-control" formControlName="agencyCity"
+                [ngClass]="{ 'is-invalid': isInvalid('agencyCity') }" />
               <div class="invalid-feedback" *ngIf="isInvalid('agencyCity')">
                 City is required.
               </div>
@@ -186,12 +177,8 @@
 
             <div class="col-md-6 mb-3">
               <label class="form-label">Company / Owner Name <span class="text-danger">*</span></label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="ownerCompanyName"
-                [ngClass]="{ 'is-invalid': isInvalid('ownerCompanyName') }"
-              />
+              <input type="text" class="form-control" formControlName="ownerCompanyName"
+                [ngClass]="{ 'is-invalid': isInvalid('ownerCompanyName') }" />
               <div class="invalid-feedback" *ngIf="isInvalid('ownerCompanyName')">
                 Company/Owner Name is required.
               </div>
@@ -199,12 +186,8 @@
 
             <div class="col-md-6 mb-3">
               <label class="form-label">Phone <span class="text-danger">*</span></label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="ownerPhone"
-                [ngClass]="{ 'is-invalid': isInvalid('ownerPhone') }"
-              />
+              <input type="text" class="form-control" formControlName="ownerPhone"
+                [ngClass]="{ 'is-invalid': isInvalid('ownerPhone') }" />
               <div class="invalid-feedback" *ngIf="isInvalid('ownerPhone')">
                 Phone is required.
               </div>
@@ -212,12 +195,8 @@
 
             <div class="col-md-6 mb-3">
               <label class="form-label">Address <span class="text-danger">*</span></label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="ownerAddress"
-                [ngClass]="{ 'is-invalid': isInvalid('ownerAddress') }"
-              />
+              <input type="text" class="form-control" formControlName="ownerAddress"
+                [ngClass]="{ 'is-invalid': isInvalid('ownerAddress') }" />
               <div class="invalid-feedback" *ngIf="isInvalid('ownerAddress')">
                 Address is required.
               </div>
@@ -225,19 +204,15 @@
 
             <div class="col-md-6 mb-3">
               <label class="form-label">City <span class="text-danger">*</span></label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="ownerCity"
-                [ngClass]="{ 'is-invalid': isInvalid('ownerCity') }"
-              />
+              <input type="text" class="form-control" formControlName="ownerCity"
+                [ngClass]="{ 'is-invalid': isInvalid('ownerCity') }" />
               <div class="invalid-feedback" *ngIf="isInvalid('ownerCity')">
                 City is required.
               </div>
             </div>
           </ng-container>
 
-          <!-- Guest (optional fields) -->
+          <!-- Guest -->
           <ng-container *ngIf="selectedRole === 'guest'">
             <div class="col-12 mt-2">
               <h6 class="fw-bold text-secondary mb-2">Guest Details (Optional)</h6>
@@ -264,11 +239,7 @@
           <div class="d-flex gap-2">
             <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
 
-            <button
-              type="submit"
-              [ngClass]="userId ? 'btn btn-warning' : 'btn btn-success'"
-              [disabled]="userForm.invalid"
-            >
+            <button type="submit" [ngClass]="userId ? 'btn btn-warning' : 'btn btn-success'">
               {{ userId ? 'Update ✏️' : 'Save ✅' }}
             </button>
           </div>

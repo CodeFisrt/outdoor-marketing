@@ -11,7 +11,10 @@ import { PollKiosk } from './Services/poll-kiosk/poll-kiosk';
 import { WallPainting } from './Services/wall-painting/wall-painting';
 import { SignIn } from './pages/sign-in/sign-in';
 import { SignUp } from './pages/sign-up/sign-up';
-import { Dashboard } from './pages/dashboard/dashboard';
+import { Dashboard } from './pages/dashboards/dashboard/dashboard';
+import { AgencyDashboard} from './pages/dashboards/agency-dashboard/agency-dashboard';
+import { ScreenOwnerDashboard } from './pages/dashboards/screen-owner-dashboard/screen-owner-dashboard';
+import { GuestDashboard } from './pages/dashboards/guest-dashboard/guest-dashboard';
 import { ScreenForm } from './Services Forms/screen-form/screen-form';
 import { PollKisokForm } from './Services Forms/poll-kisok-form/poll-kisok-form';
 import { VehicleAdsForm } from './Services Forms/vehicle-ads-form/vehicle-ads-form';
@@ -53,6 +56,9 @@ export const routes: Routes = [
   { path: "screenBoardDescrpt/:id/:service_type", component: ScreenBoardDescript },
   { path: 'featured/:type', component: FeaturedList },
   { path: 'map-3d/:lat/:lng', component: Map3dView },
+  { path: 'agency-dashboard', component: AgencyDashboard, canActivate: [authGuard], },
+  { path: 'screen-owner-dashboard', component: ScreenOwnerDashboard, canActivate: [authGuard], },
+  { path: 'guest-dashboard', component: GuestDashboard, canActivate: [authGuard], },
 
 
   // ✅ Dashboard Layout with children
