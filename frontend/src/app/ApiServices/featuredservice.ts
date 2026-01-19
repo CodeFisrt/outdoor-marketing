@@ -1,84 +1,103 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class Featuredservice {
 
-  hoardings: any[] = [];
-  screens: any[] = [];
-  vehicles: any[] = [];
-  polls: any[] = [];
-  societies: any[] = [];
+  private hoardings$ = new BehaviorSubject<any[]>([]);
+  private screens$ = new BehaviorSubject<any[]>([]);
+  // private vehicles$ = new BehaviorSubject<any[]>([]);
+  // private polls$ = new BehaviorSubject<any[]>([]);
+  // private societies$ = new BehaviorSubject<any[]>([]);
+
+  private hoardingsLoaded = false;
+  private screensLoaded = false;
 
   constructor(private http: HttpClient) { }
 
-  // ============================
-  // Load all data once (cache)
-  // ============================
-  loadAll() {
-    this.loadHoardings();
-    this.loadScreens();
-    this.loadVehicles();
-    this.loadPolls();
-    this.loadSocieties();
-  }
-
   loadHoardings() {
-    if (this.hoardings.length) return;
+    if (this.hoardingsLoaded) return;
+
+    this.hoardingsLoaded = true;
 
     this.http.get<any[]>('http://localhost:8080/hoardings')
-      .subscribe(res => {
-        this.hoardings = res.filter(h => h.featured === 1);
+      .subscribe({
+        next: res => {
+          this.hoardings$.next(res.filter(h => h.featured === 1));
+        },
+        error: () => {
+          this.hoardingsLoaded = false; // allow retry
+        }
       });
   }
 
   loadScreens() {
-    if (this.screens.length) return;
+    if (this.screensLoaded) return;
+
+    this.screensLoaded = true;
 
     this.http.get<any>('http://localhost:8080/screens')
-      .subscribe(res => {
-        this.screens = res.data?.filter((s: any) => s.featured === 1) || [];
+      .subscribe({
+        next: res => {
+          this.screens$.next(res.data?.filter((s: any) => s.featured === 1) || []);
+        },
+        error: () => {
+          this.screensLoaded = false;
+        }
       });
   }
 
-  loadVehicles() {
-    if (this.vehicles.length) return;
+  // loadVehicles() {
+  //   if (this.vehicles$.value.length) return;
 
-    this.http.get<any[]>('http://localhost:8080/vehicles')
-      .subscribe(res => {
-        this.vehicles = res.filter(v => v.featured === 1);
-      });
+  //   this.http.get<any[]>('http://localhost:8080/vehicles')
+  //     .subscribe(res => {
+  //       this.vehicles$.next(res.filter(v => v.featured === 1));
+  //     });
+  // }
+
+  // loadPolls() {
+  //   if (this.polls$.value.length) return;
+
+  //   this.http.get<any[]>('http://localhost:8080/balloons')
+  //     .subscribe(res => {
+  //       this.polls$.next(res.filter(p => p.featured === 1));
+  //     });
+  // }
+
+  // loadSocieties() {
+  //   if (this.societies$.value.length) return;
+
+  //   this.http.get<any[]>('http://localhost:8080/societies')
+  //     .subscribe(res => {
+  //       this.societies$.next(res.filter(s => s.featured === 1));
+  //     });
+  // }
+
+  loadAll() {
+    this.loadHoardings();
+    this.loadScreens();
+    // this.loadVehicles();
+    // this.loadPolls();
+    // this.loadSocieties();
   }
 
-  loadPolls() {
-    if (this.polls.length) return;
+  // Expose observables
+  getHoardings() { return this.hoardings$.asObservable(); }
+  getScreens() { return this.screens$.asObservable(); }
+  // getVehicles() { return this.vehicles$.asObservable(); }
+  // getPolls() { return this.polls$.asObservable(); }
+  // getSocieties() { return this.societies$.asObservable(); }
 
-    this.http.get<any[]>('http://localhost:8080/balloons')
-      .subscribe(res => {
-        this.polls = res.filter(p => p.featured === 1);
-      });
-  }
-
-  loadSocieties() {
-    if (this.societies.length) return;
-
-    this.http.get<any[]>('http://localhost:8080/societies')
-      .subscribe(res => {
-        this.societies = res.filter(s => s.featured === 1);
-      });
-  }
-
-  // ============================
-  // Get FULL data by type
-  // ============================
-  getAllByType(type: string): any[] {
+  getByType(type: string) {
     switch (type) {
-      case 'hoardings': return this.hoardings;
-      case 'screens': return this.screens;
-      case 'vehicles': return this.vehicles;
-      case 'polls': return this.polls;
-      case 'societies': return this.societies;
-      default: return [];
+      case 'hoardings': return this.getHoardings();
+      case 'screens': return this.getScreens();
+      // case 'vehicles': return this.getVehicles();
+      // case 'polls': return this.getPolls();
+      // case 'societies': return this.getSocieties();
+      default: throw new Error('Invalid type');
     }
   }
 }

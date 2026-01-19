@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule, NgFor } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Featuredservice } from '../..//ApiServices/featuredservice';
@@ -20,17 +20,21 @@ export class FeaturedList implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private featuredService: Featuredservice
+    private featuredService: Featuredservice,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
     this.type = this.route.snapshot.paramMap.get('type') || '';
 
-    // Ensure data is loaded
+    // Trigger loading (safe even if already loaded)
     this.featuredService.loadAll();
 
-    // Get all items by type
-    this.items = this.featuredService.getAllByType(this.type);
+    // ✅ Subscribe to correct observable
+    this.featuredService.getByType(this.type).subscribe(data => {
+      this.items = data;
+      this.cdr.detectChanges();
+    });
   }
 
   onImgError(event: Event) {

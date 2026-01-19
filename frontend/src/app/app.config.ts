@@ -1,26 +1,53 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection, importProvidersFrom } from '@angular/core';
+import {
+  ApplicationConfig,
+  provideBrowserGlobalErrorListeners,
+  provideZonelessChangeDetection,
+  importProvidersFrom
+} from '@angular/core';
+
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+
+import {
+  provideClientHydration,
+  withEventReplay
+} from '@angular/platform-browser';
+
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors
+} from '@angular/common/http';
+
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { ToastrModule } from 'ngx-toastr';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+
 import { authInterceptor } from './Interceptor/auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideRouter(routes),
-    provideClientHydration(withEventReplay()),
-    provideHttpClient(withInterceptors([authInterceptor])),
-    provideHttpClient(withFetch()),
 
-    // ✅ Import NgModules using importProvidersFrom
+    provideRouter(routes),
+
+    provideClientHydration(withEventReplay()),
+
+    // ✅ SINGLE HttpClient provider (FIX)
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([authInterceptor])
+    ),
+
     importProvidersFrom(
-      ReactiveFormsModule, NgxSkeletonLoaderModule.forRoot({
+      ReactiveFormsModule,
+
+      BrowserAnimationsModule,
+
+      NgxSkeletonLoaderModule.forRoot({
         theme: {
           extendsFromRoot: true,
           color: '#f2f8ff',
@@ -32,7 +59,6 @@ export const appConfig: ApplicationConfig = {
         },
       }),
 
-      BrowserAnimationsModule,
       ToastrModule.forRoot({
         timeOut: 3000,
         positionClass: 'toast-top-right',

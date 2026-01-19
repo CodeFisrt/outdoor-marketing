@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule, NgFor } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -24,20 +24,36 @@ export class FeaturedCards implements OnInit {
 
   constructor(
     private featuredService: Featuredservice,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
-    // Load all data once
     this.featuredService.loadAll();
 
-    // HOME PAGE → show only 3 items
-    this.hoardings = this.featuredService.hoardings.slice(0, 3);
-    this.screens = this.featuredService.screens.slice(0, 3);
-    this.vehicles = this.featuredService.vehicles.slice(0, 3);
-    this.polls = this.featuredService.polls.slice(0, 3);
-    this.societies = this.featuredService.societies.slice(0, 3);
+    this.featuredService.getHoardings().subscribe(data => {
+      this.hoardings = data.slice(0, 3);
+      this.cdr.detectChanges();
+    });
+
+    this.featuredService.getScreens().subscribe(data => {
+      this.screens = data.slice(0, 3);
+      this.cdr.detectChanges();
+    });
+
+    // this.featuredService.getVehicles().subscribe(data => {
+    //   this.vehicles = data.slice(0, 3);
+    // });
+
+    // this.featuredService.getPolls().subscribe(data => {
+    //   this.polls = data.slice(0, 3);
+    // });
+
+    // this.featuredService.getSocieties().subscribe(data => {
+    //   this.societies = data.slice(0, 3);
+    // });
   }
+
 
   onImgError(event: Event) {
     const img = event.target as HTMLImageElement;
