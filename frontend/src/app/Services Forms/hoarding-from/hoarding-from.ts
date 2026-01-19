@@ -1,6 +1,8 @@
 import { NgClass, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { ViewChild } from '@angular/core';
+
 import {
   AbstractControl,
   FormBuilder,
@@ -27,6 +29,9 @@ export class HoardingFrom {
   hoardingId?: number;
   submitted = false;
 
+  @ViewChild(CaseStudyFormComponent)
+  caseStudyComponent!: CaseStudyFormComponent;
+
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
@@ -42,7 +47,7 @@ export class HoardingFrom {
         h_name: ['', Validators.required],
         address: ['', Validators.required],
         city: ['', Validators.required],
-        State: ['', Validators.required],
+        state: ['', Validators.required],
 
         latitude: ['', [Validators.required, this.latitudeValidator]],
         longitude: ['', [Validators.required, this.longitudeValidator]],
@@ -176,64 +181,103 @@ export class HoardingFrom {
   }
 
   loadHoardingsData(id: number) {
-
     this.http.get(`http://localhost:8080/hoardings/${id}`).subscribe({
       next: (data: any) => {
         this.hoardingForm.patchValue({
-          ...data,
+          h_name: data.h_name,
+          address: data.address,
+          city: data.city,
+          state: data.State,
+
+          latitude: data.latitude,
+          longitude: data.longitude,
+
+          size: data.size,
+          owner_name: data.owner_name,
+          contact_person: data.contact_person,
+          contact_number: data.contact_number,
+
           ad_start_date: data.ad_start_date?.split('T')[0],
           ad_end_date: data.ad_end_date?.split('T')[0],
+
+          status: data.status,
+          rental_cost: data.rental_cost,
+
           contract_start_date: data.contract_start_date?.split('T')[0],
           contract_end_date: data.contract_end_date?.split('T')[0],
+
+          notes: data.notes,
           featured: data.featured === 1
         });
-        console.log(data);
-      }
+
+      },
+      error: () => this.toastr.error('Failed to load hoarding data ❌')
     });
   }
+
+
+
 
   save() {
     this.submitted = true;
 
     if (this.hoardingForm.invalid) {
-      this.hoardingForm.markAllAsTouched(); // ✅ show all required errors
+      this.hoardingForm.markAllAsTouched();
       return;
     }
 
-    debugger;
+    const formData = new FormData();
 
-    const payLoad = {
-      ...this.hoardingForm.value,
-      featured: this.hoardingForm.value.featured ? 1 : 0
-    };
+    // append form fields
+    Object.entries(this.hoardingForm.value).forEach(([key, value]) => {
+      if (key === 'featured') {
+        formData.append(key, value ? '1' : '0');
+      } else {
+        formData.append(key, value as any);
+      }
+    });
 
+    // 🔑 PDF IS OPTIONAL (POST & PUT)
+    const caseStudyPdf: Blob | null =
+      this.caseStudyComponent?.getCaseStudyPdfBlob();
 
-    console.log(payLoad);
+    if (caseStudyPdf) {
+      formData.append('caseStudyPdf', caseStudyPdf, 'case-study.pdf');
+    }
 
+    // ---------------- UPDATE ----------------
     if (this.hoardingId) {
-      this.http.put(`http://localhost:8080/hoardings/${this.hoardingId}`, payLoad).subscribe({
-        next: () => {
-          this.router.navigateByUrl('/dashboard/hoarding');
-          this.toastr.success('Hoarding updated successfully ✅');
-          // this.cancel();
-        },
-        error: () => this.toastr.error('Update failed ❌')
-      });
-    } else {
-      this.http.post('http://localhost:8080/hoardings/', payLoad).subscribe({
-        next: () => {
-          // ✅ auto reset after submit
-          this.resetForm();
-          this.submitted = false;
+      this.http
+        .put(`http://localhost:8080/hoardings/${this.hoardingId}`, formData)
+        .subscribe({
+          next: () => {
+            this.router.navigateByUrl('/dashboard/hoarding');
+            this.toastr.success('Hoarding updated successfully ✅');
+          },
+          error: (err) => {
+            console.error('Update error:', err);
+            this.toastr.error('Update failed ❌');
+          }
+        });
+    }
 
-          this.resetToDefaults(); // ✅ auto reset after Add
+    // ---------------- CREATE ----------------
+    else {
+      this.http.post(`http://localhost:8080/hoardings`, formData).subscribe({
+        next: () => {
+          this.resetToDefaults();
           this.router.navigateByUrl('/dashboard/hoarding');
           this.toastr.success('Hoarding added successfully 🎉');
         },
-        error: () => this.toastr.error('Creation failed ❌')
+        error: (err) => {
+          console.error('Create error:', err);
+          this.toastr.error('Creation failed ❌');
+        }
       });
     }
   }
+
+
 
   // cancel() {
   //   this.hoardingForm.reset();

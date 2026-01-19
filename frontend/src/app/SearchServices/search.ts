@@ -65,4 +65,9 @@ export class Search {
     return this.http.post('http://localhost:8080/book-service', data);
   }
 
+  getHoardingPdf(id: number): Observable<Blob> {
+    return this.http.get(`http://localhost:8080/hoardings/${id}/pdf`, { responseType: 'blob' });
+  }
+
+
 }

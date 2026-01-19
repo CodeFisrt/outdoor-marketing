@@ -11,8 +11,9 @@
       <label>Campaign Objective :</label>
       <textarea
         formControlName="campaignObjective"
-        placeholder="e.g., Increase brand visibility and drive footfall to nearby stores during festive season"
-      ></textarea>
+        placeholder="e.g., Increase brand visibility during festive season"
+      >
+      </textarea>
     </div>
 
     <div class="form-row">
@@ -30,43 +31,29 @@
       <input
         type="text"
         formControlName="crowdFootfall"
-        placeholder="e.g., Approx. 3.5 – 4 lakh people per day"
+        placeholder="e.g., 3.5 – 4 lakh people/day"
       />
     </div>
 
     <div class="form-row">
       <label>Nearby Companies :</label>
-      <textarea
-        formControlName="nearbyCompanies"
-        placeholder="e.g., Infosys SEZ, Tech Park Offices, Orion Mall, Metro Station"
-      ></textarea>
+      <textarea formControlName="nearbyCompanies" placeholder="e.g., Infosys, Tech Parks, Mall">
+      </textarea>
     </div>
 
     <div class="form-row">
       <label>Distance from Main Road :</label>
-      <input
-        type="text"
-        formControlName="boardDistance"
-        placeholder="e.g., 6–8 meters from main carriageway"
-      />
+      <input type="text" formControlName="boardDistance" placeholder="e.g., 6–8 meters" />
     </div>
 
     <div class="form-row">
       <label>Road Type :</label>
-      <input
-        type="text"
-        formControlName="roadType"
-        placeholder="e.g., 6-lane arterial road with signal junction"
-      />
+      <input type="text" formControlName="roadType" placeholder="e.g., 6-lane arterial road" />
     </div>
 
     <div class="form-row">
       <label>Traffic Count :</label>
-      <input
-        type="text"
-        formControlName="trafficCount"
-        placeholder="e.g., 1.2 lakh vehicles per day"
-      />
+      <input type="text" formControlName="trafficCount" placeholder="e.g., 1.2 lakh vehicles/day" />
     </div>
 
     <div class="form-row">
@@ -74,25 +61,19 @@
       <input
         type="text"
         formControlName="nightVisibility"
-        placeholder="e.g., Excellent visibility till midnight"
+        placeholder="e.g., Excellent till midnight"
       />
     </div>
 
     <div class="form-row">
       <label>Illumination Type :</label>
-      <input
-        type="text"
-        formControlName="illuminationType"
-        placeholder="e.g., High-lux LED flood lights on both sides"
-      />
+      <input type="text" formControlName="illuminationType" placeholder="e.g., LED flood lights" />
     </div>
 
     <div class="form-row">
       <label>Previous Ads :</label>
-      <textarea
-        formControlName="previousAds"
-        placeholder="e.g., Automobile brand launch, FMCG awareness campaign"
-      ></textarea>
+      <textarea formControlName="previousAds" placeholder="e.g., FMCG, Automobile launch">
+      </textarea>
     </div>
 
     <div class="form-row">
@@ -107,47 +88,19 @@
 
     <div class="form-row">
       <label>Results :</label>
-      <textarea
-        formControlName="results"
-        placeholder="e.g., 24% increase in store walk-ins and 38% brand recall lift"
-      ></textarea>
+      <textarea formControlName="results" placeholder="e.g., 38% brand recall lift"></textarea>
     </div>
 
     <div class="form-row">
       <label>Conclusion :</label>
       <textarea
         formControlName="conclusion"
-        placeholder="e.g., The hoarding delivered strong visibility and measurable business impact due to strategic location"
+        placeholder="e.g., Strategic location delivered strong ROI"
       ></textarea>
     </div>
 
     <div class="form-actions">
-      <button type="button" (click)="generatePDF()">Generate PDF</button>
+      <button type="button" disabled>Case Study will be saved with Hoarding</button>
     </div>
-  </div>
-
-  <!-- PDF ACTIONS -->
-  <div class="pdf-actions" *ngIf="showPdfActions">
-    <button type="button" class="view" (click)="viewPDF()">View PDF</button>
-    <button
-      *ngIf="signupservice.canDownloadPdf()"
-      type="button"
-      class="download"
-      (click)="downloadPDF()"
-    >
-      Download PDF
-    </button>
-    <button type="button" *ngIf="!signupservice.canDownloadPdf()" routerLink="/signin">
-      Login to download PDF
-    </button>
-  </div>
-
-  <!-- PDF PREVIEW -->
-  <div class="pdf-preview-panel" *ngIf="showPreview && safePdfUrl">
-    <div class="pdf-preview-header">
-      <span>PDF Preview</span>
-      <button type="button" (click)="closePreview()">Close</button>
-    </div>
-    <iframe [src]="safePdfUrl"></iframe>
   </div>
 </div>

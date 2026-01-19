@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 const port = 3000;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // for HTML forms
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
@@ -18,8 +18,9 @@ const db = require("./db");
 
 app.use(
   cors({
-    origin: ["http://localhost:4200", "http://localhost:5173"], // Angular dev server
+    origin: ["http://localhost:4200", "http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "DELETE"],
+    exposedHeaders: ["Content-Type", "Content-Disposition"],
   })
 );
 

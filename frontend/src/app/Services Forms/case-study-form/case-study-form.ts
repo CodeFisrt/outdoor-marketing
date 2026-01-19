@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import jsPDF from 'jspdf';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Signupservice } from '../../ApiServices/signupservice';
 import { RouterLink, RouterModule } from "@angular/router";
 
 @Component({
@@ -26,7 +25,6 @@ export class CaseStudyFormComponent {
   constructor(
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
-    public signupservice: Signupservice
   ) {
     this.caseStudyForm = this.fb.group({
       clientName: ['', Validators.required],
@@ -48,10 +46,33 @@ export class CaseStudyFormComponent {
     });
   }
 
-  generatePDF() {
+  patchCaseStudyData(data: any) {
+    if (!data) return;
+    this.caseStudyForm.patchValue({
+      clientName: data.clientName || '',
+      campaignObjective: data.campaignObjective || '',
+      areaName: data.areaName || '',
+      city: data.city || '',
+      crowdFootfall: data.crowdFootfall || '',
+      nearbyCompanies: data.nearbyCompanies || '',
+      boardDistance: data.boardDistance || '',
+      roadType: data.roadType || '',
+      trafficCount: data.trafficCount || '',
+      nightVisibility: data.nightVisibility || '',
+      illuminationType: data.illuminationType || '',
+      previousAds: data.previousAds || '',
+      boardSize: data.boardSize || '',
+      campaignDuration: data.campaignDuration || '',
+      results: data.results || '',
+      conclusion: data.conclusion || ''
+    });
+  }
+
+
+  getCaseStudyPdfBlob(): Blob | null {
     if (this.caseStudyForm.invalid) {
       this.caseStudyForm.markAllAsTouched();
-      return;
+      return null;
     }
 
     const pdf = new jsPDF();
@@ -62,7 +83,6 @@ export class CaseStudyFormComponent {
     y += 12;
 
     pdf.setFontSize(11);
-
     const data = this.caseStudyForm.value;
 
     const addField = (label: string, value: string) => {
@@ -89,7 +109,14 @@ export class CaseStudyFormComponent {
     addField('Results', data.results);
     addField('Conclusion', data.conclusion);
 
-    const blob = pdf.output('blob');
+    return pdf.output('blob');
+  }
+
+
+  generatePDF() {
+    const blob = this.getCaseStudyPdfBlob();
+    if (!blob) return;
+
     this.pdfUrl = URL.createObjectURL(blob);
     this.safePdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.pdfUrl);
 
@@ -97,24 +124,4 @@ export class CaseStudyFormComponent {
     this.showPreview = false;
   }
 
-  viewPDF() {
-    this.showPreview = true;
-  }
-
-  closePreview() {
-    this.showPreview = false;
-  }
-
-  downloadPDF() {
-    if (!this.signupservice.canDownloadPdf()) {
-      return;
-    }
-
-    if (!this.pdfUrl) return;
-
-    const link = document.createElement('a');
-    link.href = this.pdfUrl;
-    link.download = 'Outdoor-Hoarding-Case-Study.pdf';
-    link.click();
-  }
 }

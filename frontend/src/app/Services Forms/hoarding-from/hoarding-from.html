@@ -55,16 +55,16 @@
             <div class="invalid-feedback" *ngIf="isInvalid('city')">City is required.</div>
           </div>
 
-          <!-- State -->
+          <!-- state -->
           <div class="col-md-6 mb-3">
             <label class="form-label">State <span class="text-danger">*</span></label>
             <input
               type="text"
               class="form-control"
-              formControlName="State"
-              [ngClass]="{ 'is-invalid': isInvalid('State') }"
+              formControlName="state"
+              [ngClass]="{ 'is-invalid': isInvalid('state') }"
             />
-            <div class="invalid-feedback" *ngIf="isInvalid('State')">State is required.</div>
+            <div class="invalid-feedback" *ngIf="isInvalid('state')">state is required.</div>
           </div>
 
           <!-- Contact Number -->
@@ -308,7 +308,7 @@
           />
           <label class="form-check-label fw-semibold" for="featured"> ⭐ Set As Featured </label>
         </div>
-        <app-case-study-form></app-case-study-form>
+        <app-case-study-form ngSkipHydration></app-case-study-form>
 
         <!-- Buttons -->
         <div class="d-flex justify-content-between mt-4">

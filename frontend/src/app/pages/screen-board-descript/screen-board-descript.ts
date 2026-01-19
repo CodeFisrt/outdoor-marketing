@@ -19,6 +19,10 @@ export class ScreenBoardDescript implements OnInit {
   loading: boolean = true;
   imageBaseUrl: string = 'http://localhost:8080/uploads/';
 
+  pdfUrl: SafeResourceUrl | null = null;
+  pdfBlobUrl: string | null = null; // store raw blob URL
+
+
   // ⬅️ THIS VARIABLE WILL CONTROL WHICH UI TO SHOW
   currentSection: string = "details";         //// details | book | schedule | bidding
   nearBoards: any[] = [];
@@ -38,14 +42,15 @@ export class ScreenBoardDescript implements OnInit {
   };
 
   constructor(
-    private route: ActivatedRoute, 
-    private searchService: Search, 
+    private route: ActivatedRoute,
+    private searchService: Search,
     private cdr: ChangeDetectorRef,
     private router: Router,
     private sanitizer: DomSanitizer //add for map url
   ) { }
-  
+
   minDate: string = '';
+  mapUrl!: SafeResourceUrl;
 
   ngOnInit(): void {
     const today = new Date();
@@ -67,11 +72,34 @@ export class ScreenBoardDescript implements OnInit {
 
     this.searchService.getServiceDetails(type, id).subscribe({
       next: (res: any) => {
-        // API might return { result: true, data: {...} } or just {...}
-        let data = res;
-        if (res.data) data = res.data;
+        let data = res.data ? res.data : res;
 
         this.board = this.normalizeData(data, type);
+
+        // Fetch PDF AFTER board is loaded
+        if (type === 'hoardings' && this.board?.h_id) {
+          this.searchService.getHoardingPdf(this.board.h_id).subscribe({
+            next: (blob) => {
+              // Revoke old blob URL if exists
+              if (this.pdfBlobUrl) {
+                URL.revokeObjectURL(this.pdfBlobUrl);
+              }
+              // Create new blob URL
+              this.pdfBlobUrl = URL.createObjectURL(blob);
+              this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.pdfBlobUrl); // only for template bindings if needed
+              this.cdr.detectChanges(); // ensure template updates buttons
+            },
+            error: (err) => {
+              console.warn('No PDF found for this hoarding', err);
+              this.pdfBlobUrl = null;
+              this.pdfUrl = null;
+              this.cdr.detectChanges(); // update template
+            }
+          });
+        } else {
+          this.pdfBlobUrl = null;
+          this.pdfUrl = null;
+        }
         this.loading = false;
         this.cdr.detectChanges(); // Force UI update to ensure image renders
       },
@@ -81,15 +109,12 @@ export class ScreenBoardDescript implements OnInit {
         this.cdr.detectChanges();
       }
     });
+
   }
-
-// mapUrl: any;
-mapUrl!: SafeResourceUrl;
-
 
   normalizeData(data: any, type: string) {
     let b: any = { ...data };
-    
+
 
     // Image handling
     if (data.image) {
@@ -187,23 +212,23 @@ mapUrl!: SafeResourceUrl;
 
 
     // 🌍 Latitude & Longitude (ALL SERVICES)
-b.lat =
-  data.b_lat ||
-  data.h_lat ||
-  data.Latitude ||
-  data.latitude;
+    b.lat =
+      data.b_lat ||
+      data.h_lat ||
+      data.Latitude ||
+      data.latitude;
 
-b.lng =
-  data.b_long ||
-  data.h_long ||
-  data.Longitude ||
-  data.longitude;
+    b.lng =
+      data.b_long ||
+      data.h_long ||
+      data.Longitude ||
+      data.longitude;
 
-// 🗺️ Google Map Embed (SAFE)
-if (b.lat && b.lng) {
-  const url = `https://www.google.com/maps?q=${b.lat},${b.lng}&z=16&output=embed`;
-  this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-}
+    // 🗺️ Google Map Embed (SAFE)
+    if (b.lat && b.lng) {
+      const url = `https://www.google.com/maps?q=${b.lat},${b.lng}&z=16&output=embed`;
+      this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    }
 
 
 
@@ -309,6 +334,22 @@ if (b.lat && b.lng) {
     });
   }
 
+  // Open PDF in new tab
+  previewHoardingPdf() {
+    if (!this.pdfBlobUrl) return;
+    window.open(this.pdfBlobUrl, '_blank'); // raw blob URL works here
+  }
+
+  // Download PDF
+  downloadHoardingPdf() {
+    if (!this.pdfBlobUrl || !this.board?.h_id) return;
+
+    const a = document.createElement('a');
+    a.href = this.pdfBlobUrl;
+    a.download = `case-study-${this.board.h_id}.pdf`;
+    a.click();
+  }
+
   // 3d view 
 
   view3D(lat: number, lng: number) {
@@ -316,3 +357,4 @@ if (b.lat && b.lng) {
   }
 
 }
+

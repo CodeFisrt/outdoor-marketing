@@ -56,7 +56,7 @@ export class Map3dView implements AfterViewInit, OnDestroy {
       container: 'map3d',
       style: this.getEsriStyle(),
       center: [this.lng, this.lat],
-      zoom: 18,
+      zoom: 16,
       pitch: 45,
       bearing: 0,
       antialias: true
