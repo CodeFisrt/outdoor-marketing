@@ -1,9 +1,16 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { Router, RouterLink } from '@angular/router';
+
 @Component({
   selector: 'app-poll-kiosk',
   standalone: true,
@@ -12,18 +19,17 @@ import { Router, RouterLink } from '@angular/router';
   styleUrls: ['./poll-kiosk.css']
 })
 export class PollKiosk implements OnInit {
-
   balloons: any[] = [];
   filteredList: any[] = [];
 
-  // ✅ PAGINATION (ADDED – SAME AS HOARDINGS)
+  // ✅ PAGINATION (SAME AS YOUR CODE)
   pageSize: number = 5;
   currentPage: number = 1;
   totalPages: number = 1;
   pagedList: any[] = [];
 
   balloonForm!: FormGroup;
-  searchTerm: string = "";
+  searchTerm: string = '';
   editingId: number | null = null;
 
   apiUrl = 'http://localhost:8080/balloons';
@@ -34,7 +40,7 @@ export class PollKiosk implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     private cd: ChangeDetectorRef
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -67,19 +73,26 @@ export class PollKiosk implements OnInit {
     });
   }
 
-  // 🔍 Search filter
+  // 🔍 Search filter (UPDATED like Hoardings)
   filterBallons() {
-    const t = this.searchTerm.toLowerCase();
+    const term = this.searchTerm?.toLowerCase();
 
-    this.filteredList = this.balloons.filter(b =>
-      b.b_location_name.toLowerCase().includes(t) ||
-      b.b_city.toLowerCase().includes(t) ||
-      b.b_type.toLowerCase().includes(t) ||
-      String(b.b_cost).includes(t)
+    this.filteredList = this.balloons.filter((b) =>
+      b.b_location_name?.toLowerCase().includes(term) ||
+      b.b_city?.toLowerCase().includes(term) ||
+      b.b_type?.toLowerCase().includes(term) ||
+      String(b.b_cost ?? '').includes(term) ||
+      b.payment_status?.toLowerCase().includes(term)
     );
 
+    // ✅ Pagination update after search (same as Hoardings)
     this.currentPage = 1;
     this.buildPagination();
+  }
+
+  // 🔍 Search triggered by icon click (ADDED like Hoardings)
+  applySearch() {
+    this.filterBallons();
   }
 
   // ✅ Load all records
@@ -88,11 +101,13 @@ export class PollKiosk implements OnInit {
       next: (data) => {
         this.balloons = data;
         this.filteredList = data;
+
         this.currentPage = 1;
         this.buildPagination();
+
         this.cd.detectChanges();
       },
-      error: () => this.toastr.error("Failed to load balloons")
+      error: () => this.toastr.error('Failed to load balloons')
     });
   }
 
@@ -164,20 +179,20 @@ export class PollKiosk implements OnInit {
   // ✏️ Edit
   edit(balloonId: number) {
     this.editingId = balloonId;
-    this.router.navigateByUrl("/dashboard/poll-Kisok-Form/" + balloonId);
-    this.toastr.info("Editing balloon data");
+    this.router.navigateByUrl('/dashboard/poll-Kisok-Form/' + balloonId);
+    this.toastr.info('Editing balloon data');
   }
 
   // ❌ Delete
   delete(id: number) {
-    if (!confirm("Are you sure you want to delete?")) return;
+    if (!confirm('Are you sure you want to delete?')) return;
 
     this.http.delete(`${this.apiUrl}/${id}`).subscribe({
       next: () => {
-        this.toastr.warning("Balloon deleted");
+        this.toastr.warning('Balloon deleted');
         this.loadBalloons();
       },
-      error: () => this.toastr.error("Delete failed")
+      error: () => this.toastr.error('Delete failed')
     });
   }
 

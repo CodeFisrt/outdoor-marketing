@@ -8,26 +8,40 @@
 /* =========================
    HEADER
 ========================= */
-h3 {
+h2 {
   letter-spacing: 0.4px;
-  font-weight: 700;
 }
 
 /* =========================
    SEARCH BAR
 ========================= */
-input.form-control {
+.input-group {
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.input-group .form-control {
   border: none;
   padding: 10px 14px;
   font-size: 0.95rem;
 }
 
-input.form-control:focus {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  outline: none;
+.input-group .form-control:focus {
+  box-shadow: none;
+}
+
+.input-group .btn {
+  border: none;
+  padding: 0 16px;
+  font-size: 1rem;
+  background: #f4f6fb;
+  transition: background 0.2s ease;
+}
+
+.input-group .btn:hover {
+  background: #e7ebf7;
 }
 
 /* =========================
@@ -38,7 +52,6 @@ input.form-control:focus {
   padding: 10px 18px;
   font-weight: 600;
   box-shadow: 0 8px 18px rgba(13, 110, 253, 0.25);
-  transition: all 0.25s ease;
 }
 
 .btn-primary:hover {
@@ -52,13 +65,6 @@ input.form-control:focus {
 .card {
   border-radius: 18px;
   overflow: hidden;
-  border: none;
-}
-
-.card-header {
-  background: #ffffff;
-  font-weight: 600;
-  border-bottom: none;
 }
 
 .card-body {
@@ -127,8 +133,7 @@ input.form-control:focus {
   white-space: nowrap;
 }
 
-.btn-outline-primary,
-.btn-outline-danger {
+.action-btn {
   border-radius: 10px;
   padding: 6px 14px;
   font-weight: 600;
@@ -136,26 +141,26 @@ input.form-control:focus {
   transition: all 0.25s ease;
 }
 
-/* Edit Button */
-.btn-outline-primary {
+/* Edit */
+.edit-btn {
   border-color: #5c6ac4;
   color: #5c6ac4;
 }
 
-.btn-outline-primary:hover {
+.edit-btn:hover {
   background: #5c6ac4;
   color: #ffffff;
   box-shadow: 0 6px 14px rgba(92, 106, 196, 0.35);
   transform: translateY(-1px);
 }
 
-/* Delete Button */
-.btn-outline-danger {
+/* Delete */
+.delete-btn {
   border-color: #e5533d;
   color: #e5533d;
 }
 
-.btn-outline-danger:hover {
+.delete-btn:hover {
   background: #e5533d;
   color: #ffffff;
   box-shadow: 0 6px 14px rgba(229, 83, 61, 0.35);
@@ -163,24 +168,18 @@ input.form-control:focus {
 }
 
 /* =========================
-   PAGINATION BUTTONS
-========================= */
-.btn-outline-secondary {
-  border-radius: 12px;
-  padding: 0 16px;
-  font-size: 0.85rem;
-  background: #f4f6fb;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-  transition: all 0.2s ease;
-}
-
-.btn-outline-secondary:hover {
-  background: #e7ebf7;
-}
-
-/* =========================
    EMPTY STATE
 ========================= */
 .text-muted {
   font-size: 0.95rem;
+}
+
+.btn-outline-secondary {
+  border-radius: 12px 12px 12px 12px;
+  border: solid;
+  padding: 0 16px;
+  font-size: 1rem;
+  background: #f4f6fb;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
 }

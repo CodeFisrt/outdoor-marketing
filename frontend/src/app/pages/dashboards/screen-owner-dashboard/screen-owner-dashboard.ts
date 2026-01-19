@@ -1,15 +1,3 @@
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-screen-owner-dashboard',
-//   imports: [],
-//   templateUrl: './screen-owner-dashboard.html',
-//   styleUrl: './screen-owner-dashboard.css'
-// })
-// export class ScreenOwnerDashboard {
-
-// }
-
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { RouterModule } from '@angular/router';

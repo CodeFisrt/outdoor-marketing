@@ -1,0 +1,5 @@
+.footer-bg {
+  background: linear-gradient(90deg, #0b0b0b, #1a1a1a, #0b0b0b);
+  background: linear-gradient(90deg, #0f172a, #1e293b);
+  /* box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45); */
+}
