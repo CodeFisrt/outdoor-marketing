@@ -16,12 +16,11 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 })
 export class SignIn {
 
-  
-
   signInForm: FormGroup;
   errorMessage: string = '';
   loading = false;
   role: any
+  showPassword: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -36,100 +35,81 @@ export class SignIn {
     });
   }
 
-  
-  // onSubmit() {
-  //   if (this.signInForm.invalid) {
-  //     this.errorMessage = 'Please enter valid credentials.';
-  //     return;
-  //   }
+  onSubmit(data: any) {
+    if (data.invalid) {
+      this.toastr.error("Please enter valid email & password");
+      return;
+    }
+    
+    const email = data.value.emailId;
+    const password = data.value.password;
 
-  //   this.loading = true;
-  //   const { emailId, password } = this.signInForm.value;
+    // ✅ 1) try admin login first
+    this.http.post<any>('http://localhost:8080/admin/login', {
+      adminEmail: email,
+      password: password
+    }).subscribe({
+      next: (res) => {
+        // ✅ admin login success
+        localStorage.setItem('adminToken', res.token);
+        localStorage.setItem('token', res.token);
 
+        localStorage.setItem('role', 'admin');
+        localStorage.setItem('userName', res.admin.adminName);
+        localStorage.setItem('userEmail', res.admin.adminEmail);
 
-  //   this.http.get<{ token: string }>(
-  //     `http://localhost:8080/Users`,
-  //     {
-  //       params: {
-  //         emailId: emailId,
-  //         password: password
-  //       }
-  //     }
-  //   ).subscribe({
-  //     next: (res: any) => {
+        this.toastr.success(`Admin Login Successful ✅ Welcome "${res.admin.adminName}"`);
+        this.router.navigateByUrl('/dashboard');
+      },
+      error: () => {
+        // ✅ 2) if not admin, try user login
+        this.http.post<any>('http://localhost:8080/Users/login', {
+          emailId: email,
+          password: password
+        }).subscribe({
+          next: (res2) => {
+            // ✅ add your code here (only added)
+            const user = res2.user;
 
-  //       res.forEach((user: any) => {
+            if (user) {
+              this.toastr.success(`Login Successful!, Welcome Back "${user.userName}"`);
 
-  //       }
+              // store auth info
+              localStorage.setItem('token', 'loggedin'); // later replace with real token
+              localStorage.setItem('userEmail', user.userEmail);
+              localStorage.setItem('userName', user.userName);
 
+              const role = (user.role || 'guest').toLowerCase();
+              localStorage.setItem('role', role);
 
+              // ✅ role wise redirect
+              if (role === 'admin') {
+                this.router.navigateByUrl('/dashboard/overview');
+              } else if (role === 'agency') {
+                this.router.navigateByUrl('/agency-dashboard');
+              } else if (role === 'screenowner') {
+                this.router.navigateByUrl('/screen-owner-dashboard');
+              } else {
+                this.router.navigateByUrl('/guest-dashboard');
+              }
 
+            } else {
+              this.toastr.error("Invalid Email or Password");
+            }
+            // ✅ end your code
 
-  //       this.router.navigateByUrl('/dashboard');
-  //     },
-  //     error: (err) => {
-  //       this.errorMessage = err.error?.message || 'Login failed. Please try again.';
-  //     },
-  //     complete: () => {
-  //       this.loading = false;
-  //     }
-  //   });
-  // }
-
-  // onSubmit(data: any) {
-  //   debugger
-  //   this.signupservice.signIn().subscribe({
-  //     next: (res: any) => {
-  //       const user = res.find((u: any) => u.userEmail === data.value.emailId && u.password === data.value.password);
-  //       if (user) {
-  //         this.toastr.success(`Login Successful!, Welcome Back  "${user.userName}"`);
-  //         localStorage.setItem('role', user.role);
-  //         this.router.navigateByUrl('/dashboard');
-  //       }
-  //     }
-  //   });
-  // }
-
-
-
-
-    onSubmit(data: any) {
-  if (data.invalid) {
-    this.toastr.error("Please enter valid email & password");
-    return;
+          },
+          error: (err2) => {
+            this.toastr.error(err2?.error?.message || "Invalid Email or Password");
+          }
+        });
+      }
+    });
   }
 
-  this.signupservice.signIn().subscribe({
-    next: (res: any) => {
-      const user = res.find((u: any) =>
-        u.userEmail === data.value.emailId && u.password === data.value.password
-      );
-
-      if (user) {
-        this.toastr.success(`Login Successful!, Welcome Back "${user.userName}"`);
-
-        // ✅ IMPORTANT: store auth info (guard/interceptor needs token)
-        localStorage.setItem('token', 'loggedin');              // temporary token
-        localStorage.setItem('userEmail', user.userEmail);      // header display
-        localStorage.setItem('userName', user.userName);        // header display
-        localStorage.setItem('role', user.role || 'admin');
-
-        // ✅ go dashboard
-        this.router.navigateByUrl('/dashboard');
-      } else {
-        this.toastr.error("Invalid Email or Password");
-      }
-    },
-    error: () => {
-      this.toastr.error("Login failed. Please try again.");
-    }
-  });
+  togglePassword() {
+  this.showPassword = !this.showPassword;
 }
-
-
-
-
-
 
   openGmailLogin() {
     const googleAuthUrl =
@@ -146,9 +126,6 @@ export class SignIn {
     );
   }
 
-
-
-
   loginWithFacebook() {
     const fbAuthUrl =
       'https://www.facebook.com/v18.0/dialog/oauth?' +
@@ -158,8 +135,6 @@ export class SignIn {
 
     window.open(fbAuthUrl, 'facebookLogin', 'width=500,height=600,left=200,top=100');
   };
-
-
 
   loginWithTwitter() {
     const twitterAuthUrl =
@@ -174,8 +149,4 @@ export class SignIn {
 
     window.open(twitterAuthUrl, 'twitterLogin', 'width=500,height=600');
   }
-
-  
-
-
 }

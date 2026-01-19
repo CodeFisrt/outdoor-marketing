@@ -1,46 +1,24 @@
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'users-list',
-//   imports: [],
-//   templateUrl: './users-list.html',
-//   styleUrl: './users-list.css'
-// })
-// export class UsersList {
-
-// }
-
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 
 @Component({
   selector: 'users-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, HttpClientModule],
   templateUrl: './users-list.html',
   styleUrl: './users-list.css'
 })
 export class UsersList implements OnInit {
-
-  // ✅ change this later with API response
-  list: any[] = [
-    { userId: 1, userName: 'Admin', userEmail: 'admin@gmail.com', role: 'admin', status: 'active' },
-    { userId: 2, userName: 'Agency User', userEmail: 'agency@gmail.com', role: 'agency', status: 'active' },
-    { userId: 3, userName: 'Screen Owner', userEmail: 'owner@gmail.com', role: 'screenOwner', status: 'blocked' },
-    { userId: 4, userName: 'Admin', userEmail: 'admin@gmail.com', role: 'admin', status: 'active' },
-    { userId: 5, userName: 'Agency User', userEmail: 'agency@gmail.com', role: 'agency', status: 'active' },
-    { userId: 6, userName: 'Screen Owner', userEmail: 'owner@gmail.com', role: 'screenOwner', status: 'blocked' },
-
-  ];
+  // ✅ list will come from API
+  list: any[] = [];
 
   searchTerm: string = '';
-
   filteredList: any[] = [];
   pagedList: any[] = [];
 
-  // pagination
   currentPage: number = 1;
   pageSize: number = 5;
   totalPages: number = 1;
@@ -49,11 +27,67 @@ export class UsersList implements OnInit {
   showingFrom: number = 0;
   showingTo: number = 0;
 
-  constructor(private router: Router) {}
+  private isBrowser: boolean;
+
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: any
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   ngOnInit(): void {
-    this.filteredList = [...this.list];
-    this.updatePagination();
+    if (!this.isBrowser) return;
+
+    const role = (localStorage.getItem('role') || '').toLowerCase();
+
+    // ✅ Only admin can open this page
+    if (role !== 'admin') {
+      this.router.navigateByUrl('/signin');
+      return;
+    }
+
+    // ✅ fetch users from DB
+    this.loadUsers();
+  }
+
+  loadUsers() {
+    const token = localStorage.getItem('token'); // your stored admin token
+
+    const headers = token
+      ? new HttpHeaders({ Authorization: `Bearer ${token}` })
+      : new HttpHeaders();
+
+    this.http.get<any[]>('http://localhost:8080/Users', { headers }).subscribe({
+      next: (res) => {
+        // ✅ normalize keys so your UI keeps working
+        this.list = (res || []).map((u: any) => ({
+          userId: u.userId ?? u.id,
+          userName: u.userName,
+          userEmail: u.userEmail ?? u.emailId ?? u.userEmail,
+          role: u.role || 'user',
+          status: u.status || 'active'
+        }));
+
+        this.filteredList = [...this.list];
+        this.currentPage = 1;
+        this.updatePagination();
+
+        // ✅ Fix NG0100 ExpressionChangedAfterItHasBeenCheckedError
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Users fetch error:', err);
+
+        // if token missing/invalid -> force login
+        if (err?.status === 401 || err?.status === 403) {
+          localStorage.clear();
+          this.router.navigateByUrl('/signin');
+        }
+      }
+    });
   }
 
   // ✅ Search
@@ -79,10 +113,9 @@ export class UsersList implements OnInit {
     this.filterUsers();
   }
 
-  // ✅ Pagination Helpers
+  // ✅ Pagination
   updatePagination() {
     this.totalPages = Math.ceil(this.filteredList.length / this.pageSize) || 1;
-
     this.pageNumbers = Array.from({ length: this.totalPages }, (_, i) => i + 1);
 
     const startIndex = (this.currentPage - 1) * this.pageSize;
@@ -121,7 +154,6 @@ export class UsersList implements OnInit {
 
   // ✅ Actions
   edit(userId: number) {
-    // later we can open same add-user form in edit mode
     this.router.navigateByUrl(`/dashboard/users/add?edit=${userId}`);
   }
 
@@ -129,7 +161,7 @@ export class UsersList implements OnInit {
     const ok = confirm('Are you sure you want to delete this user?');
     if (!ok) return;
 
-    // temporary delete in UI
+    // (optional later) call backend delete API here
     this.list = this.list.filter(u => u.userId !== userId);
     this.filterUsers();
   }

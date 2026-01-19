@@ -1,7 +1,9 @@
 <div class="container mt-4">
+  <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold"><i class="bi bi-truck-front"></i> Vehicle Management</h3>
+    <h2 class="fw-bold text-primary">🚚 Vehicle Management</h2>
 
+    <!-- Search Bar -->
     <div class="input-group w-25 me-3">
       <input
         type="text"
@@ -10,7 +12,14 @@
         [(ngModel)]="searchTerm"
         (input)="filterVehicle()"
       />
-      <button class="btn btn-outline-secondary" type="button" (click)="applySearch()">🔍</button>
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        (click)="applySearch()"
+        title="Search"
+      >
+        🔍
+      </button>
     </div>
 
     <a
@@ -21,10 +30,11 @@
     </a>
   </div>
 
-  <div class="card shadow-lg rounded-4">
+  <!-- Table Card -->
+  <div class="card shadow-lg border-0 rounded-4">
     <div class="card-body p-0">
-      <table class="table table-bordered table-striped table-hover align-middle shadow-sm mb-0">
-        <thead class="table-primary text-center">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-primary">
           <tr>
             <th>#</th>
             <th>Type</th>
@@ -35,13 +45,15 @@
             <th class="text-center">Actions</th>
           </tr>
         </thead>
+
         <tbody>
           <tr *ngFor="let v of paginatedList; let i = index">
-            <td class="text-center">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
-            <td><i class="bi bi-truck"></i> {{ v.v_type }}</td>
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+            <td>{{ v.v_type }}</td>
             <td>{{ v.v_number }}</td>
-            <td><i class="bi bi-geo-alt"></i> {{ v.v_city }}</td>
-            <td class="text-end">₹ {{ v.v_cost }}</td>
+            <td>{{ v.v_city }}</td>
+            <td>₹ {{ v.v_cost }}</td>
+
             <td>
               <span
                 class="badge"
@@ -49,32 +61,43 @@
                   'bg-success': v.payment_status === 'Paid',
                   'bg-warning text-dark': v.payment_status === 'Pending'
                 }"
-                >{{ v.payment_status }}</span
               >
+                {{ v.payment_status }}
+              </span>
             </td>
-            <td class="text-center">
-              <button class="btn btn-outline-primary btn-sm me-2" (click)="editVehicle(v.v_id)">
-                Edit
+
+            <td class="text-center action-buttons">
+              <button
+                class="btn btn-sm btn-outline-primary me-2 d-inline-flex align-items-center action-btn edit-btn"
+                (click)="editVehicle(v.v_id)"
+              >
+                <i class="bi bi-pencil-square me-1"></i> Edit
               </button>
-              <button class="btn btn-outline-danger btn-sm" (click)="deleteVehicle(v.v_id)">
-                Delete
+
+              <button
+                class="btn btn-sm btn-outline-danger d-inline-flex align-items-center action-btn delete-btn"
+                (click)="deleteVehicle(v.v_id)"
+              >
+                <i class="bi bi-trash me-1"></i> Delete
               </button>
             </td>
           </tr>
         </tbody>
       </table>
 
-      <!-- Pagination and Page Size -->
+      <!-- ✅ Pagination UI (same style) -->
       <div
         class="d-flex flex-wrap justify-content-between align-items-center mt-3 py-2 px-2"
         *ngIf="filteredList.length > 0"
       >
+        <!-- Showing info -->
         <div class="text-muted small">
           Showing <b>{{ showingFrom }}</b> – <b>{{ showingTo }}</b> of
           <b>{{ filteredList.length }}</b>
         </div>
 
         <div class="d-flex align-items-center gap-2">
+          <!-- Page size -->
           <select
             class="form-select form-select-sm"
             style="width: 90px"
@@ -87,6 +110,7 @@
             <option [ngValue]="50">50</option>
           </select>
 
+          <!-- Prev -->
           <button
             class="btn btn-sm btn-outline-secondary"
             (click)="prevPage()"
@@ -95,6 +119,7 @@
             ◀ Prev
           </button>
 
+          <!-- Page Numbers -->
           <button
             *ngFor="let p of pageNumbers"
             class="btn btn-sm"
@@ -104,6 +129,7 @@
             {{ p }}
           </button>
 
+          <!-- Next -->
           <button
             class="btn btn-sm btn-outline-secondary"
             (click)="nextPage()"
@@ -113,7 +139,10 @@
           </button>
         </div>
       </div>
+
+      <!-- No Data -->
       <div *ngIf="filteredList.length === 0" class="text-center py-4 text-muted">
+        <!-- keep simple / or you can leave only text like earlier -->
         No vehicles found.
       </div>
     </div>

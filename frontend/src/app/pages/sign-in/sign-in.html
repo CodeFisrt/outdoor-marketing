@@ -1,5 +1,6 @@
 <!-- Sign in -->
-<div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
+<div
+  class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
   <div class="row shadow-lg rounded-4 overflow-hidden w-50">
     <!-- Left Panel -->
     <div
@@ -7,7 +8,8 @@
       <div class="text-center my-auto">
         <h2 class="fw-bold">Welcome Back !</h2>
         <p>Welcome back! Let’s take your brand further.</p>
-        <a class="btn btn-light text-primary fw-bold px-4 text-decoration-none" href="signup" role="button">Sign
+        <a class="btn btn-light text-primary fw-bold px-4 text-decoration-none"
+          href="signup" role="button">Sign
           Up</a>
       </div>
     </div>
@@ -20,12 +22,30 @@
       <form [formGroup]="signInForm" (ngSubmit)="onSubmit(signInForm)">
         <div class="mb-3">
           <label for="email" class="form-label">Email</label>
-          <input formControlName="emailId" type="email" id="emailId" class="form-control rounded-2 shadow-sm" />
+          <input formControlName="emailId" type="email" id="emailId"
+            class="form-control rounded-2 shadow-sm" />
         </div>
 
         <div class="mb-3">
           <label for="password" class="form-label">Password</label>
-          <input formControlName="password" type="password" id="password" class="form-control rounded-2 shadow-sm" />
+
+          <div class="position-relative">
+            <input
+              formControlName="password"
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              class="form-control rounded-2 shadow-sm pe-5" />
+
+            <button
+              type="button"
+              class="password-eye"
+              (mousedown)="showPassword = true"
+              (mouseup)="showPassword = false"
+              (mouseleave)="showPassword = false"
+              aria-label="Show password">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
         </div>
 
         <!-- Error message -->
@@ -39,9 +59,12 @@
         </div>
 
         <div class="d-flex justify-content-center gap-3 mb-4 signin-option">
-          <img src="assets/google.png" alt="Gmail" width="32" (click)="openGmailLogin()" />
-          <img src="assets/twitterx--v1.png" alt="X" width="32" (click)="loginWithTwitter()" />
-          <img src="assets/facebook-new.png" alt="Facebook" width="32" (click)="loginWithFacebook()" />
+          <img src="assets/google.png" alt="Gmail" width="32"
+            (click)="openGmailLogin()" />
+          <img src="assets/twitterx--v1.png" alt="X" width="32"
+            (click)="loginWithTwitter()" />
+          <img src="assets/facebook-new.png" alt="Facebook" width="32"
+            (click)="loginWithFacebook()" />
 
           <!-- <img src="assets/facebook.png" width="40"
           (click)="openFbModal()" style="cursor:pointer;"> -->
@@ -49,7 +72,7 @@
 
         <div class="text-center">
           <!-- <button type="submit" class="btn btn-primary px-4" (click)="onSubmit(signInForm)">Sign In</button> -->
-           <button type="submit" class="btn btn-primary px-4">Sign In</button>
+          <button type="submit" class="btn btn-primary px-4">Sign In</button>
         </div>
       </form>
     </div>

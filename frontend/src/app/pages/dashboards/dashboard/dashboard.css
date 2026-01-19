@@ -1,0 +1,22 @@
+/* Sidebar links look */
+.sidebar .sidebar-link {
+  border-radius: 10px;
+  transition: 0.2s;
+}
+
+/* Hover */
+.sidebar .sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Active tab */
+.sidebar .sidebar-link.active {
+  background: rgba(255, 255, 255, 0.14) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-weight: 600;
+}
+
+/* Optional: icon highlight when active */
+.sidebar .sidebar-link.active i {
+  transform: translateX(2px);
+}

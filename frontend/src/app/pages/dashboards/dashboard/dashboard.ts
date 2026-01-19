@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { RouterLink, Router, RouterOutlet } from '@angular/router';
+import { RouterLink, Router, RouterOutlet, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Header } from '../../shared/header/header';
-import { Footer } from '../../shared/footer/footer';
+import { Header } from '../../../shared/header/header';
+import { Footer } from '../../../shared/footer/footer';
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterOutlet, CommonModule, RouterLink],
+  imports: [RouterOutlet, CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })

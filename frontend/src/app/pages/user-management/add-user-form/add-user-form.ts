@@ -1,16 +1,4 @@
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-add-user-form',
-//   imports: [],
-//   templateUrl: './add-user-form.html',
-//   styleUrl: './add-user-form.css'
-// })
-// export class AddUserForm {
-
-// }
-
-
+// add-user-form.ts
 import { NgClass, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import {
@@ -23,6 +11,8 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+
+import { UserApiService } from '../../../ApiServices/user-api.service'; // ✅ adjust path if needed
 
 @Component({
   selector: 'app-add-user-form',
@@ -41,7 +31,8 @@ export class AddUserForm {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private userApi: UserApiService
   ) {}
 
   ngOnInit(): void {
@@ -52,6 +43,8 @@ export class AddUserForm {
 
         userName: ['', Validators.required],
         userEmail: ['', [Validators.required, Validators.email]],
+
+        // ✅ required for create, optional for edit
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', Validators.required],
 
@@ -73,24 +66,87 @@ export class AddUserForm {
       { validators: [this.passwordMatchValidator('password', 'confirmPassword', 'passwordMismatch')] }
     );
 
-    // role change -> apply validators + show fields
+    // role change => apply validators
     this.userForm.get('role')?.valueChanges.subscribe((role: string) => {
       this.selectedRole = role;
       this.applyRoleValidators(role);
     });
 
-    // Edit mode (optional later)
+    // ✅ Edit mode: /dashboard/users/add?edit=12
     this.route.queryParamMap.subscribe(params => {
       const id = params.get('edit');
       if (id) {
         this.userId = +id;
-        // later: load user by id and patchValue
-        // this.loadUser(this.userId);
+        this.loadUserForEdit(this.userId);
+
+        // ✅ make password optional during edit
+        this.makePasswordOptionalForEdit();
       }
     });
   }
 
-  // ✅ show errors only after submit OR touched
+  // ============================
+  // ✅ Edit: load user into form
+  // ============================
+  loadUserForEdit(id: number) {
+    this.userApi.getUserById(id).subscribe({
+      next: (u: any) => {
+        const role = u?.role || '';
+        this.selectedRole = role;
+
+        // ✅ patch values
+        this.userForm.patchValue({
+          role: role,
+          status: u.status || 'active',
+
+          userName: u.userName || '',
+          userEmail: u.userEmail || '',
+
+          // password not returned by backend (keep empty)
+          password: '',
+          confirmPassword: '',
+
+          // agency
+          agencyName: u.agencyName || '',
+          agencyPhone: u.agencyPhone || '',
+          agencyCity: u.agencyCity || '',
+
+          // owner
+          ownerCompanyName: u.ownerCompanyName || '',
+          ownerPhone: u.ownerPhone || '',
+          ownerAddress: u.ownerAddress || '',
+          ownerCity: u.ownerCity || '',
+
+          // guest
+          guestPhone: u.guestPhone || '',
+          guestCity: u.guestCity || ''
+        });
+
+        // ✅ re-apply role validators so fields show required correctly
+        this.applyRoleValidators(role);
+
+        this.submitted = false;
+      },
+      error: (err) => {
+        console.error('Load user error:', err);
+        this.toastr.error('Failed to load user');
+        this.router.navigateByUrl('/dashboard/users-list');
+      }
+    });
+  }
+
+  makePasswordOptionalForEdit() {
+    // ✅ remove required validators in edit mode
+    this.userForm.get('password')?.clearValidators();
+    this.userForm.get('password')?.updateValueAndValidity({ emitEvent: false });
+
+    this.userForm.get('confirmPassword')?.clearValidators();
+    this.userForm.get('confirmPassword')?.updateValueAndValidity({ emitEvent: false });
+  }
+
+  // ============================
+  // ✅ Validation helpers
+  // ============================
   isInvalid(controlName: string): boolean {
     const c = this.userForm.get(controlName);
     return !!(c && c.invalid && (c.touched || this.submitted));
@@ -109,10 +165,12 @@ export class AddUserForm {
       const pass = group.get(passKey)?.value;
       const confirm = group.get(confirmKey)?.value;
 
+      // ✅ In edit mode, if password empty => don't validate mismatch
+      if (this.userId && (!pass || !confirm)) return null;
+
       if (!pass || !confirm) return null;
       if (pass !== confirm) return { [errorKey]: true };
 
-      // remove only this error if exists
       if (group.errors?.[errorKey]) {
         const { [errorKey]: _, ...rest } = group.errors || {};
         return Object.keys(rest).length ? rest : null;
@@ -122,19 +180,24 @@ export class AddUserForm {
   }
 
   private applyRoleValidators(role: string) {
-    // clear validators for role-wise fields
     const roleFields = [
       'agencyName','agencyPhone','agencyCity',
       'ownerCompanyName','ownerPhone','ownerAddress','ownerCity'
     ];
 
+    // clear previous role validators
     roleFields.forEach(f => {
       this.userForm.get(f)?.clearValidators();
-      this.userForm.get(f)?.setValue('');
+
+      // clear values ONLY if creating new user
+      if (!this.userId) {
+        this.userForm.get(f)?.setValue('');
+      }
+
       this.userForm.get(f)?.updateValueAndValidity({ emitEvent: false });
     });
 
-    // apply required based on role
+    // apply new role validators
     if (role === 'agency') {
       this.userForm.get('agencyName')?.setValidators([Validators.required]);
       this.userForm.get('agencyPhone')?.setValidators([Validators.required]);
@@ -158,8 +221,12 @@ export class AddUserForm {
     });
     this.selectedRole = '';
     this.submitted = false;
+    this.userId = undefined;
   }
 
+  // ============================
+  // ✅ Create / Update
+  // ============================
   save() {
     this.submitted = true;
 
@@ -168,36 +235,59 @@ export class AddUserForm {
       return;
     }
 
-    const payload = { ...this.userForm.value };
+    const payload: any = { ...this.userForm.value };
+    delete payload.confirmPassword;
 
-    // ✅ TEMP: no database right now
-    console.log('USER PAYLOAD:', payload);
+    // ✅ trim strings
+    Object.keys(payload).forEach(k => {
+      if (typeof payload[k] === 'string') payload[k] = payload[k].trim();
+    });
 
+    // ✅ EDIT MODE => UPDATE
     if (this.userId) {
-      this.toastr.success('User updated (temporary) ✅');
-    } else {
-      this.toastr.success('User added (temporary) 🎉');
+      // if password empty => don't send it
+      if (!payload.password) delete payload.password;
+
+      this.userApi.updateUser(this.userId, payload).subscribe({
+        next: (res: any) => {
+          this.toastr.success(res?.message || "User updated successfully ✅");
+          this.router.navigateByUrl('/dashboard/users-list');
+        },
+        error: (err) => {
+          this.toastr.error(err?.error?.message || "Failed to update user");
+        }
+      });
+      return;
     }
 
-    this.router.navigateByUrl('/dashboard/users');
+    // ✅ CREATE MODE => REGISTER
+    this.userApi.createUser(payload).subscribe({
+      next: (res: any) => {
+        this.toastr.success(res?.message || "User created successfully ✅");
+        this.router.navigateByUrl('/dashboard/users-list');
+      },
+      error: (err) => {
+        this.toastr.error(err?.error?.message || "Failed to create user");
+      }
+    });
   }
 
   cancel() {
-    // In edit mode, keep old data
-    if (this.userId) return;
-
-    // In add mode, clear form
+    // if edit mode, go back
+    if (this.userId) {
+      this.router.navigateByUrl('/dashboard/users-list');
+      return;
+    }
     this.resetToDefaults();
   }
 
   resetForm() {
-    // In edit mode, we would reload old data later
     if (this.userId) {
-      // later: this.loadUser(this.userId);
+      // reload original user details
       this.submitted = false;
+      this.loadUserForEdit(this.userId);
       return;
     }
-
     this.resetToDefaults();
   }
 }

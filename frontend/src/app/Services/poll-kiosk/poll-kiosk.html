@@ -1,27 +1,40 @@
+<!-- ✅ Balloons UI updated to match Hoarding List style (NO core logic changed) -->
 <div class="container mt-4">
-  <!-- Header + Add New Button -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>🎈 Balloons</h3>
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-primary">🎈 Balloons List</h2>
 
-    <input
-      type="text"
-      class="form-control w-25 me-3"
-      placeholder="🔍 Search screens..."
-      [(ngModel)]="searchTerm"
-      (input)="filterBallons()"
-    />
+    <!-- Search Bar -->
+    <div class="input-group w-25 me-3">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search balloons..."
+        [(ngModel)]="searchTerm"
+        (input)="filterBallons()"
+      />
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        (click)="applySearch()"
+        title="Search"
+      >
+        🔍
+      </button>
+    </div>
 
-    <button class="btn btn-primary" routerLink="/dashboard/poll-Kisok-Form/0">
+    <button
+      class="btn btn-primary d-flex align-items-center gap-2"
+      routerLink="/dashboard/poll-Kisok-Form/0"
+    >
       <i class="bi bi-plus-circle"></i> Add New
     </button>
   </div>
 
-  <!-- 📋 Balloons List -->
-  <div class="card shadow-lg">
-    <!-- <div class="card-header bg-white text-dark"><h5>All Balloons</h5></div> -->
-
-    <div class="card-body p-0">
-      <table class="table table-striped mb-0">
+  <!-- Table -->
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-body">
+      <table class="table table-hover align-middle mb-0">
         <thead class="table-primary">
           <tr>
             <th>#</th>
@@ -39,27 +52,39 @@
           <tr>
             <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
             <td>{{ b.b_location_name }}</td>
-            <td><i class="bi bi-geo-alt"></i> {{ b.b_city }}</td>
+            <td>{{ b.b_city }}</td>
             <td>{{ b.b_type }}</td>
-            <td>{{ b.b_cost }}</td>
+            <td>₹ {{ b.b_cost }}</td>
+
             <td>
               <span
                 class="badge"
                 [ngClass]="{
                   'bg-success': b.payment_status === 'Paid',
                   'bg-warning text-dark': b.payment_status === 'Pending',
-                  'bg-danger': b.payment_status === 'Overdue'
+                  'bg-danger': b.payment_status === 'Overdue',
+                  'bg-secondary': b.payment_status === 'Cancelled'
                 }"
               >
                 {{ b.payment_status }}
               </span>
             </td>
-            <td class="text-center">
-              <button class="btn btn-sm btn-outline-primary me-2" (click)="edit(b.b_id)">
-                <i class="bi bi-pencil-square"></i> Edit
+
+            <td class="text-center action-buttons">
+              <!-- Edit Button -->
+              <button
+                class="btn btn-sm btn-outline-primary me-2 d-inline-flex align-items-center action-btn edit-btn"
+                (click)="edit(b.b_id)"
+              >
+                <i class="bi bi-pencil-square me-1"></i> Edit
               </button>
-              <button class="btn btn-sm btn-outline-danger" (click)="delete(b.b_id)">
-                <i class="bi bi-trash"></i> Delete
+
+              <!-- Delete Button -->
+              <button
+                class="btn btn-sm btn-outline-danger d-inline-flex align-items-center action-btn delete-btn"
+                (click)="delete(b.b_id)"
+              >
+                <i class="bi bi-trash me-1"></i> Delete
               </button>
             </td>
           </tr>
@@ -67,17 +92,19 @@
         </tbody>
       </table>
 
-      <!-- ✅ PAGINATION UI -->
+      <!-- ✅ Pagination UI (same as Hoarding List) -->
       <div
-        class="d-flex justify-content-between align-items-center px-3 py-2"
+        class="d-flex flex-wrap justify-content-between align-items-center mt-3 py-2 px-2"
         *ngIf="filteredList.length > 0"
       >
+        <!-- Showing info -->
         <div class="text-muted small">
           Showing <b>{{ showingFrom }}</b> – <b>{{ showingTo }}</b> of
           <b>{{ filteredList.length }}</b>
         </div>
 
         <div class="d-flex align-items-center gap-2">
+          <!-- Page size -->
           <select
             class="form-select form-select-sm"
             style="width: 90px"
@@ -90,6 +117,7 @@
             <option [ngValue]="50">50</option>
           </select>
 
+          <!-- Prev -->
           <button
             class="btn btn-sm btn-outline-secondary"
             (click)="prevPage()"
@@ -98,6 +126,7 @@
             ◀ Prev
           </button>
 
+          <!-- Page Numbers -->
           <button
             *ngFor="let p of pageNumbers"
             class="btn btn-sm"
@@ -107,6 +136,7 @@
             {{ p }}
           </button>
 
+          <!-- Next -->
           <button
             class="btn btn-sm btn-outline-secondary"
             (click)="nextPage()"
@@ -115,6 +145,11 @@
             Next ▶
           </button>
         </div>
+      </div>
+
+      <!-- No Data -->
+      <div *ngIf="filteredList.length === 0" class="text-center py-4 text-muted">
+        <!-- keep empty like hoarding (or add message if you want) -->
       </div>
     </div>
   </div>
