@@ -22,6 +22,8 @@ export class ScreenBoardDescript implements OnInit {
   pdfUrl: SafeResourceUrl | null = null;
   pdfBlobUrl: string | null = null; // store raw blob URL
 
+  isLoggedIn: boolean = false;
+
 
   // ⬅️ THIS VARIABLE WILL CONTROL WHICH UI TO SHOW
   currentSection: string = "details";         //// details | book | schedule | bidding
@@ -53,6 +55,8 @@ export class ScreenBoardDescript implements OnInit {
   mapUrl!: SafeResourceUrl;
 
   ngOnInit(): void {
+    this.checkLoginStatus();
+
     const today = new Date();
     this.minDate = today.toISOString().split('T')[0];
 
@@ -208,9 +212,6 @@ export class ScreenBoardDescript implements OnInit {
 
 
 
-
-
-
     // 🌍 Latitude & Longitude (ALL SERVICES)
     b.lat =
       data.b_lat ||
@@ -229,12 +230,6 @@ export class ScreenBoardDescript implements OnInit {
       const url = `https://www.google.com/maps?q=${b.lat},${b.lng}&z=16&output=embed`;
       this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
-
-
-
-
-
-
     return b;
   }
 
@@ -354,6 +349,12 @@ export class ScreenBoardDescript implements OnInit {
 
   view3D(lat: number, lng: number) {
     this.router.navigate(['/map-3d', lat, lng]);
+  }
+
+  checkLoginStatus() {
+    // ✅ Change key name based on your auth logic
+    const token = localStorage.getItem('token');
+    this.isLoggedIn = !!token;
   }
 
 }

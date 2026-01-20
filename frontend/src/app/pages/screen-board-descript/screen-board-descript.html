@@ -39,24 +39,31 @@
           >
             {{ board.availability }}
           </div>
-          <button *ngIf="board?.id" type="button" (click)="previewHoardingPdf()">Preview</button>
-
-          <button
-            class="view-3d"
-            *ngIf="board.latitude || board.longitude"
-            (click)="view3D(board.latitude, board.longitude)"
-          >
-            <i class="bi bi-badge-3d"></i>
-            View in 3D
-          </button>
-
-          <!-- 📄 CASE STUDY PDF PREVIEW -->
-          <div class="preview-btn-container">
-            <button *ngIf="pdfUrl" class="preview-btn a" (click)="previewHoardingPdf()">
+          <div class="action-btn-container">
+            <!-- 📄 PREVIEW PDF -->
+            <button *ngIf="pdfUrl" class="action-btn preview" (click)="previewHoardingPdf()">
+              <i class="bi bi-eye-fill"></i>
               Preview PDF
             </button>
-            <button *ngIf="pdfUrl" class="preview-btn b" (click)="downloadHoardingPdf()">
+
+            <!-- ⬇️ DOWNLOAD PDF -->
+            <button
+              *ngIf="pdfUrl && isLoggedIn"
+              class="action-btn download"
+              (click)="downloadHoardingPdf()"
+            >
+              <i class="bi bi-download"></i>
               Download PDF
+            </button>
+
+            <!-- 🧊 VIEW 3D (LAST ALWAYS) -->
+            <button
+              *ngIf="board.latitude || board.longitude"
+              class="action-btn view3d"
+              (click)="view3D(board.latitude, board.longitude)"
+            >
+              <i class="bi bi-badge-3d"></i>
+              View in 3D
             </button>
           </div>
         </div>
@@ -390,7 +397,7 @@
         </div>
         <div class="total-row">
           <span>Total Estimated Cost</span>
-          <span class="total-amount">₹{{ totalCost | number : '1.0-0' }}</span>
+          <span class="total-amount">₹{{ totalCost | number: '1.0-0' }}</span>
         </div>
       </div>
 
@@ -461,7 +468,7 @@
         (click)="submitBooking()"
         [disabled]="bookingDetails.paymentCompleted === 'No' || !bookingDetails.agreedToTerms"
         [ngClass]="{
-          'disabled-btn': bookingDetails.paymentCompleted === 'No' || !bookingDetails.agreedToTerms
+          'disabled-btn': bookingDetails.paymentCompleted === 'No' || !bookingDetails.agreedToTerms,
         }"
       >
         <span>Confirm Booking</span>

@@ -29,6 +29,9 @@ export class HoardingFrom {
   hoardingId?: number;
   submitted = false;
 
+  // UI-only toggle (not part of form submission)
+  showCaseStudyForm: boolean = false;
+
   @ViewChild(CaseStudyFormComponent)
   caseStudyComponent!: CaseStudyFormComponent;
 
@@ -313,5 +316,10 @@ export class HoardingFrom {
   }
 
 
+  // toggle handler
+  toggleCaseStudy(event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.showCaseStudyForm = checked;
+  }
 
 }

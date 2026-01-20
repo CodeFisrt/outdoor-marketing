@@ -46,29 +46,6 @@ export class CaseStudyFormComponent {
     });
   }
 
-  patchCaseStudyData(data: any) {
-    if (!data) return;
-    this.caseStudyForm.patchValue({
-      clientName: data.clientName || '',
-      campaignObjective: data.campaignObjective || '',
-      areaName: data.areaName || '',
-      city: data.city || '',
-      crowdFootfall: data.crowdFootfall || '',
-      nearbyCompanies: data.nearbyCompanies || '',
-      boardDistance: data.boardDistance || '',
-      roadType: data.roadType || '',
-      trafficCount: data.trafficCount || '',
-      nightVisibility: data.nightVisibility || '',
-      illuminationType: data.illuminationType || '',
-      previousAds: data.previousAds || '',
-      boardSize: data.boardSize || '',
-      campaignDuration: data.campaignDuration || '',
-      results: data.results || '',
-      conclusion: data.conclusion || ''
-    });
-  }
-
-
   getCaseStudyPdfBlob(): Blob | null {
     if (this.caseStudyForm.invalid) {
       this.caseStudyForm.markAllAsTouched();

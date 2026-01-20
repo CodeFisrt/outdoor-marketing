@@ -144,3 +144,34 @@ mat-checkbox {
     padding: 0 12px;
   }
 }
+
+/* Case Study toggle styling */
+.case-study-toggle .form-check-input {
+  cursor: pointer;
+}
+
+.case-study-toggle label {
+  cursor: pointer;
+  color: #0d6efd;
+}
+
+/* Smooth appearance */
+.case-study-wrapper {
+  padding: 18px;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  animation: fadeInCaseStudy 0.35s ease;
+}
+
+/* Animation */
+@keyframes fadeInCaseStudy {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

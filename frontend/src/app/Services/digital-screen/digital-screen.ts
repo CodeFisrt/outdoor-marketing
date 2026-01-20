@@ -204,7 +204,6 @@ export class DigitalScreen implements OnInit {
 
   // Edit screen
   editScreen(screenId: number) {
-    debugger;
     this.router.navigateByUrl("/dashboard/screen-Form/" + screenId);
     // this.toaster.info("Edit screen data loaded into form");
   }

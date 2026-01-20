@@ -206,7 +206,7 @@
               class="form-control"
               formControlName="ad_start_date"
               [ngClass]="{
-                'is-invalid': isInvalid('ad_start_date') || hasFormError('adDateRangeInvalid')
+                'is-invalid': isInvalid('ad_start_date') || hasFormError('adDateRangeInvalid'),
               }"
             />
             <div class="invalid-feedback" *ngIf="isInvalid('ad_start_date')">
@@ -227,7 +227,7 @@
               class="form-control"
               formControlName="ad_end_date"
               [ngClass]="{
-                'is-invalid': isInvalid('ad_end_date') || hasFormError('adDateRangeInvalid')
+                'is-invalid': isInvalid('ad_end_date') || hasFormError('adDateRangeInvalid'),
               }"
             />
             <div class="invalid-feedback" *ngIf="isInvalid('ad_end_date')">
@@ -249,7 +249,7 @@
               formControlName="contract_start_date"
               [ngClass]="{
                 'is-invalid':
-                  isInvalid('contract_start_date') || hasFormError('contractDateRangeInvalid')
+                  isInvalid('contract_start_date') || hasFormError('contractDateRangeInvalid'),
               }"
             />
             <div class="invalid-feedback" *ngIf="isInvalid('contract_start_date')">
@@ -271,7 +271,7 @@
               formControlName="contract_end_date"
               [ngClass]="{
                 'is-invalid':
-                  isInvalid('contract_end_date') || hasFormError('contractDateRangeInvalid')
+                  isInvalid('contract_end_date') || hasFormError('contractDateRangeInvalid'),
               }"
             />
             <div class="invalid-feedback" *ngIf="isInvalid('contract_end_date')">
@@ -298,17 +298,37 @@
           </div>
         </div>
 
-        <!-- FEATURED CHECKBOX -->
-        <div class="form-check mt-3">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            id="featured"
-            formControlName="featured"
-          />
-          <label class="form-check-label fw-semibold" for="featured"> ⭐ Set As Featured </label>
+        <!-- FEATURED + CASE STUDY (SAME LINE) -->
+        <div class="d-flex align-items-center gap-4 mt-3 flex-wrap">
+          <!-- FEATURED CHECKBOX (FORM CONTROL) -->
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="featured"
+              formControlName="featured"
+            />
+            <label class="form-check-label fw-semibold" for="featured"> ⭐ Set As Featured </label>
+          </div>
+
+          <!-- ADD CASE STUDY CHECKBOX (UI ONLY) -->
+          <div class="form-check case-study-toggle">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="addCaseStudy"
+              (change)="toggleCaseStudy($event)"
+            />
+            <label class="form-check-label fw-semibold" for="addCaseStudy">
+              📄 Add Case Study
+            </label>
+          </div>
         </div>
-        <app-case-study-form ngSkipHydration></app-case-study-form>
+
+        <!-- CASE STUDY FORM (CONDITIONAL) -->
+        <div class="case-study-wrapper mt-4" *ngIf="showCaseStudyForm">
+          <app-case-study-form ngSkipHydration></app-case-study-form>
+        </div>
 
         <!-- Buttons -->
         <div class="d-flex justify-content-between mt-4">
