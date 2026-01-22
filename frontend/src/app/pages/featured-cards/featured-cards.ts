@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule, NgFor } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Featuredservice } from '../../ApiServices/featuredservice';
+import { Featuredservice } from '../../ApiServices/CallApis/featuredservice';
 
 @Component({
   selector: 'app-featured-cards',

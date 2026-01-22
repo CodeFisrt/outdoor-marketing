@@ -1,10 +1,10 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { Society } from '../../Model/model';
 import { CommonModule, NgClass } from '@angular/common';
+import { SocietyService } from '../../ApiServices/CallApis/society-service';
 
 @Component({
   selector: 'app-wall-painting',
@@ -18,17 +18,17 @@ export class WallPainting {
   filteredList: Society[] = [];
   pagedList: Society[] = [];
   societyForm: FormGroup;
-  searchTerm: string = "";
+  searchTerm: string = '';
 
-  // ✅ Pagination
-  pageSize: number = 5;
-  currentPage: number = 1;
-  totalPages: number = 1;
+  // Pagination
+  pageSize = 5;
+  currentPage = 1;
+  totalPages = 1;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient,
+    private societyService: SocietyService,
     private toaster: ToastrService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef
@@ -59,43 +59,48 @@ export class WallPainting {
       remarks: ['']
     });
 
-    this.getAll();
+    this.loadSocieties();
   }
 
-  // ✅ Get all societies
-  getAll() {
-    this.http.get<Society[]>('http://localhost:8080/societies').subscribe(res => {
-      this.societyList = res;
-      this.filteredList = res;
-
-      // reset pagination
-      this.currentPage = 1;
-      this.buildPagination();
-      this.cdr.detectChanges();
-    }, () => this.toaster.error("Failed to fetch societies"));
+  // ========================
+  // LOAD SOCIETIES (CACHED)
+  // ========================
+  loadSocieties() {
+    this.societyService.getAllSocieties().subscribe({
+      next: (res) => {
+        this.societyList = res || [];
+        this.filteredList = [...this.societyList];
+        this.currentPage = 1;
+        this.buildPagination();
+      },
+      error: () => this.toaster.error('Failed to fetch societies')
+    });
   }
 
-  // 🔍 Filter
+  // ========================
+  // FILTER / SEARCH
+  // ========================
   filterSocities() {
     const term = this.searchTerm.toLowerCase();
 
     this.filteredList = this.societyList.filter(s =>
-      s.s_name.toLowerCase().includes(term) ||
-      s.s_city.toLowerCase().includes(term) ||
-      s.s_no_flats.toString().includes(term) ||
-      s.expected_cost.toString().includes(term)
+      s.s_name?.toLowerCase().includes(term) ||
+      s.s_city?.toLowerCase().includes(term) ||
+      s.s_no_flats?.toString().includes(term) ||
+      s.expected_cost?.toString().includes(term)
     );
 
     this.currentPage = 1;
     this.buildPagination();
-    this.cdr.detectChanges();
   }
 
   applySearch() {
     this.filterSocities();
   }
 
-  // ✅ Pagination logic
+  // ========================
+  // PAGINATION
+  // ========================
   private buildPagination() {
     const total = this.filteredList.length;
     this.totalPages = Math.max(1, Math.ceil(total / this.pageSize));
@@ -111,17 +116,13 @@ export class WallPainting {
   }
 
   get pageNumbers(): number[] {
-    const total = this.totalPages;
-    const current = this.currentPage;
-
     const pages: number[] = [];
-    const start = Math.max(1, current - 2);
-    const end = Math.min(total, current + 2);
+    const start = Math.max(1, this.currentPage - 2);
+    const end = Math.min(this.totalPages, this.currentPage + 2);
 
     for (let i = start; i <= end; i++) pages.push(i);
-
     if (pages[0] !== 1) pages.unshift(1);
-    if (pages[pages.length - 1] !== total) pages.push(total);
+    if (pages[pages.length - 1] !== this.totalPages) pages.push(this.totalPages);
 
     return Array.from(new Set(pages));
   }
@@ -152,48 +153,54 @@ export class WallPainting {
     this.buildPagination();
   }
 
-  get showingFrom(): number {
-    if (!this.filteredList.length) return 0;
-    return (this.currentPage - 1) * this.pageSize + 1;
+  get showingFrom() {
+    return this.filteredList.length
+      ? (this.currentPage - 1) * this.pageSize + 1
+      : 0;
   }
 
-  get showingTo(): number {
+  get showingTo() {
     return Math.min(this.currentPage * this.pageSize, this.filteredList.length);
   }
 
-  // ✅ CRUD operations
+  // ========================
+  // CRUD
+  // ========================
   add() {
     if (this.societyForm.invalid) return;
 
-    this.http.post('http://localhost:8080/societies/', this.societyForm.value).subscribe(() => {
+    this.societyService.addSociety(this.societyForm.value).subscribe(() => {
       this.toaster.success('Society Added');
+      this.societyService.refreshSocieties();
+      this.loadSocieties();
       this.societyForm.reset({ approval_status: 'Pending', event_status: 'Scheduled' });
-      this.getAll();
-    }, () => this.toaster.error('Add failed'));
+    });
   }
 
   update() {
     const id = this.societyForm.value.s_id;
     if (!id) return;
 
-    this.http.put(`http://localhost:8080/societies/${id}`, this.societyForm.value).subscribe(() => {
+    this.societyService.updateSociety(id, this.societyForm.value).subscribe(() => {
       this.toaster.success('Society Updated');
+      this.societyService.refreshSocieties();
+      this.loadSocieties();
       this.societyForm.reset({ approval_status: 'Pending', event_status: 'Scheduled' });
-      this.getAll();
-    }, () => this.toaster.error('Update failed'));
+    });
   }
 
   delete(id: number) {
     if (!confirm('Delete this society?')) return;
 
-    this.http.delete(`http://localhost:8080/societies/${id}`).subscribe(() => {
+    this.societyService.deleteSociety(id).subscribe(() => {
       this.toaster.success('Society Deleted');
-      this.getAll();
-    }, () => this.toaster.error('Delete failed'));
+      this.societyService.refreshSocieties();
+      this.loadSocieties();
+    });
   }
 
   edit(id: number) {
-    this.router.navigateByUrl("/dashboard/wall-Paints-Form/" + id);
-    this.toaster.info("Edit Wall data loaded into form");
+    this.router.navigateByUrl('/dashboard/wall-Paints-Form/' + id);
+    this.toaster.info('Edit Wall data loaded into form');
   }
 }

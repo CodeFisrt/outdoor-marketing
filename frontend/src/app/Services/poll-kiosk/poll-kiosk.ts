@@ -7,9 +7,9 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { Router, RouterLink } from '@angular/router';
+import { BalloonService } from '../../ApiServices/CallApis/balloon-service';
 
 @Component({
   selector: 'app-poll-kiosk',
@@ -19,35 +19,34 @@ import { Router, RouterLink } from '@angular/router';
   styleUrls: ['./poll-kiosk.css']
 })
 export class PollKiosk implements OnInit {
+
   balloons: any[] = [];
   filteredList: any[] = [];
-
-  // ✅ PAGINATION (SAME AS YOUR CODE)
-  pageSize: number = 5;
-  currentPage: number = 1;
-  totalPages: number = 1;
   pagedList: any[] = [];
 
-  balloonForm!: FormGroup;
-  searchTerm: string = '';
-  editingId: number | null = null;
+  // ✅ Pagination
+  pageSize = 5;
+  currentPage = 1;
+  totalPages = 1;
 
-  apiUrl = 'http://localhost:8080/balloons';
+  balloonForm!: FormGroup;
+  searchTerm = '';
+  editingId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient,
+    private balloonService: BalloonService,
     private toastr: ToastrService,
     private router: Router,
     private cd: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
     this.loadBalloons();
   }
 
-  // ✅ Initialize form
+  // ✅ FORM
   initForm() {
     this.balloonForm = this.fb.group({
       b_id: [0],
@@ -73,11 +72,24 @@ export class PollKiosk implements OnInit {
     });
   }
 
-  // 🔍 Search filter (UPDATED like Hoardings)
-  filterBallons() {
-    const term = this.searchTerm?.toLowerCase();
+  // ✅ LOAD DATA (ONLY ONCE)
+  loadBalloons() {
+    this.balloonService.getAllBalloons().subscribe({
+      next: (res) => {
+        this.balloons = res;
+        this.filteredList = res;
+        this.currentPage = 1;
+        this.buildPagination();
+      },
+      error: () => this.toastr.error('Failed to load balloons')
+    });
+  }
 
-    this.filteredList = this.balloons.filter((b) =>
+  // 🔍 SEARCH (SAME LOGIC)
+  filterBallons() {
+    const term = this.searchTerm.toLowerCase();
+
+    this.filteredList = this.balloons.filter(b =>
       b.b_location_name?.toLowerCase().includes(term) ||
       b.b_city?.toLowerCase().includes(term) ||
       b.b_type?.toLowerCase().includes(term) ||
@@ -85,36 +97,17 @@ export class PollKiosk implements OnInit {
       b.payment_status?.toLowerCase().includes(term)
     );
 
-    // ✅ Pagination update after search (same as Hoardings)
     this.currentPage = 1;
     this.buildPagination();
   }
 
-  // 🔍 Search triggered by icon click (ADDED like Hoardings)
   applySearch() {
     this.filterBallons();
   }
 
-  // ✅ Load all records
-  loadBalloons() {
-    this.http.get<any[]>(this.apiUrl).subscribe({
-      next: (data) => {
-        this.balloons = data;
-        this.filteredList = data;
-
-        this.currentPage = 1;
-        this.buildPagination();
-
-        this.cd.detectChanges();
-      },
-      error: () => this.toastr.error('Failed to load balloons')
-    });
-  }
-
-  // ✅ PAGINATION CORE (SAME LOGIC)
+  // ✅ PAGINATION CORE (UNCHANGED)
   private buildPagination() {
     const total = this.filteredList.length;
-
     this.totalPages = Math.max(1, Math.ceil(total / this.pageSize));
 
     if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
@@ -124,7 +117,6 @@ export class PollKiosk implements OnInit {
     const end = start + this.pageSize;
 
     this.pagedList = this.filteredList.slice(start, end);
-
     this.cd.detectChanges();
   }
 
@@ -168,26 +160,26 @@ export class PollKiosk implements OnInit {
   }
 
   get showingFrom(): number {
-    if (!this.filteredList.length) return 0;
-    return (this.currentPage - 1) * this.pageSize + 1;
+    return this.filteredList.length
+      ? (this.currentPage - 1) * this.pageSize + 1
+      : 0;
   }
 
   get showingTo(): number {
     return Math.min(this.currentPage * this.pageSize, this.filteredList.length);
   }
 
-  // ✏️ Edit
-  edit(balloonId: number) {
-    this.editingId = balloonId;
-    this.router.navigateByUrl('/dashboard/poll-Kisok-Form/' + balloonId);
+  // ✏️ EDIT
+  edit(id: number) {
+    this.router.navigateByUrl('/dashboard/poll-Kisok-Form/' + id);
     this.toastr.info('Editing balloon data');
   }
 
-  // ❌ Delete
+  // ❌ DELETE
   delete(id: number) {
-    if (!confirm('Are you sure you want to delete?')) return;
+    if (!confirm('Delete this balloon?')) return;
 
-    this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+    this.balloonService.deleteBalloon(id).subscribe({
       next: () => {
         this.toastr.warning('Balloon deleted');
         this.loadBalloons();

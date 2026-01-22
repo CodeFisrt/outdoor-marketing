@@ -1,7 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { Screen } from '../../Model/model';
-import { HttpClient } from '@angular/common/http';
+import { ScreenService } from '../../ApiServices/CallApis/screen-service';
 import { ToastrService } from 'ngx-toastr';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -15,27 +14,28 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./digital-screen.css']
 })
 export class DigitalScreen implements OnInit {
-  screenList: Screen[] = [];
-  filteredList: Screen[] = [];
-  searchTerm: string = "";
+
+  screenList: any[] = [];
+  filteredList: any[] = [];
+  paginatedList: any[] = [];
+
+  searchTerm: string = '';
   screenForm!: FormGroup;
   selectedScreenId: number = 0;
 
-  // ✅ Pagination
+  // Pagination
   pageSize: number = 5;
   currentPage: number = 1;
   totalPages: number = 1;
-  paginatedList: Screen[] = [];
+  pageNumbers: number[] = [];
+  maxPageButtons: number = 5;
 
-  // ✅ For your UI
   showingFrom: number = 0;
   showingTo: number = 0;
-  pageNumbers: number[] = [];
-  maxPageButtons: number = 5; // ✅ show only 5 page buttons
 
   constructor(
     private router: Router,
-    private http: HttpClient,
+    private screenService: ScreenService,
     private toaster: ToastrService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef
@@ -43,10 +43,11 @@ export class DigitalScreen implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.getAllScreen();
+    this.loadScreens(); // ✅ called only once
   }
 
-  // Initialize form
+
+  // Form init
   initForm() {
     this.screenForm = this.fb.group({
       ScreenName: ['', Validators.required],
@@ -73,29 +74,34 @@ export class DigitalScreen implements OnInit {
     });
   }
 
-  // Load all screens
-  getAllScreen() {
-    this.http.get("http://localhost:8080/screens").subscribe({
+  // Load screens (SERVICE USED)
+  // getAllScreen() {
+  //   this.screenService.getAllScreens().subscribe({
+  //     next: (res: any) => {
+  //       this.screenList = res.data || [];
+  //       this.filteredList = [...this.screenList];
+  //       this.currentPage = 1;
+  //       this.applyPagination();
+  //     },
+  //     error: () => this.toaster.error('Failed to load screens')
+  //   });
+  // }
+
+  loadScreens() {
+    this.screenService.getAllScreens().subscribe({
       next: (res: any) => {
         this.screenList = res.data || [];
-        this.filteredList = res.data || [];
-
+        this.filteredList = [...this.screenList];
         this.currentPage = 1;
         this.applyPagination();
-
-        // this.cdr.detectChanges();
-        // this.toaster.success("Screens Loaded Successfully");
       },
-      error: (err) => {
-        console.error(err);
-        this.toaster.error("Failed to load screens");
-      }
+      error: () => this.toaster.error('Failed to load screens')
     });
   }
 
-  // Search filter
+  // Search
   filterScreens() {
-    const term = (this.searchTerm || '').toLowerCase();
+    const term = this.searchTerm.toLowerCase();
 
     this.filteredList = this.screenList.filter(s =>
       (s.ScreenName || '').toLowerCase().includes(term) ||
@@ -106,44 +112,35 @@ export class DigitalScreen implements OnInit {
 
     this.currentPage = 1;
     this.applyPagination();
-    this.cdr.detectChanges();
   }
 
   applySearch() {
     this.filterScreens();
   }
 
-  // ✅ MAIN pagination function
+  // Pagination logic
   applyPagination() {
     const totalItems = this.filteredList.length;
 
     this.totalPages = Math.max(1, Math.ceil(totalItems / this.pageSize));
-
-    // clamp current page
-    if (this.currentPage < 1) this.currentPage = 1;
-    if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+    this.currentPage = Math.min(this.currentPage, this.totalPages);
 
     const startIndex = (this.currentPage - 1) * this.pageSize;
     const endIndex = startIndex + this.pageSize;
 
     this.paginatedList = this.filteredList.slice(startIndex, endIndex);
 
-    // showing range
     this.showingFrom = totalItems === 0 ? 0 : startIndex + 1;
     this.showingTo = Math.min(endIndex, totalItems);
 
-    // build limited page numbers
     this.buildPageNumbers();
-
     this.cdr.detectChanges();
   }
 
-  // ✅ show only 5 page buttons (windowed)
   buildPageNumbers() {
     this.pageNumbers = [];
-    if (this.totalPages <= 1) return;
-
     const half = Math.floor(this.maxPageButtons / 2);
+
     let start = this.currentPage - half;
     let end = this.currentPage + half;
 
@@ -157,7 +154,9 @@ export class DigitalScreen implements OnInit {
       start = Math.max(1, end - this.maxPageButtons + 1);
     }
 
-    for (let i = start; i <= end; i++) this.pageNumbers.push(i);
+    for (let i = start; i <= end; i++) {
+      this.pageNumbers.push(i);
+    }
   }
 
   goToPage(page: number) {
@@ -185,36 +184,27 @@ export class DigitalScreen implements OnInit {
     this.applyPagination();
   }
 
-  // Delete screen
+  // Delete (SERVICE USED)
   deleteScreen(id: number) {
-    if (!window.confirm("Are you sure you want to delete this screen?")) return;
+    if (!confirm('Are you sure you want to delete this screen?')) return;
 
-    this.http.delete(`http://localhost:8080/screens/${id}`).subscribe({
+    this.screenService.deleteScreenById(id).subscribe({
       next: () => {
-        this.toaster.success("Screen Deleted Successfully");
-        this.getAllScreen();
-        this.cdr.detectChanges();
+        this.toaster.success('Screen deleted successfully');
+        this.loadScreens();
       },
-      error: (err) => {
-        console.error(err);
-        this.toaster.error("Failed to delete screen");
-      }
+      error: () => this.toaster.error('Delete failed')
     });
   }
 
-  // Edit screen
-  editScreen(screenId: number) {
-    this.router.navigateByUrl("/dashboard/screen-Form/" + screenId);
-    // this.toaster.info("Edit screen data loaded into form");
+  // Edit
+  editScreen(id: number) {
+    this.router.navigateByUrl(`/dashboard/screen-Form/${id}`);
   }
 
   resetForm() {
     this.screenForm.reset();
-    this.selectedScreenId = 0;
-
     this.currentPage = 1;
     this.applyPagination();
-
-    this.cdr.detectChanges();
   }
 }
