@@ -27,6 +27,7 @@ import { ScreenBoardDescript } from './pages/screen-board-descript/screen-board-
 import { ScreenBoardCardList } from './pages/screen-board-card-list/screen-board-card-list';
 import { FeaturedList } from './pages/featured-list/featured-list';
 import { Map3dView } from './pages/map3d-view/map3d-view';
+import { InventoryMap } from './pages/inventory-map/inventory-map';
 
 
 import { UsersList } from './pages/user-management/users-list/users-list';
@@ -56,6 +57,11 @@ export const routes: Routes = [
   { path: "screenBoardDescrpt/:id/:service_type", component: ScreenBoardDescript },
   { path: 'featured/:type', component: FeaturedList },
   { path: 'map-3d/:lat/:lng', component: Map3dView },
+  { 
+    path: 'inventory-map', 
+    component: InventoryMap,
+    // Allow all authenticated users to view, but booking requires agency/admin role
+  },
   { path: 'agency-dashboard', component: AgencyDashboard, canActivate: [authGuard], },
   { path: 'screen-owner-dashboard', component: ScreenOwnerDashboard, canActivate: [authGuard], },
   { path: 'guest-dashboard', component: GuestDashboard, canActivate: [authGuard], },

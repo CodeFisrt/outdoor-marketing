@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+const http = require("http");
+const { Server } = require("socket.io");
 const port = 3000;
 
 app.use(express.json({ limit: "10mb" }));
@@ -16,6 +18,17 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const db = require("./db");
 
+// Create HTTP server for Socket.io
+const server = http.createServer(app);
+
+// Initialize Socket.io
+const io = new Server(server, {
+  cors: {
+    origin: ["http://localhost:4200", "http://localhost:5173"],
+    methods: ["GET", "POST"]
+  }
+});
+
 app.use(
   cors({
     origin: ["http://localhost:4200", "http://localhost:5173"],
@@ -23,6 +36,9 @@ app.use(
     exposedHeaders: ["Content-Type", "Content-Disposition"],
   })
 );
+
+// Make io available to routes
+app.set("io", io);
 
 // Swagger Setup (kept same, now scans index.js + routes folder)
 const options = {
@@ -51,7 +67,29 @@ const JWT_SECRET = process.env.JWT_SECRET || "secret";
 
 registerAllRoutes(app, db, { bcrypt, jwt, JWT_SECRET });
 
+// ---------------- Socket.io Connection Handling ----------------
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+
+  // Join inventory room for real-time updates
+  socket.on("join-inventory", () => {
+    socket.join("inventory-updates");
+    console.log(`Client ${socket.id} joined inventory-updates room`);
+  });
+
+  // Handle status updates
+  socket.on("inventory-status-update", (data) => {
+    // Broadcast to all clients in inventory room
+    io.to("inventory-updates").emit("inventory-updated", data);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
+});
+
 // ---------------- Start Server ----------------
-app.listen(8080, () => {
+server.listen(8080, () => {
   console.log(`Server running at http://localhost:${8080}`);
+  console.log(`WebSocket server ready for connections`);
 });

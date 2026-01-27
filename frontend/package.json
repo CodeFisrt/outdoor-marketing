@@ -44,6 +44,7 @@
     "ngx-skeleton-loader": "^11.3.0",
     "ngx-toastr": "^19.0.0",
     "rxjs": "~7.8.0",
+    "socket.io-client": "^4.7.5",
     "swiper": "^11.2.10",
     "tslib": "^2.3.0",
     "zone.js": "^0.15.1"
