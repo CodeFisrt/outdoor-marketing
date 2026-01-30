@@ -10,6 +10,7 @@ import {
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InventoryService, InventoryItem, GeoJSONFeature } from '../../ApiServices/CallApis/inventory-service';
+import { HoardingService } from '../../ApiServices/CallApis/hoarding-service';
 import { io, Socket } from 'socket.io-client';
 
 type MapMode = 'all' | 'digital_only' | 'high_traffic' | 'available' | 'maintenance' | 'heatmap';
@@ -28,36 +29,36 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
   selectedItem: InventoryItem | null = null;
   clusterSource: any = null;
   socket: Socket | null = null;
-  
+
   // Map state
   mapMode: MapMode = 'all';
   isLoading = false;
   showHeatmap = false;
   showBookingCalendar = false;
-  
+
   // Booking state
   bookingStartDate = '';
   bookingEndDate = '';
   selectedInventoryForBooking: InventoryItem | null = null;
   bookings: any[] = [];
-  
+
   // Sidebar state
   sidebarOpen = true;
   activeTab: 'trending' | 'disruptions' = 'trending';
-  
+
   // Filters
   selectedMediaType = '';
   selectedCity = '';
   selectedAvailability = '';
   selectedVisibility = '';
   searchQuery = '';
-  
+
   // Data
   allInventory: GeoJSONFeature[] = [];
   filteredInventory: GeoJSONFeature[] = [];
   trendingItems: InventoryItem[] = [];
   cities: string[] = [];
-  
+
   // Media type options
   mediaTypes = [
     { value: '', label: 'All Types' },
@@ -68,14 +69,14 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
     { value: 'bus_shelter', label: 'Bus Shelters' },
     { value: 'unipole', label: 'Unipoles' }
   ];
-  
+
   availabilityOptions = [
     { value: '', label: 'All Status' },
     { value: 'available', label: 'Available' },
     { value: 'booked', label: 'Booked' },
     { value: 'maintenance', label: 'Maintenance' }
   ];
-  
+
   visibilityOptions = [
     { value: '', label: 'All Visibility' },
     { value: 'high', label: 'High Traffic (80+)' },
@@ -85,9 +86,10 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private inventoryService: InventoryService,
+    private hoardingService: HoardingService,
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -138,7 +140,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
     if (isPlatformBrowser(this.platformId)) {
       await this.initMap();
       // Inventory will be loaded in map.on('load') callback
-      
+
       // Listen for view details event from popup
       window.addEventListener('viewInventoryDetails', (e: any) => {
         const inventoryId = e.detail;
@@ -149,13 +151,15 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    window.removeEventListener('viewInventoryDetails', () => {});
-    
+    if (isPlatformBrowser(this.platformId)) {
+      window.removeEventListener('viewInventoryDetails', () => { });
+    }
+
     // Disconnect WebSocket
     if (this.socket) {
       this.socket.disconnect();
     }
-    
+
     if (this.map) {
       // Remove layers and sources
       if (this.map.getLayer('clusters')) this.map.removeLayer('clusters');
@@ -173,7 +177,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
    */
   async initMap() {
     const maplibregl = await import('maplibre-gl');
-    
+
     this.map = new maplibregl.Map({
       container: 'inventory-map',
       style: {
@@ -214,13 +218,13 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
           'background-color': '#0a0e27'
         }
       }, 'simple-tiles');
-      
+
       // Adjust raster layer opacity for dark theme
       this.map.setPaintProperty('simple-tiles', 'raster-opacity', 0.4);
-      
+
       // Initialize clustering source
       await this.initClustering();
-      
+
       // Load inventory after map is ready
       await this.loadInventory();
     });
@@ -320,17 +324,17 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
     // Visibility filter
     if (this.selectedVisibility) {
       const score = this.selectedVisibility === 'high' ? 80 : this.selectedVisibility === 'medium' ? 60 : 0;
-      filtered = filtered.filter(f => 
+      filtered = filtered.filter(f =>
         this.selectedVisibility === 'high' ? f.properties.trafficScore >= 80 :
-        this.selectedVisibility === 'medium' ? f.properties.trafficScore >= 60 && f.properties.trafficScore < 80 :
-        f.properties.trafficScore < 60
+          this.selectedVisibility === 'medium' ? f.properties.trafficScore >= 60 && f.properties.trafficScore < 80 :
+            f.properties.trafficScore < 60
       );
     }
 
     // Search query
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
-      filtered = filtered.filter(f => 
+      filtered = filtered.filter(f =>
         f.properties.name?.toLowerCase().includes(query) ||
         f.properties.inventoryId?.toString().includes(query) ||
         f.properties.area?.toLowerCase().includes(query) ||
@@ -355,7 +359,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
 
     this.filteredInventory = filtered;
     this.updateMarkers();
-    
+
     // Update heatmap if enabled
     if (this.showHeatmap) {
       this.toggleHeatmap();
@@ -534,7 +538,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
    */
   updateMarkersForViewport() {
     if (!this.map || this.filteredInventory.length < 1000) return;
-    
+
     const bounds = this.map.getBounds();
     const visibleFeatures = this.filteredInventory.filter(feature => {
       const [lng, lat] = feature.geometry.coordinates;
@@ -575,6 +579,59 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       .setLngLat(coordinates)
       .setHTML(html)
       .addTo(this.map);
+
+    // Fetch Analytics for this item
+    this.hoardingService.getHoardingAnalytics(Number(item.inventoryId)).subscribe({
+      next: (data) => {
+        const container = document.getElementById(`analytics-${item.inventoryId}`);
+        if (container) {
+          if (data && data.daily_vehicle_count !== undefined) {
+            // Show data
+            container.innerHTML = `
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+                  <h5 style="font-size: 14px; margin-bottom: 5px; color: #007bff;">📊 Analytics</h5>
+                  <div style="font-size: 12px; line-height: 1.5;">
+                    <div>🚗 Daily Traffic: <strong>${data.daily_vehicle_count}</strong></div>
+                    <div>👥 Est. Humans: <strong>${data.estimated_human_count}</strong></div>
+                    <div>👁 Daily Impressions: <strong>${data.daily_impressions}</strong></div>
+                    <div>⏰ Peak Hour: <strong>${data.peak_hour}</strong></div>
+                  </div>
+                </div>
+             `;
+          } else {
+            // No data found, trigger calculation
+            container.innerHTML = `<small style="color: #888;">Fetching analytics...</small>`;
+            this.hoardingService.calculateAnalytics(Number(item.inventoryId)).subscribe({
+              next: (res) => {
+                if (res && res.formatted_data) {
+                  const d = res.formatted_data;
+                  container.innerHTML = `
+                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+                          <h5 style="font-size: 14px; margin-bottom: 5px; color: #007bff;">📊 Analytics</h5>
+                          <div style="font-size: 12px; line-height: 1.5;">
+                            <div>🚗 Daily Traffic: <strong>${d.daily_vehicle_count}</strong></div>
+                            <div>👥 Est. Humans: <strong>${d.estimated_human_count}</strong></div>
+                            <div>👁 Daily Impressions: <strong>${d.daily_impressions}</strong></div>
+                            <div>⏰ Peak Hour: <strong>${d.peak_hour}</strong></div>
+                          </div>
+                        </div>
+                     `;
+                } else {
+                  container.innerHTML = `<small style="color: #888;">No data available.</small>`;
+                }
+              },
+              error: () => {
+                container.innerHTML = `<small style="color: red;">Failed to load analytics.</small>`;
+              }
+            });
+          }
+        }
+      },
+      error: () => {
+        const container = document.getElementById(`analytics-${item.inventoryId}`);
+        if (container) container.innerHTML = `<small>Analytics unavailable</small>`;
+      }
+    });
 
     // Attach click handlers to buttons after popup is added
     setTimeout(() => {
@@ -648,7 +705,11 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
               <span class="label">Rental Cost:</span>
               <span class="value">₹${item.rentalCost.toLocaleString()}/month</span>
             </div>
+            </div>
           ` : ''}
+          
+          <div id="analytics-${item.inventoryId}" style="min-height: 20px;"></div>
+
         </div>
         <div class="popup-footer">
           <button class="popup-btn view-details" data-id="${item.inventoryId}">
@@ -884,7 +945,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
    */
   isDateRangeAvailable(startDate: string, endDate: string): boolean {
     if (!this.bookings.length) return true;
-    
+
     const start = new Date(startDate);
     const end = new Date(endDate);
 
@@ -895,4 +956,3 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 }
-

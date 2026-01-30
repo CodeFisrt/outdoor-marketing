@@ -382,3 +382,146 @@ a:hover {
         display: none !important;
     }
 }
+
+/* ==================== MAP POPUP OVERRIDES (HIGH CONTRAST) ==================== */
+/* Ensure these styles are applied globally to MapLibre popups */
+
+.inventory-popup {
+    z-index: 5000 !important;
+    max-width: 380px !important;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.8)) !important;
+}
+
+.inventory-popup .maplibregl-popup-content {
+    background-color: #0b0f19 !important;
+    /* Very Dark Blue/Black */
+    border: 2px solid #00d4ff !important;
+    /* Neon Cyan Border */
+    border-radius: 8px !important;
+    padding: 0 !important;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.2) !important;
+    color: #ffffff !important;
+}
+
+.inventory-popup .maplibregl-popup-tip {
+    border-top-color: #00d4ff !important;
+    border-bottom-color: #00d4ff !important;
+}
+
+.inventory-popup .maplibregl-popup-close-button {
+    color: #ffffff !important;
+    font-size: 24px !important;
+    right: 8px !important;
+    top: 4px !important;
+    border-radius: 50% !important;
+    padding: 0 6px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    transition: background 0.2s !important;
+    width: 30px !important;
+    height: 30px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10 !important;
+}
+
+.inventory-popup .maplibregl-popup-close-button:hover {
+    background-color: #ff4444 !important;
+    color: white !important;
+}
+
+/* Internal Content Styling (Custom Classes) */
+.inventory-popup .popup-content {
+    background: transparent !important;
+}
+
+.inventory-popup .popup-header {
+    background: linear-gradient(90deg, #002f4b, #050510) !important;
+    padding: 15px 20px !important;
+    border-bottom: 2px solid #00d4ff !important;
+}
+
+.inventory-popup .popup-header h3 {
+    color: #ffffff !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    margin: 0 !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+.inventory-popup .popup-code {
+    color: #00d4ff !important;
+    font-weight: 600 !important;
+    display: block !important;
+    margin-top: 4px !important;
+}
+
+.inventory-popup .popup-body {
+    padding: 20px !important;
+    background: #0b0f19 !important;
+}
+
+.inventory-popup .popup-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 8px 0 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    text-shadow: none !important;
+}
+
+.inventory-popup .popup-row .label {
+    color: #cccccc !important;
+    font-size: 13px !important;
+    text-transform: uppercase !important;
+    font-weight: 600 !important;
+}
+
+.inventory-popup .popup-row .value {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    text-align: right !important;
+}
+
+.inventory-popup .traffic-score {
+    color: #00ff88 !important;
+    font-size: 16px !important;
+}
+
+.inventory-popup .status-badge {
+    background: #00d4ff !important;
+    color: #000000 !important;
+    padding: 2px 8px !important;
+    border-radius: 4px !important;
+    font-size: 11px !important;
+}
+
+.inventory-popup .popup-footer {
+    padding: 15px 20px !important;
+    background: #050510 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.inventory-popup .popup-btn {
+    border: 2px solid #00d4ff !important;
+    color: #00d4ff !important;
+    font-weight: 800 !important;
+    background: transparent !important;
+    text-transform: uppercase !important;
+}
+
+.inventory-popup .popup-btn:hover {
+    background: #00d4ff !important;
+    color: #000000 !important;
+}
+
+.inventory-popup .popup-btn.book-now {
+    border-color: #ff8200 !important;
+    color: #ff8200 !important;
+}
+
+.inventory-popup .popup-btn.book-now:hover {
+    background: #ff8200 !important;
+    color: #000000 !important;
+}

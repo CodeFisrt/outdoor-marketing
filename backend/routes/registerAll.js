@@ -10,6 +10,7 @@ const registerBookingRoutes = require("./booking.routes");
 const registerContactRoutes = require("./contact.routes");
 const registerUserRoutes = require("./users.routes");
 const registerInventoryRoutes = require("./inventory.routes");
+const registerAnalyticsRoutes = require("./analytics");
 
 
 /**
@@ -28,8 +29,9 @@ module.exports = function registerAllRoutes(app, db, deps = {}) {
   registerBookingRoutes(app, db);
   registerContactRoutes(app, db);
   registerInventoryRoutes(app, db);
+  registerAnalyticsRoutes(app, db);
 
-  
+
   // Users module needs bcrypt/jwt/JWT_SECRET exactly like your index.js uses
   if (deps.bcrypt && deps.jwt && deps.JWT_SECRET) {
     registerUserRoutes(app, db, deps.bcrypt, deps.jwt, deps.JWT_SECRET);
