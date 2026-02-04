@@ -9,6 +9,8 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
 import { Subscription } from 'rxjs';
 
+declare const google: any;
+
 @Component({
   selector: 'app-map3d-view',
   standalone: true,
@@ -22,9 +24,8 @@ export class Map3dView implements AfterViewInit, OnDestroy {
   lng!: number;
 
   map: any = null;
+  marker: any = null;
   routeSub!: Subscription;
-
-  viewMode: 'satellite' = 'satellite';
 
   constructor(
     private route: ActivatedRoute,
@@ -40,97 +41,98 @@ export class Map3dView implements AfterViewInit, OnDestroy {
     this.routeSub = this.route.paramMap.subscribe(params => {
       this.lat = Number(params.get('lat'));
       this.lng = Number(params.get('lng'));
-      this.loadEsriMap();
+      this.waitForGoogleAndLoad();
     });
   }
 
   /* ===============================
-     ESRI WORLD IMAGERY (FREE)
+     WAIT FOR GOOGLE SCRIPT
   =============================== */
-  async loadEsriMap() {
+  waitForGoogleAndLoad() {
+    if (typeof google !== 'undefined' && google.maps) {
+      this.loadGoogle3DMap();
+    } else {
+      setTimeout(() => this.waitForGoogleAndLoad(), 50);
+    }
+  }
+
+  /* ===============================
+     GOOGLE 3D WEBGL MAP
+  =============================== */
+  async loadGoogle3DMap() {
     this.destroyMap();
 
-    const maplibregl = await import('maplibre-gl');
+    const mapDiv = document.getElementById('map3d');
 
-    this.map = new maplibregl.Map({
-      container: 'map3d',
-      style: this.getEsriStyle(),
-      center: [this.lng, this.lat],
-      zoom: 16,
-      pitch: 45,
-      bearing: 0,
-      antialias: true
-    } as any);
+    // 🔥 Prevent IntersectionObserver crash
+    if (!mapDiv) {
+      setTimeout(() => this.loadGoogle3DMap(), 50);
+      return;
+    }
 
-    this.map.addControl(
-      new maplibregl.NavigationControl({
-        visualizePitch: true,
-        showCompass: true
-      }),
-      'top-right'
-    );
+    const center = { lat: this.lat, lng: this.lng };
 
-    new maplibregl.Marker({ color: 'red' })
-      .setLngLat([this.lng, this.lat])
-      .addTo(this.map);
+    this.map = new google.maps.Map(mapDiv, {
+      center,
+      zoom: 18,
+      heading: 0,
+      tilt: 67.5,
+      mapId: 'YOUR_MAP_ID_HERE', // required for WebGL 3D
+      mapTypeControl: false,
+      streetViewControl: false,
+      fullscreenControl: false
+    });
+
+    // ✅ NEW ADVANCED MARKER (replaces deprecated Marker)
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+
+    this.marker = new AdvancedMarkerElement({
+      map: this.map,
+      position: center,
+      title: "Hoarding Location"
+    });
+
+    // ensure tilt stays
+    google.maps.event.addListenerOnce(this.map, 'idle', () => {
+      this.map.setTilt(67.5);
+    });
   }
 
   /* ===============================
-     ESRI STYLE (RASTER)
-  =============================== */
-  getEsriStyle() {
-    return {
-      version: 8,
-      sources: {
-        esri: {
-          type: 'raster',
-          tiles: [
-            'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-          ],
-          tileSize: 256,
-          attribution: '© Esri, Maxar, Earthstar Geographics'
-        }
-      },
-      layers: [
-        {
-          id: 'esri-world-imagery',
-          type: 'raster',
-          source: 'esri'
-        }
-      ]
-    };
-  }
-
-  /* ===============================
-     TOOLBAR ACTIONS
+     TOOLBAR ACTIONS (UNCHANGED)
   =============================== */
   resetView() {
     if (!this.map) return;
 
-    this.map.easeTo({
-      center: [this.lng, this.lat],
-      zoom: 16,
-      pitch: 45,
-      bearing: 0
+    this.map.moveCamera({
+      center: { lat: this.lat, lng: this.lng },
+      zoom: 18,
+      heading: 0,
+      tilt: 67.5
     });
   }
 
   rotateLeft() {
     if (!this.map) return;
-    this.map.rotateTo(this.map.getBearing() - 30, { duration: 300 });
+    const heading = this.map.getHeading() || 0;
+    this.map.moveCamera({ heading: heading - 30 });
   }
 
   rotateRight() {
     if (!this.map) return;
-    this.map.rotateTo(this.map.getBearing() + 30, { duration: 300 });
+    const heading = this.map.getHeading() || 0;
+    this.map.moveCamera({ heading: heading + 30 });
   }
 
   /* ===============================
      CLEANUP
   =============================== */
   destroyMap() {
+    if (this.marker) {
+      this.marker.map = null;
+      this.marker = null;
+    }
     if (this.map) {
-      this.map.remove();
       this.map = null;
     }
   }
