@@ -1,3 +1,4 @@
+// da0a475f090c618128d9ae25
 import {
   Component,
   AfterViewInit,
@@ -22,7 +23,6 @@ export class Map3dView implements AfterViewInit, OnDestroy {
 
   lat!: number;
   lng!: number;
-
   map: any = null;
   marker: any = null;
   routeSub!: Subscription;
@@ -32,9 +32,6 @@ export class Map3dView implements AfterViewInit, OnDestroy {
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
-  /* ===============================
-     INIT
-  =============================== */
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
@@ -45,45 +42,58 @@ export class Map3dView implements AfterViewInit, OnDestroy {
     });
   }
 
-  /* ===============================
-     WAIT FOR GOOGLE SCRIPT
-  =============================== */
   waitForGoogleAndLoad() {
     if (typeof google !== 'undefined' && google.maps) {
       this.loadGoogle3DMap();
     } else {
-      setTimeout(() => this.waitForGoogleAndLoad(), 50);
+      setTimeout(() => this.waitForGoogleAndLoad(), 100);
     }
   }
 
-  /* ===============================
-     GOOGLE 3D WEBGL MAP
-  =============================== */
   async loadGoogle3DMap() {
     this.destroyMap();
 
     const mapDiv = document.getElementById('map3d');
-
-    // 🔥 Prevent IntersectionObserver crash
-    if (!mapDiv) {
-      setTimeout(() => this.loadGoogle3DMap(), 50);
-      return;
-    }
+    if (!mapDiv) return;
 
     const center = { lat: this.lat, lng: this.lng };
 
+    // 💰 Billing counter
+    (window as any).googleApiCount = ((window as any).googleApiCount || 0) + 1;
+    console.log("💰 Total Google Map Loads:", (window as any).googleApiCount);
+
     this.map = new google.maps.Map(mapDiv, {
       center,
-      zoom: 18,
-      heading: 0,
-      tilt: 67.5,
-      mapId: 'YOUR_MAP_ID_HERE', // required for WebGL 3D
-      mapTypeControl: false,
-      streetViewControl: false,
+      zoom: 22,
+      heading: 40,
+      tilt: 80,
+      mapId: 'da0a475f090c618128d9ae25',
+
+      // 🛰 Map Type Switch
+      mapTypeControl: true,
+      mapTypeControlOptions: {
+        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+        position: google.maps.ControlPosition.TOP_RIGHT,
+        mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain']
+      },
+
+      // ✅ STREET VIEW FIX
+      streetViewControl: true,
+      streetViewControlOptions: {
+        position: google.maps.ControlPosition.TOP_RIGHT
+      },
+
       fullscreenControl: false
     });
 
-    // ✅ NEW ADVANCED MARKER (replaces deprecated Marker)
+    const panorama = new google.maps.StreetViewPanorama(
+      document.createElement("div"),
+      { position: center }
+    );
+
+    this.map.setStreetView(panorama);
+
+
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
     this.marker = new AdvancedMarkerElement({
@@ -92,47 +102,45 @@ export class Map3dView implements AfterViewInit, OnDestroy {
       title: "Hoarding Location"
     });
 
-    // ensure tilt stays
     google.maps.event.addListenerOnce(this.map, 'idle', () => {
-      this.map.setTilt(67.5);
+      this.map.moveCamera({
+        center,
+        zoom: 22,
+        tilt: 80,
+        heading: 40
+      });
     });
   }
 
-  /* ===============================
-     TOOLBAR ACTIONS (UNCHANGED)
-  =============================== */
   resetView() {
     if (!this.map) return;
-
     this.map.moveCamera({
       center: { lat: this.lat, lng: this.lng },
-      zoom: 18,
-      heading: 0,
-      tilt: 67.5
+      zoom: 22,
+      tilt: 80,
+      heading: 40
     });
   }
 
   rotateLeft() {
     if (!this.map) return;
     const heading = this.map.getHeading() || 0;
-    this.map.moveCamera({ heading: heading - 30 });
+    this.map.moveCamera({ heading: heading - 25 });
   }
 
   rotateRight() {
     if (!this.map) return;
     const heading = this.map.getHeading() || 0;
-    this.map.moveCamera({ heading: heading + 30 });
+    this.map.moveCamera({ heading: heading + 25 });
   }
 
-  /* ===============================
-     CLEANUP
-  =============================== */
   destroyMap() {
     if (this.marker) {
       this.marker.map = null;
       this.marker = null;
     }
     if (this.map) {
+      google.maps.event.clearInstanceListeners(this.map);
       this.map = null;
     }
   }
@@ -141,4 +149,6 @@ export class Map3dView implements AfterViewInit, OnDestroy {
     this.routeSub?.unsubscribe();
     this.destroyMap();
   }
+
+
 }
