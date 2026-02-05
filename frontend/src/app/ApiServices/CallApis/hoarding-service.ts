@@ -41,4 +41,12 @@ export class HoardingService {
   updateHoarding(id: number, obj: any): Observable<any> {
     return this.http.put(`${this.baseUrl}/${id}`, obj);
   }
+
+  getHoardingAnalytics(id: number): Observable<any> {
+    return this.http.get<any>(`http://localhost:8080/api/analytics/${id}`);
+  }
+
+  calculateAnalytics(id: number): Observable<any> {
+    return this.http.get<any>(`http://localhost:8080/api/analytics/calculate/${id}`);
+  }
 }

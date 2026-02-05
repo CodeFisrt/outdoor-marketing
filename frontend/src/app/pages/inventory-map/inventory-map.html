@@ -56,47 +56,26 @@
       <h3 class="panel-title">Map Focus</h3>
       <div class="focus-options">
         <label class="focus-option">
-          <input 
-            type="radio" 
-            name="mapMode" 
-            value="all" 
-            [checked]="mapMode === 'all'"
-            (change)="setMapMode('all')">
+          <input type="radio" name="mapMode" value="all" [checked]="mapMode === 'all'" (change)="setMapMode('all')">
           <span>All Traffic</span>
         </label>
         <label class="focus-option">
-          <input 
-            type="radio" 
-            name="mapMode" 
-            value="digital_only" 
-            [checked]="mapMode === 'digital_only'"
+          <input type="radio" name="mapMode" value="digital_only" [checked]="mapMode === 'digital_only'"
             (change)="setMapMode('digital_only')">
           <span>Only Digital Screens</span>
         </label>
         <label class="focus-option">
-          <input 
-            type="radio" 
-            name="mapMode" 
-            value="high_traffic" 
-            [checked]="mapMode === 'high_traffic'"
+          <input type="radio" name="mapMode" value="high_traffic" [checked]="mapMode === 'high_traffic'"
             (change)="setMapMode('high_traffic')">
           <span>High-Traffic Hoardings</span>
         </label>
         <label class="focus-option">
-          <input 
-            type="radio" 
-            name="mapMode" 
-            value="available" 
-            [checked]="mapMode === 'available'"
+          <input type="radio" name="mapMode" value="available" [checked]="mapMode === 'available'"
             (change)="setMapMode('available')">
           <span>Available Now</span>
         </label>
         <label class="focus-option">
-          <input 
-            type="radio" 
-            name="mapMode" 
-            value="maintenance" 
-            [checked]="mapMode === 'maintenance'"
+          <input type="radio" name="mapMode" value="maintenance" [checked]="mapMode === 'maintenance'"
             (change)="setMapMode('maintenance')">
           <span>Under Maintenance</span>
         </label>
@@ -120,46 +99,27 @@
 
     <!-- Map Mode Toggle (Top Right) -->
     <div class="map-mode-toggle">
-      <button 
-        class="mode-btn" 
-        [class.active]="mapMode === 'all'"
-        (click)="setMapMode('all')"
-        title="All Inventory">
+      <button class="mode-btn" [class.active]="mapMode === 'all'" (click)="setMapMode('all')" title="All Inventory">
         All
       </button>
-      <button 
-        class="mode-btn" 
-        [class.active]="mapMode === 'digital_only'"
-        (click)="setMapMode('digital_only')"
+      <button class="mode-btn" [class.active]="mapMode === 'digital_only'" (click)="setMapMode('digital_only')"
         title="Digital Screens Only">
         Digital
       </button>
-      <button 
-        class="mode-btn" 
-        [class.active]="mapMode === 'high_traffic'"
-        (click)="setMapMode('high_traffic')"
+      <button class="mode-btn" [class.active]="mapMode === 'high_traffic'" (click)="setMapMode('high_traffic')"
         title="High Traffic">
         High Traffic
       </button>
-      <button 
-        class="mode-btn" 
-        [class.active]="mapMode === 'available'"
-        (click)="setMapMode('available')"
+      <button class="mode-btn" [class.active]="mapMode === 'available'" (click)="setMapMode('available')"
         title="Available Now">
         Available
       </button>
-      <button 
-        class="mode-btn" 
-        [class.active]="mapMode === 'maintenance'"
-        (click)="setMapMode('maintenance')"
+      <button class="mode-btn" [class.active]="mapMode === 'maintenance'" (click)="setMapMode('maintenance')"
         title="Under Maintenance">
         Maintenance
       </button>
-      <button 
-        class="mode-btn" 
-        [class.active]="mapMode === 'heatmap'"
-        (click)="setMapMode('heatmap'); showHeatmap = !showHeatmap; toggleHeatmap()"
-        title="Heatmap View">
+      <button class="mode-btn" [class.active]="mapMode === 'heatmap'"
+        (click)="setMapMode('heatmap'); showHeatmap = !showHeatmap; toggleHeatmap()" title="Heatmap View">
         Heatmap
       </button>
     </div>
@@ -182,12 +142,12 @@
               <label>End Date</label>
               <input type="date" [(ngModel)]="bookingEndDate" class="form-control">
             </div>
-            <button class="btn btn-primary" (click)="createBooking()" 
-                    [disabled]="!bookingStartDate || !bookingEndDate || !isDateRangeAvailable(bookingStartDate, bookingEndDate)">
+            <button class="btn btn-primary" (click)="createBooking()"
+              [disabled]="!bookingStartDate || !bookingEndDate || !isDateRangeAvailable(bookingStartDate, bookingEndDate)">
               Create Booking
             </button>
-            <div *ngIf="bookingStartDate && bookingEndDate && !isDateRangeAvailable(bookingStartDate, bookingEndDate)" 
-                 class="alert alert-warning">
+            <div *ngIf="bookingStartDate && bookingEndDate && !isDateRangeAvailable(bookingStartDate, bookingEndDate)"
+              class="alert alert-warning">
               Date range conflicts with existing bookings
             </div>
           </div>
@@ -309,4 +269,3 @@
     </div>
   </div>
 </div>
-

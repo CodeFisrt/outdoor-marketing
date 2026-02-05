@@ -13,6 +13,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InventoryService, InventoryItem, GeoJSONFeature, GeoJSONResponse } from '../../ApiServices/CallApis/inventory-service';
+
+import { HoardingService } from '../../ApiServices/CallApis/hoarding-service';
 import { io, Socket } from 'socket.io-client';
 import { timeout, finalize } from 'rxjs/operators';
 
@@ -51,13 +53,13 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
   isLoading = false;
   showHeatmap = false;
   showBookingCalendar = false;
-  
+
   // Booking state
   bookingStartDate = '';
   bookingEndDate = '';
   selectedInventoryForBooking: InventoryItem | null = null;
   bookings: any[] = [];
-  
+
   // Sidebar state
   sidebarOpen = true;
   
@@ -79,11 +81,12 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private inventoryService: InventoryService,
+    private hoardingService: HoardingService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -164,7 +167,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
     if (this.socket) {
       this.socket.disconnect();
     }
-    
+
     if (this.map) {
       // Remove layers and sources
       if (this.map.getLayer('clusters')) this.map.removeLayer('clusters');
@@ -211,7 +214,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
         ],
         glyphs: 'https://cdn.jsdelivr.net/gh/kylebarron/openmaptiles-fonts/fonts/{fontstack}/{range}.pbf'
       },
-      center: [77.2090, 28.6139], // New Delhi, India
+      center: [78.9629, 20.5937], // India (geographic center)
       zoom: 5,
       pitch: 0,
       bearing: 0
@@ -976,7 +979,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
    */
   isDateRangeAvailable(startDate: string, endDate: string): boolean {
     if (!this.bookings.length) return true;
-    
+
     const start = new Date(startDate);
     const end = new Date(endDate);
 
@@ -986,5 +989,47 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       return (start <= bookingEnd && end >= bookingStart);
     });
   }
-}
+  /**
+ * Auto focus map on highest density inventory area
+ */
+  focusHighServiceArea() {
+    if (!this.map || !this.filteredInventory.length) return;
 
+    // Count inventory per city
+    const cityCounts: { [city: string]: number } = {};
+
+    this.filteredInventory.forEach(f => {
+      const city = f.properties.city || 'Unknown';
+      cityCounts[city] = (cityCounts[city] || 0) + 1;
+    });
+
+    // Find city with highest inventory
+    const topCity = Object.keys(cityCounts).reduce((a, b) =>
+      cityCounts[a] > cityCounts[b] ? a : b
+    );
+
+    // Get all features in that city
+    const cityFeatures = this.filteredInventory.filter(
+      f => f.properties.city === topCity
+    );
+
+    // Get center coordinate of that cluster
+    const lngs = cityFeatures.map(f => f.geometry.coordinates[0]);
+    const lats = cityFeatures.map(f => f.geometry.coordinates[1]);
+
+    const centerLng = lngs.reduce((a, b) => a + b) / lngs.length;
+    const centerLat = lats.reduce((a, b) => a + b) / lats.length;
+
+    // Fly to location
+    this.map.flyTo({
+      center: [centerLng, centerLat],
+      zoom: 14,
+      speed: 1.2,
+      curve: 1.4,
+      essential: true
+    });
+
+    console.log(`Focused on high-service city: ${topCity}`);
+  }
+
+}
