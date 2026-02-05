@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, OnInit, ChangeDetectorRef, PLATFORM_ID, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Search } from '../../SearchServices/search';
 import { FormsModule } from '@angular/forms';
@@ -27,6 +27,8 @@ export class ScreenBoardDescript implements OnInit {
 
   // ⬅️ THIS VARIABLE WILL CONTROL WHICH UI TO SHOW
   currentSection: string = "details";         //// details | book | schedule | bidding
+  /** True when user came from inventory map "Book Now" — "Back to Details" returns to map */
+  cameFromMap = false;
   nearBoards: any[] = [];
 
   // 📝 Booking Form Data
@@ -48,7 +50,8 @@ export class ScreenBoardDescript implements OnInit {
     private searchService: Search,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private sanitizer: DomSanitizer //add for map url
+    private sanitizer: DomSanitizer,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
   minDate: string = '';
@@ -56,6 +59,7 @@ export class ScreenBoardDescript implements OnInit {
 
   ngOnInit(): void {
     this.checkLoginStatus();
+    this.cameFromMap = this.route.snapshot.queryParamMap.get('from') === 'map';
 
     const today = new Date();
     this.minDate = today.toISOString().split('T')[0];
@@ -70,18 +74,30 @@ export class ScreenBoardDescript implements OnInit {
     });
   }
 
+  /** Map route service_type (e.g. from inventory map) to API type expected by getServiceDetails */
+  private mapRouteTypeToApiType(type: string): string {
+    const map: { [key: string]: string } = {
+      hoarding: 'hoardings',
+      digital_screen: 'outdoormarketingscreens',
+      led_screen: 'outdoormarketingscreens',
+      society: 'society_marketing',
+    };
+    return map[type] ?? type;
+  }
+
   loadBoardDetails(type: string, id: number) {
     this.loading = true;
     this.board = null; // Clear previous board data
+    const apiType = this.mapRouteTypeToApiType(type);
 
-    this.searchService.getServiceDetails(type, id).subscribe({
+    this.searchService.getServiceDetails(apiType, id).subscribe({
       next: (res: any) => {
         let data = res.data ? res.data : res;
 
-        this.board = this.normalizeData(data, type);
+        this.board = this.normalizeData(data, apiType);
 
         // Fetch PDF AFTER board is loaded
-        if (type === 'hoardings' && this.board?.h_id) {
+        if (apiType === 'hoardings' && this.board?.h_id) {
           this.searchService.getHoardingPdf(this.board.h_id).subscribe({
             next: (blob) => {
               // Revoke old blob URL if exists
@@ -105,6 +121,11 @@ export class ScreenBoardDescript implements OnInit {
           this.pdfUrl = null;
         }
         this.loading = false;
+        // If navigated from map "Book Now", open the Book this Service section
+        const openSection = this.route.snapshot.queryParamMap.get('open');
+        if (openSection === 'book') {
+          this.currentSection = 'book';
+        }
         this.cdr.detectChanges(); // Force UI update to ensure image renders
       },
       error: (err) => {
@@ -238,8 +259,27 @@ export class ScreenBoardDescript implements OnInit {
     this.currentSection = section;
   }
 
+  /** From Book this Service: go back to details on this page, or to inventory map if we came from map */
+  backFromBookSection() {
+    if (this.cameFromMap) {
+      const id = this.route.snapshot.paramMap.get('id');
+      const type = this.route.snapshot.paramMap.get('service_type');
+      if (id && type) {
+        this.router.navigate(['/inventory-map'], { queryParams: { open: id, type } });
+      } else {
+        this.router.navigate(['/inventory-map']);
+      }
+    } else {
+      this.showSection('details');
+    }
+  }
+
   goBack() {
-    history.back();
+    if (this.cameFromMap) {
+      this.router.navigate(['/inventory-map']);
+    } else {
+      history.back();
+    }
   }
 
   // 💰 Total Cost Calculation
@@ -352,7 +392,7 @@ export class ScreenBoardDescript implements OnInit {
   }
 
   checkLoginStatus() {
-    // ✅ Change key name based on your auth logic
+    if (!isPlatformBrowser(this.platformId)) return;
     const token = localStorage.getItem('token');
     this.isLoggedIn = !!token;
   }

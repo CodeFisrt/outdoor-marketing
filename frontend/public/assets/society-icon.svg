@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="buildingFill" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ab47bc"/>
+      <stop offset="100%" style="stop-color:#6a1b9a"/>
+    </linearGradient>
+    <linearGradient id="roofFill" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ce93d8"/>
+      <stop offset="100%" style="stop-color:#9c27b0"/>
+    </linearGradient>
+  </defs>
+  <!-- Roof -->
+  <path d="M16 4 L28 14 L28 28 L4 28 L4 14 Z" fill="url(#roofFill)" stroke="#6a1b9a" stroke-width="1.2"/>
+  <!-- Building body -->
+  <path d="M6 14 L6 28 L26 28 L26 14 L16 8 Z" fill="url(#buildingFill)" stroke="#6a1b9a" stroke-width="1"/>
+  <!-- Windows - row 1 -->
+  <rect x="9" y="16" width="3" height="3" rx="0.4" fill="#e1bee7"/>
+  <rect x="14" y="16" width="3" height="3" rx="0.4" fill="#e1bee7"/>
+  <rect x="19" y="16" width="3" height="3" rx="0.4" fill="#e1bee7"/>
+  <!-- Windows - row 2 -->
+  <rect x="9" y="21" width="3" height="3" rx="0.4" fill="#e1bee7"/>
+  <rect x="14" y="21" width="3" height="3" rx="0.4" fill="#e1bee7"/>
+  <rect x="19" y="21" width="3" height="3" rx="0.4" fill="#e1bee7"/>
+</svg>

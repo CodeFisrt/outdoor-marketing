@@ -1,6 +1,18 @@
 module.exports = function registerSocietyRoutes(app, db) {
   app.get("/societies", (req, res) => {
-    db.query("SELECT * FROM society_marketing", (err, results) => {
+    const { city, limit } = req.query;
+    let sql = "SELECT * FROM society_marketing";
+    const params = [];
+    if (city && String(city).trim()) {
+      sql += " WHERE LOWER(TRIM(s_city)) LIKE LOWER(?)";
+      params.push("%" + String(city).trim() + "%");
+    }
+    const limitNum = Math.min(Math.max(parseInt(limit, 10) || 0, 0), 2000);
+    if (limitNum > 0) {
+      sql += " LIMIT ?";
+      params.push(limitNum);
+    }
+    db.query(sql, params, (err, results) => {
       if (err) return res.status(500).send(err);
       res.json(results);
     });

@@ -5,7 +5,19 @@ module.exports = function registerHoardingRoutes(app, db) {
   };
 
   app.get("/hoardings", (req, res) => {
-    db.query("SELECT * FROM hoardings", (err, results) => {
+    const { city, limit } = req.query;
+    let sql = "SELECT * FROM hoardings";
+    const params = [];
+    if (city && String(city).trim()) {
+      sql += " WHERE LOWER(TRIM(city)) = LOWER(?)";
+      params.push(String(city).trim());
+    }
+    const limitNum = Math.min(Math.max(parseInt(limit, 10) || 0, 0), 2000);
+    if (limitNum > 0) {
+      sql += " LIMIT ?";
+      params.push(limitNum);
+    }
+    db.query(sql, params, (err, results) => {
       if (err) {
         console.error("DB ERROR:", err);
         return res.status(500).json({

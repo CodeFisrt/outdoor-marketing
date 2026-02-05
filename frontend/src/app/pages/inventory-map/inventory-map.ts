@@ -5,12 +5,16 @@ import {
   OnDestroy,
   ChangeDetectorRef,
   PLATFORM_ID,
-  Inject
+  Inject,
+  ViewChild,
+  ElementRef
 } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { InventoryService, InventoryItem, GeoJSONFeature } from '../../ApiServices/CallApis/inventory-service';
+import { InventoryService, InventoryItem, GeoJSONFeature, GeoJSONResponse } from '../../ApiServices/CallApis/inventory-service';
 import { io, Socket } from 'socket.io-client';
+import { timeout, finalize } from 'rxjs/operators';
 
 type MapMode = 'all' | 'digital_only' | 'high_traffic' | 'available' | 'maintenance' | 'heatmap';
 
@@ -22,13 +26,26 @@ type MapMode = 'all' | 'digital_only' | 'high_traffic' | 'available' | 'maintena
   styleUrls: ['./inventory-map.css']
 })
 export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('mapContainer') mapContainerRef?: ElementRef<HTMLElement>;
+
   map: any = null;
   markers: Map<string, any> = new Map();
-  popup: any = null;
   selectedItem: InventoryItem | null = null;
   clusterSource: any = null;
   socket: Socket | null = null;
-  
+  private resizeObserver: ResizeObserver | null = null;
+
+  /** Right-side details panel (split-screen, no MapLibre popup) */
+  isPanelOpen = false;
+  detailsImageError = false;
+  /** Only open panel from query params once (when returning from Book this Service) */
+  private _openedPanelFromQueryParams = false;
+  private viewDetailsHandler = (e: any) => {
+    const inventoryId = e.detail;
+    console.log('View details for:', inventoryId);
+  };
+  private resizeHandler = () => this.map?.resize();
+
   // Map state
   mapMode: MapMode = 'all';
   isLoading = false;
@@ -43,55 +60,34 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
   
   // Sidebar state
   sidebarOpen = true;
-  activeTab: 'trending' | 'disruptions' = 'trending';
   
-  // Filters
-  selectedMediaType = '';
+  
+  // Filters (selectedCity set by Search by City; map mode in Map Focus panel)
   selectedCity = '';
-  selectedAvailability = '';
-  selectedVisibility = '';
-  searchQuery = '';
-  
+  citySearchQuery = '';
+  citySearchInProgress = false;
+  citiesWithCoords: { city: string; lat: number; lng: number }[] = [];
+
+  get isCitySearchDisabled(): boolean {
+    return !this.citySearchQuery?.trim() || this.citySearchInProgress;
+  }
+
   // Data
   allInventory: GeoJSONFeature[] = [];
   filteredInventory: GeoJSONFeature[] = [];
-  trendingItems: InventoryItem[] = [];
   cities: string[] = [];
-  
-  // Media type options
-  mediaTypes = [
-    { value: '', label: 'All Types' },
-    { value: 'hoarding', label: 'Hoardings / Billboards' },
-    { value: 'digital_screen', label: 'Digital Screens' },
-    { value: 'led_screen', label: 'LED Screens' },
-    { value: 'transit_media', label: 'Transit Media' },
-    { value: 'bus_shelter', label: 'Bus Shelters' },
-    { value: 'unipole', label: 'Unipoles' }
-  ];
-  
-  availabilityOptions = [
-    { value: '', label: 'All Status' },
-    { value: 'available', label: 'Available' },
-    { value: 'booked', label: 'Booked' },
-    { value: 'maintenance', label: 'Maintenance' }
-  ];
-  
-  visibilityOptions = [
-    { value: '', label: 'All Visibility' },
-    { value: 'high', label: 'High Traffic (80+)' },
-    { value: 'medium', label: 'Medium Traffic (60-79)' },
-    { value: 'low', label: 'Low Traffic (<60)' }
-  ];
 
   constructor(
     private inventoryService: InventoryService,
     private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
+    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      this.loadTrendingItems();
+      this.loadCities();
       this.initWebSocket();
     }
   }
@@ -136,20 +132,33 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
 
   async ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
-      await this.initMap();
-      // Inventory will be loaded in map.on('load') callback
-      
-      // Listen for view details event from popup
-      window.addEventListener('viewInventoryDetails', (e: any) => {
-        const inventoryId = e.detail;
-        console.log('View details for:', inventoryId);
-        // Navigate to details page or show modal
+      window.addEventListener('viewInventoryDetails', this.viewDetailsHandler);
+      // Wait for container to be in DOM and have non-zero size (fixes blank map when container not laid out yet)
+      const tryInit = (attempt = 0) => {
+        const el = this.mapContainerRef?.nativeElement;
+        if (!el || this.map) {
+          if (attempt < 25) setTimeout(() => tryInit(attempt + 1), 100);
+          return;
+        }
+        const w = el.offsetWidth;
+        const h = el.offsetHeight;
+        if (w > 0 && h > 0) {
+          this.initMap(el);
+        } else if (attempt < 25) {
+          setTimeout(() => tryInit(attempt + 1), 100);
+        }
+      };
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => tryInit(0));
       });
     }
   }
 
   ngOnDestroy() {
-    window.removeEventListener('viewInventoryDetails', () => {});
+    if (isPlatformBrowser(this.platformId)) {
+      window.removeEventListener('viewInventoryDetails', this.viewDetailsHandler);
+      window.removeEventListener('resize', this.resizeHandler);
+    }
     
     // Disconnect WebSocket
     if (this.socket) {
@@ -165,17 +174,20 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       if (this.map.getSource('inventory-clusters')) this.map.removeSource('inventory-clusters');
       if (this.map.getSource('heatmap-source')) this.map.removeSource('heatmap-source');
       this.map.remove();
+      this.map = null;
     }
   }
 
   /**
-   * Initialize MapLibre GL map
+   * Initialize MapLibre GL map. Pass the container element so map shows when navigating to this page.
    */
-  async initMap() {
+  async initMap(container: HTMLElement) {
+    if (!container || this.map) return;
     const maplibregl = await import('maplibre-gl');
-    
+    if (!container.isConnected) return;
+
     this.map = new maplibregl.Map({
-      container: 'inventory-map',
+      container,
       style: {
         version: 8,
         sources: {
@@ -197,7 +209,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
             maxzoom: 22
           }
         ],
-        glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf'
+        glyphs: 'https://cdn.jsdelivr.net/gh/kylebarron/openmaptiles-fonts/fonts/{fontstack}/{range}.pbf'
       },
       center: [77.2090, 28.6139], // New Delhi, India
       zoom: 5,
@@ -205,8 +217,9 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       bearing: 0
     });
 
-    // Add dark theme overlay
+    // Add dark theme overlay (below tiles so tiles stay visible)
     this.map.on('load', async () => {
+      if (!this.map) return;
       this.map.addLayer({
         id: 'dark-overlay',
         type: 'background',
@@ -214,15 +227,18 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
           'background-color': '#0a0e27'
         }
       }, 'simple-tiles');
-      
-      // Adjust raster layer opacity for dark theme
-      this.map.setPaintProperty('simple-tiles', 'raster-opacity', 0.4);
+      // Keep tiles clearly visible (0.4 was too faint; 0.7 makes the map readable)
+      this.map.setPaintProperty('simple-tiles', 'raster-opacity', 0.7);
       
       // Initialize clustering source
       await this.initClustering();
-      
-      // Load inventory after map is ready
-      await this.loadInventory();
+      if (!this.map) return;
+      // Force map to recalc size (fixes blank map when container wasn't sized at init)
+      this.map.resize();
+      // Redraw again after layout settles (fixes map not showing when navigating to page)
+      setTimeout(() => this.map?.resize(), 300);
+      // By default show hoardings, digital screens, and societies on the map
+      this.loadDefaultMapData();
     });
 
     // Add navigation controls
@@ -239,47 +255,132 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       this.updateMarkersForViewport();
     });
 
-    // Create popup
-    this.popup = new maplibregl.Popup({
-      closeButton: true,
-      closeOnClick: false,
-      maxWidth: '400px',
-      className: 'inventory-popup'
+    window.addEventListener('resize', this.resizeHandler);
+  }
+
+  /**
+   * Load default map data: hoardings, digital screens, and societies (no city filter).
+   * So by default all three types show on the map.
+   */
+  loadDefaultMapData() {
+    this.isLoading = true;
+    this.cdr.detectChanges();
+    const LOAD_TIMEOUT_MS = 15000;
+    this.inventoryService.getInventory().pipe(
+      timeout(LOAD_TIMEOUT_MS),
+      finalize(() => {
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      next: (response: GeoJSONResponse) => {
+        this.allInventory = response?.features ?? [];
+        this.extractCities();
+        this.applyFilters();
+        if (this.map && this.map.getSource('inventory-clusters')) {
+          this.updateMarkers();
+          this.map.resize();
+        }
+      },
+      error: () => {
+        this.allInventory = [];
+      }
     });
   }
 
   /**
-   * Load all inventory data
+   * Load cities with coordinates for quick city buttons (derived from inventory).
    */
-  async loadInventory() {
-    this.isLoading = true;
-    try {
-      const response = await this.inventoryService.getInventory().toPromise();
-      if (response) {
-        this.allInventory = response.features;
-        this.extractCities();
-        this.applyFilters();
-        // Update map source if clustering is initialized
-        if (this.map && this.map.getSource('inventory-clusters')) {
-          await this.updateMarkers();
-        }
+  loadCities() {
+    this.inventoryService.getInventory().subscribe({
+      next: (response: GeoJSONResponse) => {
+        this.citiesWithCoords = this.extractCitiesWithCoords(response?.features ?? []);
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.citiesWithCoords = [];
+        this.cdr.detectChanges();
       }
-    } catch (error) {
-      console.error('Error loading inventory:', error);
-    } finally {
-      this.isLoading = false;
-      this.cdr.detectChanges();
-    }
+    });
+  }
+
+  /** Derive cities with center coords from GeoJSON features for quick city buttons. */
+  private extractCitiesWithCoords(features: GeoJSONFeature[]): { city: string; lat: number; lng: number }[] {
+    const byCity = new Map<string, { lat: number; lng: number; count: number }>();
+    features.forEach(f => {
+      const city = (f.properties?.city ?? '').trim();
+      if (!city) return;
+      const [lng, lat] = f.geometry?.coordinates ?? [0, 0];
+      const existing = byCity.get(city);
+      if (existing) {
+        existing.lat += lat;
+        existing.lng += lng;
+        existing.count += 1;
+      } else {
+        byCity.set(city, { lat, lng, count: 1 });
+      }
+    });
+    return Array.from(byCity.entries())
+      .map(([city, v]) => ({ city, lat: v.lat / v.count, lng: v.lng / v.count }))
+      .sort((a, b) => a.city.localeCompare(b.city));
   }
 
   /**
-   * Load trending items for sidebar
+   * Search by city: load Hoarding, Digital Screen, Society locations and show on map.
    */
-  async loadTrendingItems() {
-    try {
-      this.trendingItems = await this.inventoryService.getTrendingInventory(10).toPromise() || [];
-    } catch (error) {
-      console.error('Error loading trending items:', error);
+  searchCity() {
+    const city = this.citySearchQuery?.trim();
+    if (!city) return;
+
+    this.citySearchInProgress = true;
+    this.isLoading = true;
+    this.cdr.detectChanges();
+
+    const LOAD_TIMEOUT_MS = 15000;
+    this.inventoryService.getInventory({ city }).pipe(
+      timeout(LOAD_TIMEOUT_MS),
+      finalize(() => {
+        this.citySearchInProgress = false;
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      next: (response: GeoJSONResponse) => {
+        this.allInventory = response?.features ?? [];
+        this.extractCities();
+        this.selectedCity = (this.allInventory[0]?.properties?.city ?? city).trim();
+        this.applyFilters();
+        this.centerMapOnCity(city);
+        if (this.map) this.map.resize();
+      },
+      error: () => {
+        this.allInventory = [];
+      }
+    });
+  }
+
+  selectCityQuick(cityName: string) {
+    this.citySearchQuery = cityName;
+    this.searchCity();
+  }
+
+  centerMapOnCity(cityName: string) {
+    if (!this.map) return;
+    const normalized = cityName.trim().toLowerCase();
+    const cityInfo = this.citiesWithCoords.find(c => c.city.trim().toLowerCase() === normalized);
+    if (cityInfo) {
+      this.map.easeTo({ center: [cityInfo.lng, cityInfo.lat], zoom: 12, duration: 800 });
+      return;
+    }
+    if (this.filteredInventory.length > 0) {
+      const coords = this.filteredInventory.map(f => f.geometry.coordinates);
+      const lngs = coords.map(c => c[0]);
+      const lats = coords.map(c => c[1]);
+      const padding = 0.02;
+      this.map.fitBounds(
+        [[Math.min(...lngs) - padding, Math.min(...lats) - padding], [Math.max(...lngs) + padding, Math.max(...lats) + padding]],
+        { padding: 40, duration: 800, maxZoom: 14 }
+      );
     }
   }
 
@@ -302,51 +403,27 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
   applyFilters() {
     let filtered = [...this.allInventory];
 
-    // Media type filter
-    if (this.selectedMediaType) {
-      filtered = filtered.filter(f => f.properties.mediaType === this.selectedMediaType);
-    }
-
-    // City filter
+    // City filter (set by Search by City)
     if (this.selectedCity) {
-      filtered = filtered.filter(f => f.properties.city === this.selectedCity);
+      const cityLower = this.selectedCity.trim().toLowerCase();
+      filtered = filtered.filter(f => (f.properties.city ?? '').trim().toLowerCase() === cityLower);
     }
 
-    // Availability filter
-    if (this.selectedAvailability) {
-      filtered = filtered.filter(f => f.properties.availabilityStatus === this.selectedAvailability);
-    }
-
-    // Visibility filter
-    if (this.selectedVisibility) {
-      const score = this.selectedVisibility === 'high' ? 80 : this.selectedVisibility === 'medium' ? 60 : 0;
-      filtered = filtered.filter(f => 
-        this.selectedVisibility === 'high' ? f.properties.trafficScore >= 80 :
-        this.selectedVisibility === 'medium' ? f.properties.trafficScore >= 60 && f.properties.trafficScore < 80 :
-        f.properties.trafficScore < 60
-      );
-    }
-
-    // Search query
-    if (this.searchQuery) {
-      const query = this.searchQuery.toLowerCase();
-      filtered = filtered.filter(f => 
-        f.properties.name?.toLowerCase().includes(query) ||
-        f.properties.inventoryId?.toString().includes(query) ||
-        f.properties.area?.toLowerCase().includes(query) ||
-        f.properties.landmark?.toLowerCase().includes(query)
-      );
-    }
-
-    // Map mode filters
+    // Map mode filters (normalize status so backend variants like "Occupied", "Under Maintenance" work)
+    const normalizedStatus = (s: string | undefined): string => {
+      const lower = (s ?? '').toString().toLowerCase().trim();
+      if (lower === 'maintenance' || lower.includes('maintenance')) return 'maintenance';
+      if (lower === 'booked' || lower === 'occupied') return 'booked';
+      return lower || 'available';
+    };
     if (this.mapMode === 'digital_only') {
       filtered = filtered.filter(f => f.properties.isDigital);
     } else if (this.mapMode === 'high_traffic') {
       filtered = filtered.filter(f => f.properties.trafficScore >= 80);
     } else if (this.mapMode === 'available') {
-      filtered = filtered.filter(f => f.properties.availabilityStatus === 'available');
+      filtered = filtered.filter(f => normalizedStatus(f.properties.availabilityStatus) === 'available');
     } else if (this.mapMode === 'maintenance') {
-      filtered = filtered.filter(f => f.properties.availabilityStatus === 'maintenance');
+      filtered = filtered.filter(f => normalizedStatus(f.properties.availabilityStatus) === 'maintenance');
     } else if (this.mapMode === 'heatmap') {
       this.showHeatmap = true;
     } else {
@@ -355,10 +432,34 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
 
     this.filteredInventory = filtered;
     this.updateMarkers();
-    
+    this.tryOpenPanelFromQueryParams();
+
     // Update heatmap if enabled
     if (this.showHeatmap) {
       this.toggleHeatmap();
+    }
+  }
+
+  /**
+   * If URL has open=id&type=mediaType (return from "Back to Details" on Book form), open that item's panel.
+   */
+  private tryOpenPanelFromQueryParams() {
+    if (this._openedPanelFromQueryParams) return;
+    const openId = this.route.snapshot.queryParamMap.get('open');
+    const openType = this.route.snapshot.queryParamMap.get('type');
+    if (!openId || !openType) return;
+    const id = openId.trim();
+    const typeLower = openType.trim().toLowerCase();
+    const feature = this.filteredInventory.find(f => {
+      const p = f.properties;
+      const idMatch = String(p?.inventoryId ?? '') === id || Number(p?.inventoryId) === Number(id);
+      const typeMatch = (p?.mediaType ?? '').toLowerCase() === typeLower;
+      return idMatch && typeMatch;
+    });
+    if (feature) {
+      this.openPanel(feature.properties as InventoryItem, feature.geometry.coordinates as [number, number]);
+      this._openedPanelFromQueryParams = true;
+      this.cdr.detectChanges();
     }
   }
 
@@ -420,7 +521,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       filter: ['has', 'point_count'],
       layout: {
         'text-field': '{point_count_abbreviated}',
-        'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+        'text-font': ['Open Sans Regular'],
         'text-size': 12
       },
       paint: {
@@ -428,27 +529,24 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    // Add unclustered points
+    // Load logo icons for Hoarding, Digital Screen, Society
+    await this.loadMapIcons();
+
+    // Add unclustered points as logo icons (Hoarding, Digital Screen, Society)
     this.map.addLayer({
       id: 'unclustered-point',
-      type: 'circle',
+      type: 'symbol',
       source: 'inventory-clusters',
       filter: ['!', ['has', 'point_count']],
+      layout: {
+        'icon-image': ['get', 'iconImage'],
+        'icon-size': 1.1,
+        'icon-allow-overlap': true,
+        'icon-ignore-placement': true,
+        'icon-anchor': 'center'
+      },
       paint: {
-        'circle-color': [
-          'match',
-          ['get', 'mediaType'],
-          'hoarding', '#ff8200',
-          'digital_screen', '#00d4ff',
-          'led_screen', '#00ff88',
-          'transit_media', '#ff00ff',
-          'bus_shelter', '#ffff00',
-          'unipole', '#ff4444',
-          '#888'
-        ],
-        'circle-radius': 12,
-        'circle-stroke-width': 2,
-        'circle-stroke-color': '#fff'
+        'icon-opacity': 1
       }
     });
 
@@ -466,6 +564,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       const features = this.map.queryRenderedFeatures(e.point, {
         layers: ['clusters']
       });
+      if (!features.length) return;
       const clusterId = features[0].properties.cluster_id;
       (this.map.getSource('inventory-clusters') as any).getClusterExpansionZoom(
         clusterId,
@@ -479,19 +578,24 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       );
     });
 
-    // Click on unclustered point to show popup
+    // Click on unclustered point: open details panel (no popup)
     this.map.on('click', 'unclustered-point', (e: any) => {
-      const coordinates = e.features[0].geometry.coordinates.slice();
+      if (!e.features?.length) return;
+      e.originalEvent?.stopPropagation?.();
+      const coords = e.features[0].geometry.coordinates.slice();
       const props = e.features[0].properties;
-      // Find full item data
-      const fullItem = this.filteredInventory.find(
-        f => f.properties.inventoryId.toString() === props.inventoryId?.toString()
+      const idStr = props.inventoryId != null ? String(props.inventoryId) : '';
+      const typeStr = (props.mediaType != null ? String(props.mediaType) : '').toLowerCase();
+      let fullItem = this.filteredInventory.find(
+        f => String(f.properties.inventoryId) === idStr && String(f.properties.mediaType || '').toLowerCase() === typeStr
       );
-      if (fullItem) {
-        this.showPopup(fullItem.properties, coordinates);
-      } else {
-        this.showPopup(props, coordinates);
+      if (!fullItem && coords.length >= 2) {
+        fullItem = this.filteredInventory.find(
+          f => f.geometry.coordinates[0] === coords[0] && f.geometry.coordinates[1] === coords[1]
+        );
       }
+      const item = fullItem ? fullItem.properties : props;
+      this.openPanel(item as InventoryItem, coords);
     });
 
     // Change cursor on hover
@@ -511,155 +615,157 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * Update markers on map using clustering
+   * Load logo icons (Hoarding, Digital Screen, Society) and add to map.
+   * Rasterize SVG to ImageData so MapLibre renders them reliably.
+   */
+  private loadMapIcons(): Promise<void> {
+    const size = 64; // power of 2 for GPU texture
+    const icons: { id: string; svg: string }[] = [
+      { id: 'hoarding-icon', svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32"><defs><linearGradient id="hb" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e3f2fd"/><stop offset="100%" stop-color="#bbdefb"/></linearGradient><linearGradient id="hf" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#1976d2"/><stop offset="100%" stop-color="#0d47a1"/></linearGradient></defs><circle cx="6" cy="6" r="1.5" fill="#42a5f5" stroke="#0d47a1" stroke-width="0.8"/><circle cx="12" cy="6" r="1.5" fill="#42a5f5" stroke="#0d47a1" stroke-width="0.8"/><circle cx="18" cy="6" r="1.5" fill="#42a5f5" stroke="#0d47a1" stroke-width="0.8"/><circle cx="24" cy="6" r="1.5" fill="#42a5f5" stroke="#0d47a1" stroke-width="0.8"/><rect x="3" y="8" width="26" height="12" rx="1.5" fill="url(#hb)" stroke="#0d47a1" stroke-width="1.2"/><rect x="6" y="10" width="20" height="8" rx="1" fill="#fff"/><rect x="8" y="11.5" width="3" height="2" rx="0.3" fill="#1976d2" opacity="0.9"/><rect x="13" y="11.5" width="2" height="2" rx="0.3" fill="#1976d2" opacity="0.9"/><rect x="17" y="11.5" width="2" height="2" rx="0.3" fill="#1976d2" opacity="0.9"/><ellipse cx="9" cy="12" rx="1" ry="0.6" fill="#90caf9" opacity="0.6"/><ellipse cx="23" cy="12.5" rx="0.8" ry="0.5" fill="#90caf9" opacity="0.6"/><rect x="4" y="20" width="24" height="2.5" rx="0.5" fill="url(#hf)" stroke="#0d47a1" stroke-width="0.8"/><rect x="14.5" y="22" width="3" height="6" fill="#0d47a1"/><line x1="10" y1="28" x2="22" y2="28" stroke="#0d47a1" stroke-width="1.5" stroke-linecap="round"/></svg>` },
+      { id: 'digital-icon', svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32"><defs><linearGradient id="dg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00d4ff"/><stop offset="100%" stop-color="#0097a7"/></linearGradient><linearGradient id="df" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#00838f"/><stop offset="100%" stop-color="#004d40"/></linearGradient></defs><rect x="4" y="6" width="24" height="16" rx="2" fill="url(#df)" stroke="#004d40" stroke-width="1.2"/><rect x="6" y="8" width="20" height="12" rx="1" fill="url(#dg)" stroke="#00acc1" stroke-width="0.8"/><path d="M13 12v6l5-3-5-3z" fill="rgba(255,255,255,0.9)"/><rect x="20" y="11" width="2" height="4" rx="0.3" fill="rgba(255,255,255,0.5)"/><rect x="23" y="10" width="2" height="6" rx="0.3" fill="rgba(255,255,255,0.5)"/><rect x="14" y="22" width="4" height="2" rx="0.5" fill="#00838f"/><rect x="15" y="24" width="2" height="4" rx="0.3" fill="#004d40"/><line x1="12" y1="28" x2="20" y2="28" stroke="#004d40" stroke-width="1.2" stroke-linecap="round"/></svg>` },
+      { id: 'society-icon', svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32"><defs><linearGradient id="sg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ab47bc"/><stop offset="100%" stop-color="#6a1b9a"/></linearGradient><linearGradient id="sr" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ce93d8"/><stop offset="100%" stop-color="#9c27b0"/></linearGradient></defs><path d="M16 4 L28 14 L28 28 L4 28 L4 14 Z" fill="url(#sr)" stroke="#6a1b9a" stroke-width="1.2"/><path d="M6 14 L6 28 L26 28 L26 14 L16 8 Z" fill="url(#sg)" stroke="#6a1b9a" stroke-width="1"/><rect x="9" y="16" width="3" height="3" rx="0.4" fill="#e1bee7"/><rect x="14" y="16" width="3" height="3" rx="0.4" fill="#e1bee7"/><rect x="19" y="16" width="3" height="3" rx="0.4" fill="#e1bee7"/><rect x="9" y="21" width="3" height="3" rx="0.4" fill="#e1bee7"/><rect x="14" y="21" width="3" height="3" rx="0.4" fill="#e1bee7"/><rect x="19" y="21" width="3" height="3" rx="0.4" fill="#e1bee7"/></svg>` },
+      { id: 'default-icon', svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32"><circle cx="16" cy="16" r="10" fill="#888" stroke="#fff" stroke-width="2"/></svg>` }
+    ];
+
+    const loadOne = (id: string, svg: string): Promise<void> =>
+      new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          try {
+            if (this.map.hasImage(id)) return resolve();
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, size, size);
+              const imageData = ctx.getImageData(0, 0, size, size);
+              this.map.addImage(id, {
+                width: size,
+                height: size,
+                data: new Uint8Array(imageData.data)
+              });
+            } else {
+              this.map.addImage(id, img);
+            }
+          } catch (_) {}
+          resolve();
+        };
+        img.onerror = () => resolve();
+        img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+      });
+
+    return Promise.all(icons.map(({ id, svg }) => loadOne(id, svg))).then(() => {});
+  }
+
+  getIconImage(mediaType: string): string {
+    const map: { [key: string]: string } = { hoarding: 'hoarding-icon', digital_screen: 'digital-icon', led_screen: 'digital-icon', society: 'society-icon' };
+    return map[mediaType] ?? 'default-icon';
+  }
+
+  /**
+   * Update markers on map using clustering (logo icons)
    */
   async updateMarkers() {
     if (!this.map || !this.map.getSource('inventory-clusters')) {
-      // If source doesn't exist yet, wait for map load
       return;
     }
-
-    // Update GeoJSON source with filtered data
+    const featuresWithIcons = this.filteredInventory.map(f => ({
+      ...f,
+      properties: { ...f.properties, iconImage: this.getIconImage(f.properties.mediaType) }
+    }));
     const source = this.map.getSource('inventory-clusters') as any;
     if (source) {
-      source.setData({
-        type: 'FeatureCollection',
-        features: this.filteredInventory
-      });
+      source.setData({ type: 'FeatureCollection', features: featuresWithIcons });
     }
   }
 
   /**
-   * Update markers based on viewport (for performance with large datasets)
+   * Update markers based on viewport (for performance with large datasets).
+   * With cluster source, all data is in one GeoJSON source; MapLibre handles viewport.
+   * this.markers is unused when using clustering — no per-marker add/remove.
    */
   updateMarkersForViewport() {
-    if (!this.map || this.filteredInventory.length < 1000) return;
-    
-    const bounds = this.map.getBounds();
-    const visibleFeatures = this.filteredInventory.filter(feature => {
-      const [lng, lat] = feature.geometry.coordinates;
-      return bounds.contains([lng, lat]);
-    });
-
-    // Remove markers outside viewport
-    this.markers.forEach((marker, id) => {
-      const feature = this.filteredInventory.find(f => f.properties.inventoryId.toString() === id);
-      if (feature) {
-        const [lng, lat] = feature.geometry.coordinates;
-        if (!bounds.contains([lng, lat])) {
-          marker.remove();
-          this.markers.delete(id);
-        }
-      }
-    });
-
-    // Add markers in viewport
-    visibleFeatures.forEach(feature => {
-      const id = feature.properties.inventoryId.toString();
-      if (!this.markers.has(id)) {
-        // Re-add marker (simplified - in production, use clustering)
-        this.updateMarkers();
-      }
-    });
+    if (!this.map || !this.map.getSource('inventory-clusters')) return;
+    // Clustering already uses the full filteredInventory; no viewport culling needed here.
   }
 
   /**
-   * Show popup with inventory details
+   * Open right-side details panel (no MapLibre popup).
    */
-  async showPopup(item: InventoryItem, coordinates: [number, number]) {
-    if (!this.map || !this.popup) return;
-
+  openPanel(item: InventoryItem, coordinates?: [number, number]) {
     this.selectedItem = item;
-    const html = this.getPopupHTML(item);
-    this.popup
-      .setLngLat(coordinates)
-      .setHTML(html)
-      .addTo(this.map);
-
-    // Attach click handlers to buttons after popup is added
-    setTimeout(() => {
-      const viewBtn = document.querySelector('.popup-btn.view-details');
-      if (viewBtn) {
-        viewBtn.addEventListener('click', () => {
-          console.log('View details for:', item.inventoryId);
-          // Navigate to details page
-          window.location.href = `/screenBoardDescrpt/${item.inventoryId}/${item.mediaType}`;
-        });
-      }
-
-      const bookBtn = document.querySelector('.popup-btn.book-now');
-      if (bookBtn) {
-        bookBtn.addEventListener('click', () => {
-          this.showBookingCalendarForItem(item);
-        });
-      }
-    }, 100);
-
+    this.detailsImageError = false;
+    this.isPanelOpen = true;
+    if (this.map && coordinates?.length === 2) {
+      this.map.flyTo({ center: coordinates, zoom: 14, duration: 800 });
+    }
+    setTimeout(() => this.map?.resize(), 350);
     this.cdr.detectChanges();
   }
 
   /**
-   * Generate popup HTML
+   * Close details panel.
    */
-  getPopupHTML(item: InventoryItem): string {
-    const statusColors: { [key: string]: string } = {
-      'available': '#00ff88',
-      'booked': '#ffaa00',
-      'maintenance': '#ff4444'
-    };
+  closePanel() {
+    this.isPanelOpen = false;
+    setTimeout(() => this.map?.resize(), 350);
+    this.cdr.detectChanges();
+  }
 
-    return `
-      <div class="popup-content">
-        <div class="popup-header">
-          <h3>${item.name || 'Unnamed Inventory'}</h3>
-          <span class="popup-code">Code: ${item.inventoryId}</span>
-        </div>
-        <div class="popup-body">
-          <div class="popup-row">
-            <span class="label">Type:</span>
-            <span class="value">${this.getMediaTypeLabel(item.mediaType)}</span>
-          </div>
-          <div class="popup-row">
-            <span class="label">Location:</span>
-            <span class="value">${item.city}, ${item.area || 'N/A'}</span>
-          </div>
-          <div class="popup-row">
-            <span class="label">Size:</span>
-            <span class="value">${item.size || 'N/A'}</span>
-          </div>
-          <div class="popup-row">
-            <span class="label">Traffic Score:</span>
-            <span class="value traffic-score">${item.trafficScore}/100</span>
-          </div>
-          <div class="popup-row">
-            <span class="label">Status:</span>
-            <span class="value status-badge" style="color: ${statusColors[item.availabilityStatus] || '#888'}">
-              ${item.availabilityStatus?.toUpperCase() || 'UNKNOWN'}
-            </span>
-          </div>
-          ${item.isDigital ? `
-            <div class="popup-row">
-              <span class="label">Digital:</span>
-              <span class="value">Yes</span>
-            </div>
-          ` : ''}
-          ${item.rentalCost ? `
-            <div class="popup-row">
-              <span class="label">Rental Cost:</span>
-              <span class="value">₹${item.rentalCost.toLocaleString()}/month</span>
-            </div>
-          ` : ''}
-        </div>
-        <div class="popup-footer">
-          <button class="popup-btn view-details" data-id="${item.inventoryId}">
-            View Details
-          </button>
-          <button class="popup-btn book-now" data-id="${item.inventoryId}">
-            Book Now
-          </button>
-        </div>
-      </div>
-    `;
+  /**
+   * Close panel when user clicks map background.
+   */
+  onMapBackgroundClick(e: Event) {
+    const target = e.target as HTMLElement;
+    if (target?.id === 'inventory-map' || target?.closest?.('.map-wrapper')) {
+      if (!target.closest?.('.map-mode-toggle') && !target.closest?.('.map-legend')) {
+        this.closePanel();
+      }
+    }
+  }
+
+  viewDetails() {
+    if (!this.selectedItem) return;
+    const id = this.selectedItem.inventoryId;
+    const type = this.selectedItem.mediaType || 'hoarding';
+    this.router.navigate(['/screenBoardDescrpt', id, type], { queryParams: { from: 'map' } });
+  }
+
+  bookNow() {
+    if (!this.selectedItem) return;
+    // Navigate to Book this Service form; from=map so "Back to Details" returns to this map
+    window.location.href = `/screenBoardDescrpt/${this.selectedItem.inventoryId}/${this.selectedItem.mediaType}?open=book&from=map`;
+  }
+
+  /**
+   * First image URL from backend for the details panel (imageUrls[0]).
+   * Returns null if none, so the template can show a placeholder.
+   */
+  getDetailsImageUrl(item: InventoryItem): string | null {
+    const urls = item?.imageUrls;
+    if (Array.isArray(urls) && urls.length > 0 && typeof urls[0] === 'string' && urls[0].trim()) {
+      const url = urls[0].trim();
+      return url.startsWith('http') || url.startsWith('/') ? url : '/' + url;
+    }
+    return null;
+  }
+
+  getDailyTraffic(item: InventoryItem): string {
+    const score = item.trafficScore ?? 0;
+    if (score >= 80) return 'High';
+    if (score >= 60) return 'Medium';
+    return 'Low';
+  }
+
+  getEstimatedHumans(item: InventoryItem): string {
+    const score = item.trafficScore ?? 0;
+    const base = Math.round((score / 100) * 5000);
+    return base >= 1000 ? `${(base / 1000).toFixed(1)}K` : String(base);
+  }
+
+  getPeakHour(item: InventoryItem): string {
+    return (item as any).peakHour ?? '6–9 PM';
   }
 
   /**
@@ -670,6 +776,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       'hoarding': 'Hoarding / Billboard',
       'digital_screen': 'Digital Screen',
       'led_screen': 'LED Screen',
+      'society': 'Society / Building',
       'transit_media': 'Transit Media',
       'bus_shelter': 'Bus Shelter',
       'unipole': 'Unipole'
@@ -682,38 +789,23 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
    */
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
+    if (this.map) {
+      setTimeout(() => this.map.resize(), 0);
+    }
   }
 
   /**
-   * Change map mode
+   * Change map mode (All, Digital, High Traffic, Available, Maintenance, Heatmap)
    */
   setMapMode(mode: MapMode) {
     this.mapMode = mode;
     this.applyFilters();
+    this.cdr.detectChanges();
   }
 
   /**
    * Handle filter changes
    */
-  onFilterChange() {
-    this.applyFilters();
-  }
-
-  /**
-   * Clear all filters
-   */
-  clearFilters() {
-    this.selectedMediaType = '';
-    this.selectedCity = '';
-    this.selectedAvailability = '';
-    this.selectedVisibility = '';
-    this.searchQuery = '';
-    this.mapMode = 'all';
-    this.showHeatmap = false;
-    this.toggleHeatmap();
-    this.applyFilters();
-  }
-
   /**
    * Toggle heatmap visualization
    */

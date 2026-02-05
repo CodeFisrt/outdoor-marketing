@@ -1,6 +1,18 @@
 module.exports = function registerScreenRoutes(app, db) {
   app.get("/screens", (req, res) => {
-    db.query("SELECT * FROM outdoormarketingscreens", (err, results) => {
+    const { city, limit } = req.query;
+    let sql = "SELECT * FROM outdoormarketingscreens";
+    const params = [];
+    if (city && String(city).trim()) {
+      sql += " WHERE LOWER(TRIM(City)) = LOWER(?)";
+      params.push(String(city).trim());
+    }
+    const limitNum = Math.min(Math.max(parseInt(limit, 10) || 0, 0), 2000);
+    if (limitNum > 0) {
+      sql += " LIMIT ?";
+      params.push(limitNum);
+    }
+    db.query(sql, params, (err, results) => {
       if (err) return res.status(500).send(err);
       res.send({
         result: true,
