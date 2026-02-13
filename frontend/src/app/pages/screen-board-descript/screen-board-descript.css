@@ -4,8 +4,8 @@
   background-color: #f3f4f6;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 2rem;
+  align-items: flex-start;
+  padding: 40px 24px;
   font-family: 'Inter', sans-serif;
 }
 
@@ -39,7 +39,7 @@
 /* Premium Card Layout */
 .premium-details-card {
   background: #ffffff;
-  max-width: 1200px;
+  max-width: 1600px;
   width: 100%;
   border-radius: 20px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
@@ -68,8 +68,8 @@
 }
 
 /* Back Button */
-.back-btn {
-  position: absolute;
+/* .back-btn { */
+  /* position: absolute;
   top: 20px;
   left: 20px;
   z-index: 1;
@@ -84,13 +84,43 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  color: #333;
-}
+  color: #333; */
+/* } */
 
-.back-btn:hover {
+/* .back-btn:hover {
   background: #fff;
   transform: translateX(-5px);
+} */
+ /* Minimal Back Arrow */
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+
+  background: none;
+  border: none;
+  padding: 0;
+
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: bold;
+  color: #111827;
+
+  transition: all 0.2s ease;
 }
+
+/* Hover effect */
+.back-btn:hover {
+  transform: translateX(-5px);
+  color: #3b82f6;
+}
+
+/* Click effect */
+.back-btn:active {
+  transform: scale(0.95);
+}
+
 
 /* Left Side: Image */
 .image-section {

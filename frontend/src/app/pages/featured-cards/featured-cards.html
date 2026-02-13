@@ -18,20 +18,26 @@
             }"
           ></span>
 
-          <img
+          <img [routerLink]="['/screenBoardDescrpt', getBoardId(h), 'hoardings']"
             [src]="imageBaseUrl + h.image"
             (error)="onImgError($event)"
             class="card-img"
             alt="Hoarding Image"
           />
+          
 
           <div class="card-content">
             <h4 class="card-title">{{ h.h_name }}</h4>
             <p class="location-text">{{ h.city }}</p>
-            <p class="exact-location">📍 {{ h.address }}</p>
+            <p class="exact-location">
+              <i class="bi bi-geo-alt"></i> {{ h.address }}</p>
 
             <div class="price-size">
-              <span>📐 {{ h.size }}</span>
+              <span>
+                <i class="fa-solid fa-ruler-combined"></i>
+                
+
+ {{ h.size }}</span>
               <span class="price">₹{{ h.rental_cost }}</span>
             </div>
             <div>
@@ -62,9 +68,10 @@
             }"
           ></span>
 
-          <img
+          <img  [routerLink]="['/screenBoardDescrpt', getBoardId(s), 'outdoormarketingscreens']"
             [src]="imageBaseUrl + s.image"
             (error)="onImgError($event)"
+            
             class="card-img"
             alt="Screen Image"
           />
@@ -72,10 +79,13 @@
           <div class="card-content">
             <h4 class="card-title">{{ s.ScreenName }}</h4>
             <p class="location-text">{{ s.City }}</p>
-            <p class="exact-location">📍 {{ s.Location }}</p>
+            <p class="exact-location"><i class="bi bi-geo-alt"></i> {{ s.Location }}</p>
 
             <div class="price-size">
-              <span>📐 {{ s.Resolution }}</span>
+              <span><i class="fa-solid fa-arrows-left-right"></i>
+
+
+ {{ s.Resolution }}</span>
               <span class="price">₹{{ s.RentalCost }}</span>
             </div>
             <div>
@@ -110,7 +120,7 @@
           <div class="card-content">
             <h4 class="card-title">{{ v.v_type }}</h4>
             <p class="location-text">{{ v.v_city }}</p>
-            <p class="exact-location">📍 {{ v.State }}</p>
+            <p class="exact-location"><i class="bi bi-geo-alt"></i> {{ v.State }}</p>
 
             <div class="price-size">
               <span>contact: {{ v.v_contact_num }}</span>
@@ -147,7 +157,7 @@
           <div class="card-content">
             <h4 class="card-title">{{ p.b_type }}</h4>
             <p class="location-text">{{ p.b_city }}</p>
-            <p class="exact-location">📍 {{ p.b_location_name }}</p>
+            <p class="exact-location"><i class="bi bi-geo-alt"></i> {{ p.b_location_name }}</p>
 
             <div class="price-size">
               <span>📐 {{ p.b_size }}</span>
@@ -192,7 +202,7 @@
           <div class="card-content">
             <h4 class="card-title">{{ s.s_type }}</h4>
             <p class="location-text">{{ s.s_city }}</p>
-            <p class="exact-location">📍 {{ s.s_name }}</p>
+            <p class="exact-location"><i class="bi bi-geo-alt"></i> {{ s.s_name }}</p>
 
             <div class="price-size">
               <span>📐 {{ s.s_no_flats }}</span>

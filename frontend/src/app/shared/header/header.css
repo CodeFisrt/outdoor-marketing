@@ -32,6 +32,7 @@
   padding: 8px 14px;
   color: #e6e6e6 !important;
   transition: color 0.3s ease;
+  text-transform: uppercase;
 }
 
 .navbar-nav .nav-link::after {
@@ -43,6 +44,7 @@
   left: 50%;
   bottom: 0;
   transition: all 0.3s ease;
+  text-transform: uppercase;
 }
 
 .navbar-nav .nav-link:hover::after {
@@ -54,6 +56,7 @@
   color: #7129f6 !important;
   transition: all 0.35s ease;
   font-size: 18px;
+  text-transform: uppercase;
 }
 
 .btn-outline-light {
@@ -65,7 +68,7 @@
 }
 
 .btn-outline-light:hover {
-  background: linear-gradient(90deg, #c9c9e9, #f49af4);
+  /* background: linear-gradient(90deg, #c9c9e9, #f49af4); */
   border-color: transparent;
   color: #000;
 }

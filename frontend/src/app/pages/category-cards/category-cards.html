@@ -31,10 +31,11 @@
         </div>
 
         <!-- Card Content -->
-        <div class="card-content-wrapper">
+       <div class="card-content-wrapper">
           <!-- Top Badge/Icon -->
           <div class="card-icon-badge">
-            <span class="category-emoji">{{ category.icon }}</span>
+            <i [class]="category.icon + ' category-icon'"></i>
+
           </div>
 
           <!-- Bottom Content -->
@@ -52,7 +53,7 @@
                   height="20"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="currentColor"
+                 stroke="currentColor"
                   stroke-width="2.5"
                   stroke-linecap="round"
                   stroke-linejoin="round"
