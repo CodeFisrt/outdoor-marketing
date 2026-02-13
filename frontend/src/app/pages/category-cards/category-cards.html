@@ -14,13 +14,8 @@
 
     <!-- Premium Cards Grid -->
     <div class="premium-cards-grid">
-      <article
-        *ngFor="let category of categories; let i = index"
-        class="premium-card"
-        (click)="onCardClick(category)"
-        [attr.data-index]="i"
-        [attr.data-category]="category.title"
-      >
+      <article *ngFor="let category of categories; let i = index" class="premium-card" (click)="onCardClick(category)"
+        [attr.data-index]="i" [attr.data-category]="category.title">
         <!-- Card Background Image -->
         <div class="card-bg-wrapper">
           <img [src]="category.image" [alt]="category.title" class="card-bg-image" loading="lazy" />
@@ -34,7 +29,8 @@
         <div class="card-content-wrapper">
           <!-- Top Badge/Icon -->
           <div class="card-icon-badge">
-            <span class="category-emoji">{{ category.icon }}</span>
+            <i [class]="category.icon + ' category-icon'"></i>
+
           </div>
 
           <!-- Bottom Content -->
@@ -47,16 +43,8 @@
             <!-- Arrow CTA -->
             <div class="card-cta">
               <div class="cta-circle">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </div>

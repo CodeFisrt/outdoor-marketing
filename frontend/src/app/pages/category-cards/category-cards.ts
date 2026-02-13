@@ -37,37 +37,38 @@ export class CategoryCards implements OnInit {
             description: 'Large format outdoor billboards',
             image: 'assets/billboardimg.jpg',
             gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            icon: '🏗️'
+            icon: 'bi bi-bounding-box'   // 📐 dimensions
         },
         {
             title: 'Vehicle Marketing',
             description: 'Mobile advertising solutions',
             image: 'assets/vehicleimg.jpg',
             gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-            icon: '🚗'
+            icon: 'bi bi-truck'          // 🚚 vehicle
         },
         {
             title: 'Digital Marketing',
             description: 'LED screens & digital displays',
             image: 'assets/digitalscreen.jpg',
             gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-            icon: '💻'
+            icon: 'bi bi-display'        // 💻 digital screen
         },
         {
             title: 'Poll Kiosk',
             description: 'Interactive outdoor booths',
             image: 'assets/streetimg.jpg',
             gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-            icon: '🗳️'
+            icon: 'bi bi-easel2'         // booth/kiosk
         },
         {
             title: 'Wall Painting',
             description: 'Artistic wall murals & branding',
             image: 'assets/wall-img.jpg',
             gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-            icon: '🎨'
+            icon: 'bi bi-brush'          // painting
         }
     ];
+
 
     @Output() categorySelected = new EventEmitter<string>();
 

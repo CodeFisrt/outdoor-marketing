@@ -2,10 +2,12 @@
 .full-page-container {
   min-height: 100vh;
   background-color: #f3f4f6;
+
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 2rem;
+  align-items: flex-start; /* ✅ stick to top like real page */
+
+  padding: 40px 24px; /* give page breathing space */
   font-family: 'Inter', sans-serif;
 }
 
@@ -39,7 +41,7 @@
 /* Premium Card Layout */
 .premium-details-card {
   background: #ffffff;
-  max-width: 1200px;
+  max-width: 1600px;
   width: 100%;
   border-radius: 20px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
