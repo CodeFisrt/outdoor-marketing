@@ -11,6 +11,7 @@ const registerContactRoutes = require("./contact.routes");
 const registerUserRoutes = require("./users.routes");
 const registerInventoryRoutes = require("./inventory.routes");
 const registerAnalyticsRoutes = require("./analytics");
+const registerWishlistRoutes = require("./wishlist.routes");
 
 
 /**
@@ -30,6 +31,7 @@ module.exports = function registerAllRoutes(app, db, deps = {}) {
   registerContactRoutes(app, db);
   registerInventoryRoutes(app, db);
   registerAnalyticsRoutes(app, db);
+  registerWishlistRoutes(app, db);
 
 
   // Users module needs bcrypt/jwt/JWT_SECRET exactly like your index.js uses

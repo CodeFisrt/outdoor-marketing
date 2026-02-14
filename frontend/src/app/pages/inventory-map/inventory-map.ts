@@ -19,8 +19,10 @@ import { environment } from '../../../environments/environment';
 
 import { HoardingService } from '../../ApiServices/CallApis/hoarding-service';
 import { io, Socket } from 'socket.io-client';
-import { timeout, finalize } from 'rxjs/operators';
+import { timeout, finalize, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
+import { WishlistService } from '../../ApiServices/CallApis/wishlist-service';
+import { Subject } from 'rxjs';
 
 
 
@@ -59,6 +61,8 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
     }
   };
 
+  private searchSubject = new Subject<string>();
+
   isLoading = false;
   showBookingCalendar = false;
 
@@ -71,6 +75,11 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
   // Data
   allInventory: GeoJSONFeature[] = [];
   filteredInventory: GeoJSONFeature[] = [];
+
+  // Categorized filtered arrays
+  filteredHoardings: GeoJSONFeature[] = [];
+  filteredScreens: GeoJSONFeature[] = [];
+  filteredSocieties: GeoJSONFeature[] = [];
   // Filters
   searchCity: string = '';
 
@@ -84,6 +93,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private inventoryService: InventoryService,
     private hoardingService: HoardingService,
+    private wishlistService: WishlistService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private router: Router,
@@ -95,6 +105,11 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
     if (isPlatformBrowser(this.platformId)) {
       this.initWebSocket();
     }
+
+    this.searchSubject.pipe(debounceTime(700), distinctUntilChanged()).subscribe((value) => {
+      this.searchCity = value;
+      this.applyFilters();
+    })
   }
 
   /**
@@ -312,6 +327,30 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.filteredInventory = filtered;
+
+    // Apply specific category limits (Top 300)
+    this.filteredHoardings = filtered
+      .filter((f: any) => f.properties.mediaType === 'hoarding')
+      .sort((a: any, b: any) => (b.properties.rentalCost || 0) - (a.properties.rentalCost || 0))
+      .slice(0, 300);
+
+    this.filteredScreens = filtered
+      .filter((f: any) => f.properties.mediaType === 'digital_screen' || f.properties.mediaType === 'led_screen')
+      .sort((a: any, b: any) => (b.properties.rentalCost || 0) - (a.properties.rentalCost || 0))
+      .slice(0, 300);
+
+    this.filteredSocieties = filtered
+      .filter((f: any) => f.properties.mediaType === 'society')
+      .sort((a: any, b: any) => (b.properties.actual_cost || 0) - (a.properties.actual_cost || 0))
+      .slice(0, 300);
+
+    // Combine for general map display
+    this.filteredInventory = [
+      ...this.filteredHoardings,
+      ...this.filteredScreens,
+      ...this.filteredSocieties
+    ];
+
     this.updateMarkers();
 
     // If we have search results, we might want to focus on them
@@ -332,8 +371,9 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
     this.tryOpenPanelFromQueryParams();
   }
 
-  onSearchChange() {
-    this.applyFilters();
+  onSearchChange(value: string) {
+    // this.applyFilters();
+    this.searchSubject.next(value);
   }
 
 
@@ -377,7 +417,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       'society': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32"><defs><linearGradient id="sg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ab47bc"/><stop offset="100%" stop-color="#6a1b9a"/></linearGradient><linearGradient id="sr" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ce93d8"/><stop offset="100%" stop-color="#9c27b0"/></linearGradient></defs><path d="M16 4 L28 14 L28 28 L4 28 L4 14 Z" fill="url(#sr)" stroke="#6a1b9a" stroke-width="1.2"/><path d="M6 14 L6 28 L26 28 L26 14 L16 8 Z" fill="url(#sg)" stroke="#6a1b9a" stroke-width="1"/><rect x="9" y="16" width="3" height="3" rx="0.4" fill="#e1bee7"/><rect x="14" y="16" width="3" height="3" rx="0.4" fill="#e1bee7"/><rect x="19" y="16" width="3" height="3" rx="0.4" fill="#e1bee7"/><rect x="9" y="21" width="3" height="3" rx="0.4" fill="#e1bee7"/><rect x="14" y="21" width="3" height="3" rx="0.4" fill="#e1bee7"/><rect x="19" y="21" width="3" height="3" rx="0.4" fill="#e1bee7"/></svg>`,
       'default': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32"><circle cx="16" cy="16" r="10" fill="#888" stroke="#fff" stroke-width="2"/></svg>`
     };
-    const key = mediaType === 'led_screen' ? 'digital_screen' : (svgs[mediaType] ? mediaType : 'default');
+    const key = (mediaType === 'led_screen' || mediaType === 'digital_screen') ? 'digital_screen' : (svgs[mediaType] ? mediaType : 'default');
     return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgs[key]);
   }
 
@@ -664,6 +704,43 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       const bookingStart = new Date(booking.start_date);
       const bookingEnd = new Date(booking.end_date);
       return (start <= bookingEnd && end >= bookingStart);
+    });
+  }
+
+  /**
+   * Add selected item to wishlist
+   */
+  async addToWishlist() {
+    if (!isPlatformBrowser(this.platformId)) return;
+    if (!this.selectedItem) return;
+
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert('Please sign in to add items to your wishlist.');
+      this.router.navigateByUrl('/signin');
+      return;
+    }
+
+    const type = this.selectedItem.mediaType;
+    const itemData: any = {
+      user_id: userId,
+      h_id: type === 'hoarding' ? this.selectedItem.inventoryId : null,
+      screen_id: (type === 'digital_screen' || type === 'led_screen') ? this.selectedItem.inventoryId : null,
+      s_id: type === 'society' ? this.selectedItem.inventoryId : null
+    };
+
+    this.wishlistService.addToWishlist(itemData).subscribe({
+      next: (res) => {
+        alert('Item added to wishlist successfully! ❤️');
+      },
+      error: (err) => {
+        if (err.status === 400) {
+          alert('Already added to wishlist');
+        } else {
+          console.error('Error adding to wishlist:', err);
+          alert('Error adding to wishlist');
+        }
+      }
     });
   }
 

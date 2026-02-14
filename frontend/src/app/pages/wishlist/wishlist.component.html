@@ -1,0 +1,55 @@
+<div class="wishlist-container">
+    <div class="container py-5">
+        <div class="row mb-4 animate__animated animate__fadeInDown">
+            <div class="col-12 text-center">
+                <h2 class="wishlist-title">My Wishlist <i class="bi bi-heart-fill text-danger"></i></h2>
+                <p class="wishlist-subtitle">Manage your favorite advertising locations in one place</p>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!isLoading && wishlistItems.length === 0"
+            class="empty-wishlist text-center py-5 animate__animated animate__zoomIn">
+            <div class="empty-icon">
+                <i class="bi bi-heart-break"></i>
+            </div>
+            <h3>Your wishlist is empty</h3>
+            <p>Start exploring and add some items to your wishlist!</p>
+            <button class="btn btn-primary mt-3" routerLink="/inventory-map">Go to Map</button>
+        </div>
+
+        <!-- Wishlist Grid -->
+        <div *ngIf="!isLoading && wishlistItems.length > 0" class="row g-4">
+            <div *ngFor="let item of wishlistItems" class="col-md-6 col-lg-4 animate__animated animate__fadeInUp">
+                <div class="wishlist-card">
+                    <div class="card-image-wrap">
+                        <span class="type-badge" [ngClass]="item.itemType">{{ getTypeLabel(item.itemType) }}</span>
+                        <img [src]="item.imageUrl || 'assets/main-bg-img.jpg'" class="card-img-top" [alt]="item.name">
+                        <div class="image-overlay">
+                            <button class="btn btn-remove" (click)="removeItem(item)" title="Remove from wishlist">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.name }}</h5>
+                        <p class="card-text location">
+                            <i class="bi bi-geo-alt"></i> {{ item.location }}
+                        </p>
+                        <div class="card-footer-custom">
+                            <span class="price">₹{{ (item.price || 0) | number }} <small>/month</small></span>
+                            <button class="btn btn-view" (click)="viewDetails(item)">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

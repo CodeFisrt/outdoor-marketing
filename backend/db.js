@@ -9,6 +9,8 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME,
   port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 3306,
 
+  charset: "utf8mb4",               // ✅ ADD THIS
+  collation: "utf8mb4_general_ci",  // ✅ ADD THIS
 });
 
 db.connect((err) => {

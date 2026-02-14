@@ -40,7 +40,7 @@ export class SignIn {
       this.toastr.error("Please enter valid email & password");
       return;
     }
-    
+
     const email = data.value.emailId;
     const password = data.value.password;
 
@@ -57,6 +57,7 @@ export class SignIn {
         localStorage.setItem('role', 'admin');
         localStorage.setItem('userName', res.admin.adminName);
         localStorage.setItem('userEmail', res.admin.adminEmail);
+        localStorage.setItem('userId', res.admin.adminId);
 
         this.toastr.success(`Admin Login Successful ✅ Welcome "${res.admin.adminName}"`);
         this.router.navigateByUrl('/dashboard');
@@ -78,6 +79,7 @@ export class SignIn {
               localStorage.setItem('token', 'loggedin'); // later replace with real token
               localStorage.setItem('userEmail', user.userEmail);
               localStorage.setItem('userName', user.userName);
+              localStorage.setItem('userId', user.userId);
 
               const role = (user.role || 'guest').toLowerCase();
               localStorage.setItem('role', role);
@@ -108,8 +110,8 @@ export class SignIn {
   }
 
   togglePassword() {
-  this.showPassword = !this.showPassword;
-}
+    this.showPassword = !this.showPassword;
+  }
 
   openGmailLogin() {
     const googleAuthUrl =

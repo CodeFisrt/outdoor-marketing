@@ -50,11 +50,11 @@
         <i class="bi bi-credit-card"></i> Payments
       </a>
 
-      <div class="side-footer">
+      <!-- <div class="side-footer">
         <a class="side-item" href="javascript:void(0)" (click)="logout()">
           <i class="bi bi-box-arrow-right"></i> Logout
         </a>
-      </div>
+      </div> -->
     </div>
 
     <!-- CONTENT -->
@@ -127,8 +127,7 @@
                     <td>{{ s.size }}</td>
                     <td>{{ s.pricePerDay }}</td>
                     <td>
-                      <span class="badge-soft"
-                        [ngClass]="{
+                      <span class="badge-soft" [ngClass]="{
                           'badge-green': s.status === 'Available',
                           'badge-yellow': s.status === 'Limited'
                         }">
@@ -158,8 +157,7 @@
                     <td class="fw-semibold">{{ b.campaign }}</td>
                     <td>{{ b.screen }}</td>
                     <td>
-                      <span class="badge-soft"
-                        [ngClass]="{
+                      <span class="badge-soft" [ngClass]="{
                           'badge-green': b.status === 'Running',
                           'badge-yellow': b.status === 'Pending',
                           'badge-red': b.status === 'Closed'
