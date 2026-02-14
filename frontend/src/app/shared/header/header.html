@@ -10,15 +10,8 @@
             </a>
 
             <!-- Toggler -->
-            <button
-              class="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarNavDropdown"
-              aria-controls="navbarNavDropdown"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+              aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -68,16 +61,16 @@
             <!-- Right Side Buttons -->
             <!-- <div class="d-flex gap-3">
               <a routerLink="/signin" class="btn btn-outline-light fw-bold btn-sm">Sign In</a> -->
-              <!-- <button class="btn btn-danger btn-sm btnlog" (click)="logout()">🚪 Logout</button> -->
+            <!-- <button class="btn btn-danger btn-sm btnlog" (click)="logout()">🚪 Logout</button> -->
             <!-- </div> -->
 
 
 
             <!-- Right Side Buttons -->
-<div class="d-flex gap-3 align-items-center">
+            <!-- <div class="d-flex gap-3 align-items-center"> -->
 
-  <!-- ✅ Logged IN -->
-  <ng-container *ngIf="isLoggedIn; else loggedOut">
+            <!-- ✅ Logged IN -->
+            <!-- <ng-container *ngIf="isLoggedIn; else loggedOut">
     <a
   href="javascript:void(0)"
   (click)="goToDashboard()"
@@ -90,8 +83,8 @@
     <button class="btn btn-danger btn-sm" (click)="logout()">Logout</button>
   </ng-container>
 
-  <!-- ✅ Logged OUT -->
-  <ng-template #loggedOut>
+   ✅ Logged OUT -->
+            <!-- <ng-template #loggedOut>
     <a routerLink="/signin" class="btn btn-outline-light fw-bold btn-sm">Sign In</a>
   </ng-template>
 
@@ -105,4 +98,59 @@
       </div>
     </div>
   </div>
-</section>
+</section> -->
+
+
+            <!-- Right Side -->
+            <div class="d-flex align-items-center">
+
+              <!-- Logged In -->
+              <ng-container *ngIf="isLoggedIn; else loggedOut">
+
+                <div class="profile-wrapper">
+
+                  <!-- Avatar -->
+                  <img src="https://api.dicebear.com/6.x/pixel-art/svg?seed=avatar23" alt="Profile"
+                    class="profile-avatar" (click)="toggleProfileMenu()" />
+
+                  <!-- Dropdown -->
+                  <div class="profile-dropdown" *ngIf="showProfileMenu">
+
+                    <div class="profile-header">
+                      <strong>{{ adminName }}</strong>
+                      <small>{{ adminName }}</small>
+                    </div>
+
+                    <hr />
+
+                    <button (click)="goToDashboard()">
+                      <i class="bi bi-speedometer2"></i> Dashboard
+                    </button>
+
+                    <button (click)="goToWishlist()">
+                      <i class="bi bi-heart"></i> Wishlist
+                    </button>
+
+                    <button (click)="goToSettings()">
+                      <i class="bi bi-gear"></i> Settings
+                    </button>
+
+                    <hr />
+
+                    <button class="logout-btn" (click)="logout()">
+                      <i class="bi bi-box-arrow-right"></i> Logout
+                    </button>
+
+                  </div>
+                </div>
+
+              </ng-container>
+
+              <!-- Logged Out -->
+              <ng-template #loggedOut>
+                <a routerLink="/signin" class="btn btn-outline-light fw-bold btn-sm">
+                  Sign In
+                </a>
+              </ng-template>
+
+            </div>
