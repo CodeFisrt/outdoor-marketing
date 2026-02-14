@@ -63,7 +63,7 @@ export class InventoryService {
   private screensUrl = 'http://localhost:8080/screens';
   private societiesUrl = 'http://localhost:8080/societies';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Get inventory for a city from existing backend APIs only (hoardings, screens, societies).
@@ -241,7 +241,7 @@ export class InventoryService {
         latitude: lat,
         longitude: lng,
         rentalCost: Number(h.rental_cost) || 0,
-         trafficScore: h.featured ? 85 : (h.status === 'available' ? 70 : 50),
+        trafficScore: h.featured ? 85 : (h.status === 'available' ? 70 : 50),
         // ownerName: h.owner_name,
         // contactNumber: h.contact_number
       }
@@ -297,7 +297,8 @@ export class InventoryService {
         isDigital: false,
         latitude: lat,
         longitude: lng,
-        rentalCost: 0,
+        rentalCost: Number(s.actual_cost) || 0,
+        actual_cost: Number(s.actual_cost) || 0,
         trafficScore: 60,
         // ownerName: s.s_contact_person_name,
         // contactNumber: s.s_contact_num

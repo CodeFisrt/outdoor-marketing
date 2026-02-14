@@ -517,3 +517,21 @@
   align-items: center;
   justify-content: center;
 }
+
+.premium-cards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 48px;
+}
+
+.premium-card {
+  /* flex: 0 1 calc(36% - 40px); wider */
+  height: 300px;
+  flex: 0 1 45%;
+  /* increase width */
+  aspect-ratio: 16 / 9;
+  /* wide billboard style */
+  /* shorter */
+}

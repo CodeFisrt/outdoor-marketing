@@ -6,7 +6,7 @@
 
 module.exports = function registerInventoryRoutes(app, db) {
   const io = app.get("io"); // Get Socket.io instance
-  
+
   const safe = (v) => {
     if (v === undefined || v === null || v === "") return null;
     return v;
@@ -111,6 +111,38 @@ module.exports = function registerInventoryRoutes(app, db) {
       WHERE Latitude IS NOT NULL AND Longitude IS NOT NULL
     `;
 
+    let societiesQuery = `
+  SELECT 
+    s_id as inventoryId,
+    'society' as mediaType,
+    s_name as name,
+    CONCAT(COALESCE(s_address, ''), ', ', COALESCE(s_city, '')) as location,
+    s_city as city,
+    s_area as area,
+    s_address as landmark,
+    CASE 
+      WHEN s_no_flats IS NOT NULL THEN CONCAT(s_no_flats, ' flats')
+      ELSE ''
+    END as size,
+    COALESCE(approval_status, 'available') as availabilityStatus,
+    0 as isDigital,
+    s_lat as latitude,
+    s_long as longitude,
+    COALESCE(CAST(actual_cost AS DECIMAL(10,2)), 0) as rentalCost,
+    CASE 
+      WHEN featured = 1 THEN 80
+      ELSE 60
+    END as trafficScore,
+    NULL as imageUrls,
+    NULL as videoFeedUrl,
+    NULL as facingDirection,
+    NULL as lastInspectionDate,
+    s_contact_person_name as ownerName,
+    s_contact_num as contactNumber
+  FROM society_marketing
+  WHERE s_lat IS NOT NULL AND s_long IS NOT NULL
+`;
+
     const conditions = [];
     const params = [];
 
@@ -138,6 +170,12 @@ module.exports = function registerInventoryRoutes(app, db) {
         screensQuery += screensQuery.includes("WHERE") ? " AND City = ?" : " WHERE City = ?";
         params.push(city);
       }
+      if (societiesQuery) {
+        societiesQuery += societiesQuery.includes("WHERE")
+          ? " AND s_city = ?"
+          : " WHERE s_city = ?";
+        params.push(city);
+      }
     }
 
     if (availabilityStatus) {
@@ -147,6 +185,12 @@ module.exports = function registerInventoryRoutes(app, db) {
       }
       if (screensQuery) {
         screensQuery += screensQuery.includes("WHERE") ? " AND Status = ?" : " WHERE Status = ?";
+        params.push(availabilityStatus);
+      }
+      if (societiesQuery) {
+        societiesQuery += societiesQuery.includes("WHERE")
+          ? " AND approval_status = ?"
+          : " WHERE approval_status = ?";
         params.push(availabilityStatus);
       }
     }
@@ -169,23 +213,31 @@ module.exports = function registerInventoryRoutes(app, db) {
         hoardingsQuery += ` AND longitude BETWEEN ${minLng} AND ${maxLng} AND latitude BETWEEN ${minLat} AND ${maxLat}`;
       }
       if (screensQuery) {
-        screensQuery += screensQuery.includes("WHERE") 
+        screensQuery += screensQuery.includes("WHERE")
           ? ` AND Longitude BETWEEN ${minLng} AND ${maxLng} AND Latitude BETWEEN ${minLat} AND ${maxLat}`
           : ` WHERE Longitude BETWEEN ${minLng} AND ${maxLng} AND Latitude BETWEEN ${minLat} AND ${maxLat}`;
+      } if (societiesQuery) {
+        societiesQuery += societiesQuery.includes("WHERE")
+          ? ` AND s_long BETWEEN ${minLng} AND ${maxLng} AND s_lat BETWEEN ${minLat} AND ${maxLat}`
+          : ` WHERE s_long BETWEEN ${minLng} AND ${maxLng} AND s_lat BETWEEN ${minLat} AND ${maxLat}`;
       }
     }
 
     // Combine queries
+    // Combine queries
     let combinedQuery = "";
-    if (hoardingsQuery && screensQuery) {
-      combinedQuery = `(${hoardingsQuery}) UNION ALL (${screensQuery})`;
-    } else if (hoardingsQuery) {
-      combinedQuery = hoardingsQuery;
-    } else if (screensQuery) {
-      combinedQuery = screensQuery;
-    } else {
+
+    const queries = [];
+    if (hoardingsQuery) queries.push(`(${hoardingsQuery})`);
+    if (screensQuery) queries.push(`(${screensQuery})`);
+    if (societiesQuery) queries.push(`(${societiesQuery})`);
+
+    if (queries.length === 0) {
       return res.json([]);
     }
+
+    combinedQuery = queries.join(" UNION ALL ");
+
 
     db.query(combinedQuery, params, (err, results) => {
       if (err) {
@@ -242,10 +294,99 @@ module.exports = function registerInventoryRoutes(app, db) {
    * GET /inventory/:id
    * Get single inventory item by ID
    */
+  // app.get("/inventory/:id", (req, res) => {
+  //   const { id } = req.params;
+
+  //   // Try hoardings first
+  //   db.query("SELECT * FROM hoardings WHERE h_id = ?", [id], (err, hoardingResults) => {
+  //     if (err) {
+  //       return res.status(500).json({ message: "Database error", error: err.message });
+  //     }
+
+  //     if (hoardingResults.length > 0) {
+  //       const h = hoardingResults[0];
+  //       return res.json({
+  //         inventoryId: h.h_id,
+  //         mediaType: "hoarding",
+  //         name: h.h_name,
+  //         location: `${h.address || ""}, ${h.city || ""}, ${h.State || ""}`,
+  //         city: h.city,
+  //         area: h.address,
+  //         landmark: h.address,
+  //         size: h.size,
+  //         availabilityStatus: h.status || "available",
+  //         isDigital: false,
+  //         latitude: h.latitude,
+  //         longitude: h.longitude,
+  //         rentalCost: h.rental_cost,
+  //         trafficScore: h.featured ? 85 : h.status === "available" ? 70 : 50,
+  //         imageUrls: [],
+  //         videoFeedUrl: null,
+  //         facingDirection: null,
+  //         lastInspectionDate: null,
+  //         ownerName: h.owner_name,
+  //         contactNumber: h.contact_number,
+  //         contactPerson: h.contact_person,
+  //         adStartDate: h.ad_start_date,
+  //         adEndDate: h.ad_end_date,
+  //         contractStartDate: h.contract_start_date,
+  //         contractEndDate: h.contract_end_date,
+  //         notes: h.notes,
+  //       });
+  //     }
+
+  //     // Try screens
+  //     db.query(
+  //       "SELECT * FROM outdoormarketingscreens WHERE ScreenID = ?",
+  //       [id],
+  //       (err, screenResults) => {
+  //         if (err) {
+  //           return res.status(500).json({ message: "Database error", error: err.message });
+  //         }
+
+  //         if (screenResults.length === 0) {
+  //           return res.status(404).json({ message: "Inventory item not found" });
+  //         }
+
+  //         const s = screenResults[0];
+  //         return res.json({
+  //           inventoryId: s.ScreenID,
+  //           mediaType: s.ScreenType?.includes("LED") ? "led_screen" : "digital_screen",
+  //           name: s.ScreenName,
+  //           location: `${s.Location || ""}, ${s.City || ""}, ${s.State || ""}`,
+  //           city: s.City,
+  //           area: s.Location,
+  //           landmark: s.Location,
+  //           size: s.Size,
+  //           availabilityStatus: s.Status || "available",
+  //           isDigital: true,
+  //           latitude: s.Latitude,
+  //           longitude: s.Longitude,
+  //           rentalCost: s.RentalCost,
+  //           trafficScore: s.featured ? 90 : s.Status === "available" ? 75 : 60,
+  //           imageUrls: [],
+  //           videoFeedUrl: null,
+  //           facingDirection: null,
+  //           lastInspectionDate: s.OnboardingDate,
+  //           ownerName: s.OwnerName,
+  //           contactNumber: s.ContactNumber,
+  //           contactPerson: s.ContactPerson,
+  //           screenType: s.ScreenType,
+  //           resolution: s.Resolution,
+  //           powerBackup: s.PowerBackup,
+  //           internetConnectivity: s.InternetConnectivity,
+  //           notes: s.Notes,
+  //         });
+  //       }
+  //     );
+
+  //   });
+  // });
+
   app.get("/inventory/:id", (req, res) => {
     const { id } = req.params;
 
-    // Try hoardings first
+    // 1️⃣ Try hoardings
     db.query("SELECT * FROM hoardings WHERE h_id = ?", [id], (err, hoardingResults) => {
       if (err) {
         return res.status(500).json({ message: "Database error", error: err.message });
@@ -268,22 +409,12 @@ module.exports = function registerInventoryRoutes(app, db) {
           longitude: h.longitude,
           rentalCost: h.rental_cost,
           trafficScore: h.featured ? 85 : h.status === "available" ? 70 : 50,
-          imageUrls: [],
-          videoFeedUrl: null,
-          facingDirection: null,
-          lastInspectionDate: null,
           ownerName: h.owner_name,
           contactNumber: h.contact_number,
-          contactPerson: h.contact_person,
-          adStartDate: h.ad_start_date,
-          adEndDate: h.ad_end_date,
-          contractStartDate: h.contract_start_date,
-          contractEndDate: h.contract_end_date,
-          notes: h.notes,
         });
       }
 
-      // Try screens
+      // 2️⃣ Try screens
       db.query(
         "SELECT * FROM outdoormarketingscreens WHERE ScreenID = ?",
         [id],
@@ -292,43 +423,68 @@ module.exports = function registerInventoryRoutes(app, db) {
             return res.status(500).json({ message: "Database error", error: err.message });
           }
 
-          if (screenResults.length === 0) {
-            return res.status(404).json({ message: "Inventory item not found" });
+          if (screenResults.length > 0) {
+            const s = screenResults[0];
+            return res.json({
+              inventoryId: s.ScreenID,
+              mediaType: s.ScreenType?.includes("LED") ? "led_screen" : "digital_screen",
+              name: s.ScreenName,
+              location: `${s.Location || ""}, ${s.City || ""}, ${s.State || ""}`,
+              city: s.City,
+              area: s.Location,
+              landmark: s.Location,
+              size: s.Size,
+              availabilityStatus: s.Status || "available",
+              isDigital: true,
+              latitude: s.Latitude,
+              longitude: s.Longitude,
+              rentalCost: s.RentalCost,
+              trafficScore: s.featured ? 90 : s.Status === "available" ? 75 : 60,
+              ownerName: s.OwnerName,
+              contactNumber: s.ContactNumber,
+            });
           }
 
-          const s = screenResults[0];
-          return res.json({
-            inventoryId: s.ScreenID,
-            mediaType: s.ScreenType?.includes("LED") ? "led_screen" : "digital_screen",
-            name: s.ScreenName,
-            location: `${s.Location || ""}, ${s.City || ""}, ${s.State || ""}`,
-            city: s.City,
-            area: s.Location,
-            landmark: s.Location,
-            size: s.Size,
-            availabilityStatus: s.Status || "available",
-            isDigital: true,
-            latitude: s.Latitude,
-            longitude: s.Longitude,
-            rentalCost: s.RentalCost,
-            trafficScore: s.featured ? 90 : s.Status === "available" ? 75 : 60,
-            imageUrls: [],
-            videoFeedUrl: null,
-            facingDirection: null,
-            lastInspectionDate: s.OnboardingDate,
-            ownerName: s.OwnerName,
-            contactNumber: s.ContactNumber,
-            contactPerson: s.ContactPerson,
-            screenType: s.ScreenType,
-            resolution: s.Resolution,
-            powerBackup: s.PowerBackup,
-            internetConnectivity: s.InternetConnectivity,
-            notes: s.Notes,
-          });
+          // 3️⃣ Try societies
+          db.query(
+            "SELECT * FROM society_marketing WHERE s_id = ?",
+            [id],
+            (err, societyResults) => {
+              if (err) {
+                return res.status(500).json({ message: "Database error", error: err.message });
+              }
+
+              if (societyResults.length > 0) {
+                const s = societyResults[0];
+                return res.json({
+                  inventoryId: s.s_id,
+                  mediaType: "society",
+                  name: s.s_name,
+                  location: `${s.s_address || ""}, ${s.s_city || ""}`,
+                  city: s.s_city,
+                  area: s.s_area,
+                  landmark: s.s_address,
+                  size: s.s_no_flats ? `${s.s_no_flats} flats` : "",
+                  availabilityStatus: s.approval_status || "available",
+                  isDigital: false,
+                  latitude: s.s_lat,
+                  longitude: s.s_long,
+                  rentalCost: s.actual_cost,
+                  trafficScore: s.featured ? 80 : 60,
+                  ownerName: s.s_contact_person_name,
+                  contactNumber: s.s_contact_num,
+                });
+              }
+
+              // 4️⃣ Not found anywhere
+              return res.status(404).json({ message: "Inventory item not found" });
+            }
+          );
         }
       );
     });
   });
+
 
   /**
    * GET /inventory/trending

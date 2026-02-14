@@ -8,7 +8,7 @@
     <div class="navbar-right">
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" [(ngModel)]="searchCity" (ngModelChange)="onSearchChange()"
+        <input type="text" [(ngModel)]="searchCity" (ngModelChange)="onSearchChange($event)"
           placeholder="Search by City, Area or Ad Name..." class="search-input">
         <button *ngIf="searchCity" class="clear-search" (click)="searchCity=''; applyFilters()">×</button>
       </div>
@@ -26,9 +26,10 @@
 
         <!-- Map Legend -->
         <div class="map-legend">
-          <span class="legend-item"><span class="legend-dot" style="background: #ff8200;"></span> Hoarding</span>
-          <span class="legend-item"><span class="legend-dot" style="background: #00d4ff;"></span> Digital Screen</span>
-          <span class="legend-item"><span class="legend-dot" style="background: #9c27b0;"></span> Society</span>
+          <span class="legend-item"><span class="legend-dot" style="background: #1976d2;"></span> Hoarding</span>
+          <span class="legend-item"><span class="legend-dot" style="background: #00acc1;"></span> Digital Screen</span>
+          <span class="legend-item"><span class="legend-dot" style="background: #9c27b0;"></span> Society
+            Marketing</span>
         </div>
 
 
