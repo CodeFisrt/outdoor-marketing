@@ -21,6 +21,7 @@ import { HoardingService } from '../../ApiServices/CallApis/hoarding-service';
 import { io, Socket } from 'socket.io-client';
 import { timeout, finalize, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
+import { WishlistService } from '../../ApiServices/CallApis/wishlist-service';
 import { Subject } from 'rxjs';
 
 
@@ -92,6 +93,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private inventoryService: InventoryService,
     private hoardingService: HoardingService,
+    private wishlistService: WishlistService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private router: Router,
@@ -702,6 +704,43 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       const bookingStart = new Date(booking.start_date);
       const bookingEnd = new Date(booking.end_date);
       return (start <= bookingEnd && end >= bookingStart);
+    });
+  }
+
+  /**
+   * Add selected item to wishlist
+   */
+  async addToWishlist() {
+    if (!isPlatformBrowser(this.platformId)) return;
+    if (!this.selectedItem) return;
+
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert('Please sign in to add items to your wishlist.');
+      this.router.navigateByUrl('/signin');
+      return;
+    }
+
+    const type = this.selectedItem.mediaType;
+    const itemData: any = {
+      user_id: userId,
+      h_id: type === 'hoarding' ? this.selectedItem.inventoryId : null,
+      screen_id: (type === 'digital_screen' || type === 'led_screen') ? this.selectedItem.inventoryId : null,
+      s_id: type === 'society' ? this.selectedItem.inventoryId : null
+    };
+
+    this.wishlistService.addToWishlist(itemData).subscribe({
+      next: (res) => {
+        alert('Item added to wishlist successfully! ❤️');
+      },
+      error: (err) => {
+        if (err.status === 400) {
+          alert('Already added to wishlist');
+        } else {
+          console.error('Error adding to wishlist:', err);
+          alert('Error adding to wishlist');
+        }
+      }
     });
   }
 

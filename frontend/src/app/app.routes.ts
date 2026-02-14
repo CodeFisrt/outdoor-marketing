@@ -88,9 +88,11 @@ export const routes: Routes = [
       { path: 'hoarding-form/:id', component: HoardingFrom },
       { path: 'users-list', component: UsersList },
       { path: 'users/add', component: AddUserForm },
+      { path: 'wishlist', loadComponent: () => import('./pages/wishlist/wishlist.component').then(m => m.WishlistComponent) }
 
     ]
   },
+  { path: 'wishlist', loadComponent: () => import('./pages/wishlist/wishlist.component').then(m => m.WishlistComponent) },
 
   // ✅ Forms (standalone)
 
