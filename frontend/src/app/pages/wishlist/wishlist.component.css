@@ -1,186 +1,363 @@
+/* =========================
+   CONTAINER
+========================= */
+
 .wishlist-container {
-    min-height: 80vh;
-    background-color: #f8f9fa;
-    padding-top: 20px;
+    min-height: 100vh;
+    padding-bottom: 40px;
 }
 
 .wishlist-title {
     font-weight: 800;
-    color: #1a1a1a;
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
+    font-size: 28px;
+    margin-bottom: 4px;
 }
 
 .wishlist-subtitle {
-    color: #6c757d;
-    font-size: 1.1rem;
+    color: #777;
+    font-size: 14px;
 }
 
-/* Card Styling */
+
+/* =========================
+   GRID FIX
+========================= */
+
+.row.g-4 {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.col-md-6.col-lg-4 {
+    display: flex;
+}
+
+
+/* =========================
+   CARD FIX
+========================= */
+
 .wishlist-card {
-    background: #fff;
+    position: relative;
+    width: 100%;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    height: 100%;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    transition: all 0.25s ease;
     display: flex;
     flex-direction: column;
 }
 
 .wishlist-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
 }
+
+.wishlist-card.selected {
+    border: 2px solid #1976d2;
+    background-color: rgba(25, 118, 210, 0.03);
+}
+
+
+/* =========================
+   IMAGE FIX
+========================= */
 
 .card-image-wrap {
     position: relative;
+    width: 100%;
     height: 200px;
     overflow: hidden;
 }
 
-.card-image-wrap img {
+.card-img-top {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
 }
 
-.wishlist-card:hover .card-image-wrap img {
-    transform: scale(1.1);
-}
 
-.type-badge {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    z-index: 2;
-    color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.type-badge.hoarding {
-    background: #1976d2;
-}
-
-.type-badge.screen {
-    background: #00acc1;
-}
-
-.type-badge.society {
-    background: #9c27b0;
-}
+/* =========================
+   IMAGE OVERLAY
+========================= */
 
 .image-overlay {
     position: absolute;
-    top: 0;
-    right: 0;
-    padding: 15px;
-    display: flex;
-    gap: 10px;
-    z-index: 2;
+    top: 10px;
+    right: 10px;
 }
 
 .btn-remove {
     background: rgba(255, 255, 255, 0.9);
-    color: #dc3545;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     border: none;
+    border-radius: 50%;
+    padding: 6px 10px;
+    color: red;
+    font-size: 16px;
     transition: all 0.2s;
 }
 
 .btn-remove:hover {
-    background: #dc3545;
-    color: #fff;
-    transform: scale(1.1);
+    background: red;
+    color: white;
 }
 
+
+/* =========================
+   TYPE BADGE
+========================= */
+
+/* =========================
+   MOVE BADGE SLIGHTLY RIGHT
+========================= */
+
+.type-badge {
+    position: absolute;
+    top: 12px;
+    left: 50px;
+    /* moved right so no overlap with checkbox */
+    z-index: 1;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 20px;
+    color: #fff;
+}
+
+.type-badge.screen {
+    background: #00bcd4;
+}
+
+.type-badge.hoarding {
+    background: #ff9800;
+}
+
+.type-badge.society {
+    background: #4caf50;
+}
+
+
+/* =========================
+   CARD BODY
+========================= */
+
 .card-body {
-    padding: 20px;
-    flex-grow: 1;
+    padding: 16px;
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
 }
 
 .card-title {
+    font-size: 16px;
     font-weight: 700;
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    color: #1a1a1a;
+    margin-bottom: 8px;
 }
 
-.location {
-    color: #6c757d;
-    font-size: 0.9rem;
-    margin-bottom: 20px;
+.card-text.location {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
 }
+
+
+/* =========================
+   CARD FOOTER
+========================= */
 
 .card-footer-custom {
     margin-top: auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 15px;
-    border-top: 1px solid #f1f1f1;
 }
 
 .price {
-    font-weight: 800;
-    font-size: 1.2rem;
-    color: #1a1a1a;
-}
-
-.price small {
-    font-weight: 400;
-    font-size: 0.8rem;
-    color: #6c757d;
+    font-weight: 700;
+    color: #1976d2;
 }
 
 .btn-view {
-    background: transparent;
-    color: #1976d2;
-    border: 1.5px solid #1976d2;
+    background: #1976d2;
+    color: white;
+    border: none;
+    padding: 6px 14px;
     border-radius: 8px;
-    padding: 6px 15px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    transition: all 0.2s;
+    font-size: 13px;
 }
 
 .btn-view:hover {
-    background: #1976d2;
-    color: #fff;
+    background: #1565c0;
 }
 
-/* Empty State Styling */
+
+/* =========================
+   CHECKBOX FIX
+========================= */
+
+.selection-overlay {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 1;
+
+    /* Add background so it doesn't overlap visually */
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 6px;
+    padding: 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Checkbox size and alignment */
+.selection-overlay input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: #1976d2;
+}
+
+
+/* =========================
+   SELECT ALL
+========================= */
+
+.select-all-wrap {
+    margin-top: 8px;
+}
+
+
+/* =========================
+   EMPTY STATE
+========================= */
+
 .empty-wishlist {
-    color: #adb5bd;
+    padding-top: 60px;
 }
 
 .empty-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
+    font-size: 48px;
+    color: #ccc;
 }
 
-/* Wishlist Button in Map Panel (matching other buttons) */
-::ng-deep .details-btn-wishlist {
-    background-color: transparent !important;
-    color: #dc3545 !important;
-    border: 1.5px solid #dc3545 !important;
+
+/* =========================
+   SHARE BUTTON
+========================= */
+
+.btn-share-main {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    transition: all 0.3s;
 }
 
-::ng-deep .details-btn-wishlist:hover {
-    background-color: #dc3545 !important;
-    color: #fff !important;
+.btn-share-main:hover:not(:disabled) {
+    background: #1565c0;
+}
+
+.btn-share-main:disabled {
+    background: #e0e0e0;
+    color: #999;
+}
+
+
+/* =========================
+   MODAL OVERLAY
+========================= */
+
+.share-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.share-modal {
+    background: white;
+    width: 500px;
+    max-width: 95%;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+
+/* =========================
+   MODAL HEADER
+========================= */
+
+.modal-header {
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-body {
+    padding: 16px;
+}
+
+.modal-footer {
+    padding: 16px;
+    border-top: 1px solid #eee;
+}
+
+
+/* =========================
+   USER SEARCH
+========================= */
+
+.search-box-wrap input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.user-results {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.user-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.user-item:hover {
+    background: #f5f5f5;
+}
+
+.user-item.active {
+    background: #e3f2fd;
+}
+
+
+/* =========================
+   RESPONSIVE FIX
+========================= */
+
+@media (max-width: 768px) {
+
+    .card-image-wrap {
+        height: 180px;
+    }
+
+    .wishlist-title {
+        font-size: 22px;
+    }
+
 }
