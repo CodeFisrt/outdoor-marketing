@@ -16,7 +16,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 text-end">
+            <div class="col-md-4 text-end d-flex gap-2 justify-content-end">
+                <button class="btn btn-outline-primary" [disabled]="selectedItemIds.size === 0"
+                    (click)="downloadSelectedPDF()">
+                    <i class="bi bi-file-earmark-pdf"></i> PDF
+                </button>
+
                 <button class="btn btn-share-main" [disabled]="selectedItemIds.size === 0" (click)="openShareModal()">
                     <i class="bi bi-share"></i> SHARE SELECTED ({{ selectedItemIds.size }})
                 </button>

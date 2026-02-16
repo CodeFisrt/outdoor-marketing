@@ -60,6 +60,10 @@ app.get("/", (req, res) => res.send("Welcome to Vehicle Marketing API"));
 // ✅ Register ALL routes from separate files (same endpoints, same logic)
 const registerAllRoutes = require("./routes/registerAll");
 
+// Wishlist Refactor
+const wishlistRoutes = require("./routes/wishlist.routes");
+app.use("/wishlist", wishlistRoutes);
+
 // deps for users login/register exactly like your code
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");

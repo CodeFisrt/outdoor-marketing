@@ -310,6 +310,36 @@ export class WishlistComponent implements OnInit {
     }
 
 
+    downloadSelectedPDF(): void {
+
+        if (this.selectedItemIds.size === 0) {
+            alert("Please select items to download");
+            return;
+        }
+
+        const selectedItems = this.wishlistItems.filter(item =>
+            this.selectedItemIds.has(item.wishlist_id)
+        );
+
+        this.wishlistService.downloadPDF(selectedItems).subscribe({
+            next: (blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'wishlist.pdf';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            },
+            error: () => {
+                alert("Error downloading PDF");
+            }
+        });
+
+    }
+
+
     // ========================
     // LOAD WISHLIST
     // ========================
