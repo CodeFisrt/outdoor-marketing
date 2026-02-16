@@ -1,9 +1,25 @@
 <div class="wishlist-container">
     <div class="container py-5">
-        <div class="row mb-4 animate__animated animate__fadeInDown">
-            <div class="col-12 text-center">
+        <div class="row mb-4 animate__animated animate__fadeInDown align-items-center">
+            <div class="col-md-8 text-start">
                 <h2 class="wishlist-title">My Wishlist <i class="bi bi-heart-fill text-danger"></i></h2>
                 <p class="wishlist-subtitle">Manage your favorite advertising locations in one place</p>
+
+                <!-- SELECT ALL CHECKBOX -->
+                <div class="select-all-wrap mb-2" *ngIf="wishlistItems.length > 0">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="selectAll" [checked]="isAllSelected"
+                            (change)="toggleSelectAll()">
+                        <label class="form-check-label text-muted" for="selectAll">
+                            Select All ({{ selectedItemIds.size }}/{{ wishlistItems.length }})
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-share-main" [disabled]="selectedItemIds.size === 0" (click)="openShareModal()">
+                    <i class="bi bi-share"></i> SHARE SELECTED ({{ selectedItemIds.size }})
+                </button>
             </div>
         </div>
 
@@ -28,7 +44,12 @@
         <!-- Wishlist Grid -->
         <div *ngIf="!isLoading && wishlistItems.length > 0" class="row g-4">
             <div *ngFor="let item of wishlistItems" class="col-md-6 col-lg-4 animate__animated animate__fadeInUp">
-                <div class="wishlist-card">
+                <div class="wishlist-card" [class.selected]="isSelected(item)">
+                    <div class="selection-overlay">
+                        <input type="checkbox" [checked]="isSelected(item)" (click)="$event.stopPropagation()"
+                            (change)="toggleSelection(item)">
+                    </div>
+
                     <div class="card-image-wrap">
                         <span class="type-badge" [ngClass]="item.itemType">{{ getTypeLabel(item.itemType) }}</span>
                         <img [src]="item.imageUrl || 'assets/main-bg-img.jpg'" class="card-img-top" [alt]="item.name">
@@ -49,6 +70,49 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal Overlay -->
+    <div class="share-modal-overlay" *ngIf="showShareModal">
+        <div class="share-modal animate__animated animate__fadeInUp">
+            <div class="modal-header">
+                <h3>Share Selected Items</h3>
+                <button class="btn-close-modal" (click)="closeModal()"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="modal-body">
+                <p>Sharing {{ selectedItemIds.size }} items. Search for a user to share with:</p>
+
+                <div class="search-box-wrap">
+                    <i class="bi bi-search"></i>
+                    <input type="text" [(ngModel)]="searchUsername" (ngModelChange)="onUserSearchChange($event)"
+                        placeholder="Search user by username...">
+                </div>
+
+                <div *ngIf="isSearchingUsers" class="text-center py-2">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                </div>
+
+                <div class="user-results" *ngIf="foundUsers.length > 0">
+                    <div class="user-item" *ngFor="let user of foundUsers"
+                        [class.active]="selectedTargetUser?.userId === user.userId" (click)="selectUser(user)">
+                        <div class="user-info">
+                            <span class="name">{{ user.userName }}</span>
+                            <span class="email">{{ user.userEmail }}</span>
+                        </div>
+                        <i class="bi bi-check-circle-fill" *ngIf="selectedTargetUser?.userId === user.userId"></i>
+                    </div>
+                </div>
+
+                <div class="no-results" *ngIf="!isSearchingUsers && searchUsername && foundUsers.length === 0">
+                    No users found matching "{{ searchUsername }}"
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+                <button class="btn btn-primary" [disabled]="!selectedTargetUser" (click)="confirmShare()">CONFIRM
+                    SHARE</button>
             </div>
         </div>
     </div>

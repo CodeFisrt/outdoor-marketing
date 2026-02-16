@@ -134,4 +134,68 @@ module.exports = function registerWishlistRoutes(app, db) {
         );
     });
 
+    // ✅ Share Wishlist Items
+    app.post("/wishlist/share", (req, res) => {
+        const { fromUserId, toUserId, items } = req.body;
+
+        if (!toUserId || !items || !Array.isArray(items)) {
+            return res.status(400).json({ message: "Invalid payload" });
+        }
+
+        let errors = [];
+        let successCount = 0;
+
+        // Process each item
+        const promises = items.map(item => {
+            return new Promise((resolve) => {
+                const { screen_id, h_id, s_id } = item;
+
+                // Check if already exists for toUserId
+                const checkSql = `
+                    SELECT 1 FROM wishlist 
+                    WHERE user_id = ? 
+                    AND (
+                        (screen_id IS NOT NULL AND screen_id = ?) OR 
+                        (h_id IS NOT NULL AND h_id = ?) OR 
+                        (s_id IS NOT NULL AND s_id = ?)
+                    )
+                    LIMIT 1
+                `;
+
+                db.query(checkSql, [toUserId, screen_id || null, h_id || null, s_id || null], (err, results) => {
+                    if (err) {
+                        errors.push(err);
+                        return resolve();
+                    }
+
+                    if (results.length > 0) {
+                        // Already exists, skip
+                        return resolve();
+                    }
+
+                    // Insert if not exists
+                    const insertSql = `
+                        INSERT INTO wishlist (user_id, screen_id, h_id, s_id)
+                        VALUES (?, ?, ?, ?)
+                    `;
+                    db.query(insertSql, [toUserId, screen_id || null, h_id || null, s_id || null], (err2) => {
+                        if (err2) {
+                            errors.push(err2);
+                        } else {
+                            successCount++;
+                        }
+                        resolve();
+                    });
+                });
+            });
+        });
+
+        Promise.all(promises).then(() => {
+            if (errors.length > 0 && successCount === 0) {
+                return res.status(500).json({ message: "Error sharing items", errors });
+            }
+            res.json({ message: `Successfully shared ${successCount} items`, successCount });
+        });
+    });
+
 };
