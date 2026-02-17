@@ -9,8 +9,13 @@
 }
 
 body {
-  font-family: Roboto, sans-serif;
+  font-family: 'Inter', sans-serif;
 }
+
+h1, h2, h3,p, .premium-title {
+  font-family: 'Poppins', sans-serif;
+}
+
 
 .mask {
   width: 100%;

@@ -1,13 +1,14 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule, NgFor } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterLink , RouterModule} from '@angular/router';
 import { Featuredservice } from '../../ApiServices/CallApis/featuredservice';
+
 
 @Component({
   selector: 'app-featured-cards',
   standalone: true,
-  imports: [CommonModule, NgFor, HttpClientModule],
+  imports: [CommonModule, NgFor, HttpClientModule, RouterLink, RouterModule],
   templateUrl: './featured-cards.html',
   styleUrls: ['./featured-cards.css']
 })
@@ -70,6 +71,7 @@ export class FeaturedCards implements OnInit {
   }
 
   viewMore(item: any, type: string) {
+    
     const id = this.getBoardId(item);
 
     if (id && type) {

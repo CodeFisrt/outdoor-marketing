@@ -10,6 +10,7 @@ import { HttpParams } from '@angular/common/http';
 import { CategoryCards } from '../category-cards/category-cards';
 import { SeoService } from '../../ApiServices/Seo-Service/seo-service';
 import { FeaturedCards } from "../featured-cards/featured-cards";
+import { Meta } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -21,7 +22,8 @@ export class Home implements OnInit {
   constructor(
     private searchService: Search,
     private cdr: ChangeDetectorRef,
-    private seo: SeoService
+    private seo: SeoService,
+    private meta : Meta
   ) { }
 
   ngOnInit() {

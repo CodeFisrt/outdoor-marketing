@@ -7,10 +7,12 @@
       <span class="status-dot" [ngClass]="b.status === 'Available' ? 'green' : 'red'"></span>
 
       <!-- FIXED IMAGE WITH FALLBACK -->
-      <img 
+      <img a
         [src]="imageBaseUrl + b.image" 
         (error)="onImgError($event)"
         class="card-img" 
+      
+         [routerLink]="['/screenBoardDescrpt', getBoardId(b), b.service_type]"
         alt="Board Image">
 
       <div class="card-content">
@@ -20,11 +22,11 @@
           {{ b.State }}, {{ b.District }}, {{ b.Tehsil }}, {{ b.Village }}
         </p>
 
-        <p class="exact-location">📍 {{ b.location }}</p>
+        <p class="exact-location"><i class="bi bi-geo-alt"></i> {{ b.location }}</p>
 
         <div class="price-size">
           <span>📐 {{ b.size }}</span>
-          <span class="price">₹{{ b.rental_cost }}</span>
+          <span class="price">₹{{ b.rental_cost ? b.rental_cost : b.v_cost }}</span>
         </div>
 
         <button class="view-btn" (click)="viewMore(b)">View More</button>
