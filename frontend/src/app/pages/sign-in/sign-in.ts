@@ -84,13 +84,25 @@ export class SignIn {
               const role = (user.role || 'guest').toLowerCase();
               localStorage.setItem('role', role);
 
+              // store extra fields for dashboards
+              if (user.ownerCompanyName) localStorage.setItem('ownerCompanyName', user.ownerCompanyName);
+              if (user.ownerPhone) localStorage.setItem('ownerPhone', user.ownerPhone);
+              if (user.ownerAddress) localStorage.setItem('ownerAddress', user.ownerAddress);
+              if (user.ownerCity) localStorage.setItem('ownerCity', user.ownerCity);
+
+              if (user.agencyName) localStorage.setItem('agencyName', user.agencyName);
+              if (user.agencyPhone) localStorage.setItem('agencyPhone', user.agencyPhone);
+              if (user.agencyCity) localStorage.setItem('agencyCity', user.agencyCity);
+
               // ✅ role wise redirect
               if (role === 'admin') {
                 this.router.navigateByUrl('/dashboard/overview');
               } else if (role === 'agency') {
                 this.router.navigateByUrl('/agency-dashboard');
-              } else if (role === 'screenowner') {
+              } else if (role === 'mbu') {
                 this.router.navigateByUrl('/screen-owner-dashboard');
+              } else if (role === 'client') {
+                this.router.navigateByUrl('/client-dashboard');
               } else {
                 this.router.navigateByUrl('/guest-dashboard');
               }

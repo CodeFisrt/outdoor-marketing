@@ -1,46 +1,44 @@
 import { inject, PLATFORM_ID } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn, Router, ActivatedRouteSnapshot } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 
-export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
-  return () => {
+export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
     const router = inject(Router);
     const platformId = inject(PLATFORM_ID);
 
-    if (!isPlatformBrowser(platformId)) return true;
-
-    // ✅ 1) Token must exist (otherwise block direct URL access)
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.navigate(['/signin']);
-      return false;
+    if (!isPlatformBrowser(platformId)) {
+        return true;
     }
 
-    // ✅ 2) Role check (default guest)
-    const role = (localStorage.getItem('role') || 'guest').toLowerCase();
-    const allowed = allowedRoles.map(r => r.toLowerCase());
+    const role = (localStorage.getItem('role') || '').toLowerCase();
+    const expectedRoles = route.data['expectedRoles'] as Array<string>;
 
-    // ✅ allowed role => allow route
-    if (allowed.includes(role)) return true;
-
-    // ✅ 3) Not allowed => redirect user to their own dashboard
-    if (role === 'admin') {
-      router.navigate(['/dashboard/overview']);
-      return false;
+    if (role && expectedRoles && expectedRoles.map(r => r.toLowerCase()).includes(role)) {
+        return true;
     }
 
-    if (role === 'agency') {
-      router.navigate(['/agency-dashboard']);
-      return false;
+    // If not authorized, redirect to appropriate dashboard or sign-in
+    if (!role) {
+        router.navigate(['/signin']);
+    } else {
+        // Redirect based on current role if trying to access unauthorized route
+        switch (role) {
+            case 'admin':
+                router.navigate(['/dashboard/overview']);
+                break;
+            case 'agency':
+                router.navigate(['/agency-dashboard']);
+                break;
+            case 'mbu':
+                router.navigate(['/screen-owner-dashboard']);
+                break;
+            case 'client':
+                router.navigate(['/client-dashboard']);
+                break;
+            default:
+                router.navigate(['/guest-dashboard']);
+        }
     }
 
-    if (role === 'screenowner') {
-      router.navigate(['/screen-owner-dashboard']);
-      return false;
-    }
-
-    // guest or unknown role
-    router.navigate(['/guest-dashboard']);
     return false;
-  };
 };
