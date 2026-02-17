@@ -46,4 +46,11 @@ export class WishlistService {
     shareWishlistItems(payload: any): Observable<any> {
         return this.http.post(`${this.baseUrl}/share`, payload);
     }
+
+    // ✅ Download wishlist PDF
+    downloadPDF(items: any[]): Observable<Blob> {
+        return this.http.post(`${this.baseUrl}/download-pdf`, { items }, {
+            responseType: 'blob'
+        });
+    }
 }

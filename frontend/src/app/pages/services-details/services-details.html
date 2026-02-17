@@ -1,0 +1,162 @@
+<!-- 
+<section class="blog-details-section" *ngIf="service; else loading">
+
+  <div class="container">
+
+    
+    <div class="blog-header">
+      <div class="image-container">
+        <img 
+          [src]="service.image" 
+          [alt]="service.title"
+          class="featured-image">
+
+       
+        <div class="category-tag" *ngIf="service.category">
+          {{ service.category }}
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="blog-content-wrapper">
+
+      
+      <div class="meta-row" *ngIf="service.date || service.author">
+        <div class="meta-item" *ngIf="service.date">
+          <i class="bi bi-calendar"></i>
+          {{ service.date }}
+        </div>
+
+        <span class="separator" *ngIf="service.date && service.author">•</span>
+
+        <div class="meta-item" *ngIf="service.author">
+          <i class="bi bi-person"></i>
+          {{ service.author }}
+        </div>
+      </div>
+
+      
+      <h1 class="blog-title">
+        {{ service.title }}
+      </h1>
+
+      
+      <div class="blog-body">
+        <p>
+          {{ service.fullDescription }}
+        </p>
+      </div>
+
+      
+      <div class="tags-section" *ngIf="service.tags?.length">
+        <h4>Tags</h4>
+        <div class="tags-list">
+          <span class="tag" *ngFor="let tag of service.tags">
+            {{ tag }}
+          </span>
+        </div>
+      </div>
+
+      
+      <div class="navigation-footer">
+        <a routerLink="/services" class="back-btn">
+          <i class="bi bi-arrow-left"></i>
+          Back to Services
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<ng-template #loading>
+  <div class="loading-state">
+    <p>Loading Service Details...</p>
+  </div>
+</ng-template>
+ -->
+
+<section class="blog-details-section" *ngIf="service; else loading">
+
+  <div class="container">
+
+    <!-- Header Section -->
+    <div class="blog-header">
+      <div class="image-container">
+        <img [src]="service.image" [alt]="service.title" class="featured-image">
+
+        <!-- Optional Category -->
+        <div class="category-tag" *ngIf="service.category">
+          {{ service.category }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Wrapper -->
+    <div class="blog-content-wrapper">
+
+      <!-- Title -->
+      <h1 class="blog-title">
+        {{ service.title }}
+      </h1>
+
+      <!-- Full Description -->
+      <div class="blog-body" *ngIf="service.fullDescription">
+        <p>{{ service.fullDescription }}</p>
+      </div>
+
+      <!-- ========================= -->
+      <!-- KEY FEATURES SECTION -->
+      <!-- ========================= -->
+
+      <div class="features-section" *ngIf="service.keyFeatures?.length">
+
+        <h2 class="section-title">Key Features</h2>
+
+        <div *ngFor="let feature of service.keyFeatures" class="feature-card">
+
+          <!-- Feature Title -->
+          <h4 class="feature-title">
+            ✅ {{ feature.title }}
+          </h4>
+
+          <!-- Feature Content -->
+          <p class="feature-content">
+            {{ feature.content }}
+          </p>
+
+          <!-- Locations List (if exists) -->
+          <ul *ngIf="feature.locations?.length" class="location-list">
+            <li *ngFor="let loc of feature.locations">
+              {{ loc }}
+            </li>
+          </ul>
+
+        </div>
+
+      </div>
+
+      <!-- Tags Section (Optional if you add later in TS) -->
+      <div class="tags-section" *ngIf="service.tags?.length">
+        <h4>Tags</h4>
+        <div class="tags-list">
+          <span class="tag" *ngFor="let tag of service.tags">
+            {{ tag }}
+          </span>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+</section>
+
+<!-- Loading Template -->
+<ng-template #loading>
+  <div class="loading-state">
+    <p>Loading Service Details...</p>
+  </div>
+</ng-template>
