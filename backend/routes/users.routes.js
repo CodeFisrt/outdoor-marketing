@@ -18,22 +18,60 @@ module.exports = function registerUserRoutes(app, db, bcrypt, jwt, JWT_SECRET) {
     );
   });
 
+  // 1️⃣ SEARCH route FIRST
+  app.get("/users/search", adminAuth, (req, res) => {
+
+    const { query } = req.query;
+
+    if (!query) return res.json([]);
+
+    const sql = `
+        SELECT userId, userName, userEmail
+        FROM users
+        WHERE userName LIKE ?
+           OR userEmail LIKE ?
+           OR userId LIKE ?
+        LIMIT 10
+    `;
+
+    const searchValue = `%${query}%`;
+
+    db.query(sql, [searchValue, searchValue, searchValue], (err, results) => {
+
+      if (err) return res.status(500).send(err);
+
+      res.json(results);
+
+    });
+
+  });
+
   // ✅ GET user by id (ADMIN ONLY)
-  app.get("/Users/:id", adminAuth, (req, res) => {
+  app.get("/users/:id", adminAuth, (req, res) => {
+
     const { id } = req.params;
-    db.query(
-      `SELECT userId, userName, userEmail, role, status,
-              agencyName, agencyPhone, agencyCity,
-              ownerCompanyName, ownerPhone, ownerAddress, ownerCity,
-              guestPhone, guestCity
-       FROM users WHERE userId = ? LIMIT 1`,
-      [id],
-      (err, results) => {
-        if (err) return res.status(500).send(err);
-        if (results.length === 0) return res.status(404).send("User not found");
-        res.json(results[0]);
-      }
-    );
+
+    const sql = `
+        SELECT userId, userName, userEmail, role, status,
+               agencyName, agencyPhone, agencyCity,
+               ownerCompanyName, ownerPhone, ownerAddress, ownerCity,
+               guestPhone, guestCity
+        FROM users
+        WHERE userId = ?
+        LIMIT 1
+    `;
+
+    db.query(sql, [id], (err, results) => {
+
+      if (err) return res.status(500).send(err);
+
+      if (results.length === 0)
+        return res.status(404).json({ message: "User not found" });
+
+      res.json(results[0]);
+
+    });
+
   });
 
   // ✅ ADMIN creates user with role + strong password hashing
@@ -326,23 +364,5 @@ module.exports = function registerUserRoutes(app, db, bcrypt, jwt, JWT_SECRET) {
       }
     );
   });
-  // ✅ Search users (for wishlist sharing)
-  app.get("/users/search", (req, res) => {
-    const { query } = req.query;
-    if (!query) {
-      return res.json([]);
-    }
 
-    const sql = `
-      SELECT userId, userName, userEmail
-      FROM users
-      WHERE userName LIKE ?
-      LIMIT 10
-    `;
-
-    db.query(sql, [`%${query}%`], (err, results) => {
-      if (err) return res.status(500).send(err);
-      res.json(results);
-    });
-  });
 };
