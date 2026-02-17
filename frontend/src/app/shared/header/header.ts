@@ -103,6 +103,7 @@ export class Header implements OnInit {
 
   isLoggedIn = false;
   adminName = '';
+  adminRole = '';
   showProfileMenu = false;
 
   constructor(
@@ -130,6 +131,7 @@ export class Header implements OnInit {
 
     if (!this.isLoggedIn) {
       this.adminName = '';
+      this.adminRole = '';
       return;
     }
 
@@ -138,11 +140,13 @@ export class Header implements OnInit {
         localStorage.getItem('adminName') ||
         localStorage.getItem('adminEmail') ||
         'Admin';
+      this.adminRole = 'admin';
     } else {
       this.adminName =
         localStorage.getItem('userName') ||
         localStorage.getItem('userEmail') ||
         'User';
+      this.adminRole = localStorage.getItem('role') || 'user';
     }
   }
 
@@ -170,7 +174,7 @@ export class Header implements OnInit {
       this.router.navigateByUrl('/dashboard/overview');
     } else if (role === 'agency') {
       this.router.navigateByUrl('/agency-dashboard');
-    } else if (role === 'mbu') {
+    } else if (role === 'MBU') {
       this.router.navigateByUrl('/screen-owner-dashboard');
     } else if (role === 'client') {
       this.router.navigateByUrl('/client-dashboard');
@@ -197,6 +201,7 @@ export class Header implements OnInit {
     localStorage.clear();
     this.isLoggedIn = false;
     this.adminName = '';
+    this.adminRole = '';
     this.showProfileMenu = false;
     this.router.navigateByUrl('/home');
   }

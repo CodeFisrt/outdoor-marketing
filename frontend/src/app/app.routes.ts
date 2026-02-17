@@ -35,6 +35,7 @@ import { AddUserForm } from './pages/user-management/add-user-form/add-user-form
 import { authGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
 import { ClientDashboard } from './pages/dashboards/client-dashboard/client-dashboard';
+import { ServicesDetails } from './pages/services-details/services-details';
 
 
 // 👇 New DashboardOverview component for default dashboard page
@@ -54,11 +55,13 @@ export const routes: Routes = [
   { path: 'blog-details/:id', component: BlogDetails },
   { path: 'contactUs', component: ContactUs },
   { path: 'Services', component: Services },
+  { path: 'services-details/:id', component: ServicesDetails },
   { path: "auth/callback", component: AuthCallback },
   { path: "screenBoardCardList", component: ScreenBoardCardList },
   { path: "screenBoardDescrpt/:id/:service_type", component: ScreenBoardDescript },
   { path: 'featured/:type', component: FeaturedList },
   { path: 'map-3d/:lat/:lng', component: Map3dView },
+
   {
     path: 'inventory-map',
     component: InventoryMap,

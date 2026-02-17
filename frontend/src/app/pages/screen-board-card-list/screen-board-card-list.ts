@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-screen-board-card-list',
-  imports: [CommonModule],
+  imports: [CommonModule,RouterLink],
   templateUrl: './screen-board-card-list.html',
   styleUrl: './screen-board-card-list.css'
 })

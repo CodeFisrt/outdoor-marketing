@@ -1,128 +1,483 @@
-import { Component, OnInit, Inject, PLATFORM_ID, NgZone, ChangeDetectorRef } from '@angular/core';
-import { CommonModule, isPlatformBrowser, NgIf, NgFor } from '@angular/common';
+import {
+    Component,
+    OnInit,
+    Inject,
+    PLATFORM_ID,
+    NgZone,
+    ChangeDetectorRef
+} from '@angular/core';
+
+import {
+    CommonModule,
+    isPlatformBrowser,
+    NgIf,
+    NgFor
+} from '@angular/common';
+
 import { WishlistService, WishlistItem } from '../../ApiServices/CallApis/wishlist-service';
+
 import { Router, RouterLink } from '@angular/router';
+
+import { FormsModule } from '@angular/forms';
+
+import { Subject, of } from 'rxjs';
+
+import {
+    debounceTime,
+    distinctUntilChanged,
+    switchMap
+} from 'rxjs/operators';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+
 
 @Component({
     selector: 'app-wishlist',
     standalone: true,
-    imports: [CommonModule, NgIf, NgFor, RouterLink],
+    imports: [CommonModule, NgIf, NgFor, RouterLink, FormsModule, ToastrModule],
     templateUrl: './wishlist.component.html',
     styleUrls: ['./wishlist.component.css']
 })
 export class WishlistComponent implements OnInit {
 
     wishlistItems: WishlistItem[] = [];
+
     isLoading = false;
+
     userId: number | null = null;
+
+    // ✅ FIXED selection logic using ID instead of object reference
+    selectedItemIds: Set<number> = new Set();
+
+    showShareModal = false;
+
+    // User search
+    searchUsername = '';
+    foundUsers: any[] = [];
+    selectedTargetUser: any = null;
+    isSearchingUsers = false;
+
+    private searchSubject = new Subject<string>();
+
 
     constructor(
         private wishlistService: WishlistService,
         private router: Router,
         private cdr: ChangeDetectorRef,
         private zone: NgZone,
+        private toastr: ToastrService,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
+
     ngOnInit(): void {
+
         if (!isPlatformBrowser(this.platformId)) return;
 
         const storedUserId = localStorage.getItem('userId');
 
         if (!storedUserId) {
-            alert('Please login to view your wishlist');
+
+            this.toastr.error('Please login to view your wishlist');
+
             this.router.navigate(['/signin']);
+
             return;
         }
 
         this.userId = Number(storedUserId);
-        this.zone.run(() => this.loadWishlist());
+
+        this.loadWishlist();
+
+        this.setupUserSearch();
     }
 
-    // ✅ Load Wishlist Items
-    loadWishlist(): void {
 
-        if (this.userId === null) {
-            console.warn("UserId is null");
+    // ========================
+    // USER SEARCH WITH DEBOUNCE
+    // ========================
+
+    setupUserSearch(): void {
+
+        this.searchSubject.pipe(
+
+            debounceTime(700),
+
+            distinctUntilChanged(),
+
+            switchMap(query => {
+
+                if (!query || query.trim() === '') {
+
+                    this.foundUsers = [];
+
+                    return of([]);   // ✅ FIXED
+
+                }
+
+                this.isSearchingUsers = true;
+
+                return this.wishlistService.searchUsers(query);
+
+            })
+
+        ).subscribe({
+
+            next: (users: any[]) => {
+
+                console.log("Users found:", users);
+
+                this.foundUsers = users;
+
+                this.isSearchingUsers = false;
+
+                this.cdr.detectChanges();
+
+            },
+
+            error: (err) => {
+
+                console.error("Search error:", err);
+
+                this.isSearchingUsers = false;
+
+                this.cdr.detectChanges();
+
+            }
+
+        });
+
+    }
+
+
+    onUserSearchChange(query: string): void {
+
+        this.searchSubject.next(query);
+
+    }
+
+
+    selectUser(user: any): void {
+
+        this.selectedTargetUser = user;
+
+    }
+
+
+    // ========================
+    // SELECTION LOGIC (FIXED)
+    // ========================
+
+    toggleSelection(item: WishlistItem): void {
+
+        const id = item.wishlist_id;
+
+        if (this.selectedItemIds.has(id)) {
+
+            this.selectedItemIds.delete(id);
+
+        } else {
+
+            this.selectedItemIds.add(id);
+
+        }
+
+        // Important: create new Set for Angular detection
+        this.selectedItemIds = new Set(this.selectedItemIds);
+
+        this.cdr.detectChanges();
+
+    }
+
+
+    get isAllSelected(): boolean {
+
+        return this.wishlistItems.length > 0 && this.selectedItemIds.size === this.wishlistItems.length;
+
+    }
+
+
+    toggleSelectAll(): void {
+
+        if (this.isAllSelected) {
+
+            this.selectedItemIds.clear();
+
+        } else {
+
+            this.wishlistItems.forEach(item => this.selectedItemIds.add(item.wishlist_id));
+
+        }
+
+        this.selectedItemIds = new Set(this.selectedItemIds);
+
+        this.cdr.detectChanges();
+
+    }
+
+
+    isSelected(item: WishlistItem): boolean {
+
+        return this.selectedItemIds.has(item.wishlist_id);
+
+    }
+
+
+    trackByWishlistId(index: number, item: WishlistItem): number {
+
+        return item.wishlist_id;
+
+    }
+
+
+    // ========================
+    // SHARE MODAL
+    // ========================
+
+    openShareModal(): void {
+
+        if (this.selectedItemIds.size === 0) {
+
+            this.toastr.error("Please select items to share");
+
             return;
         }
+
+        this.showShareModal = true;
+
+    }
+
+
+    closeModal(): void {
+
+        this.zone.run(() => {
+
+            this.showShareModal = false;
+
+            this.searchUsername = '';
+
+            this.foundUsers = [];
+
+            this.selectedTargetUser = null;
+
+            this.isSearchingUsers = false;
+
+            this.searchSubject.next('');
+
+            this.cdr.markForCheck();
+            this.cdr.detectChanges();
+
+        });
+
+    }
+
+    confirmShare(): void {
+
+        if (!this.userId || !this.selectedTargetUser) return;
+
+        const selectedItems = this.wishlistItems.filter(item =>
+            this.selectedItemIds.has(item.wishlist_id)
+        );
+
+        const itemsToShare = selectedItems.map(item => ({
+            screen_id: item.screen_id || null,
+            h_id: item.h_id || null,
+            s_id: item.s_id || null
+        }));
+
+        const payload = {
+            fromUserId: this.userId,
+            toUserId: this.selectedTargetUser.userId,
+            items: itemsToShare
+        };
+
+        this.wishlistService.shareWishlistItems(payload).subscribe({
+
+            next: (res) => {
+
+                this.toastr.success(res.message || "Shared successfully");
+
+                // ✅ RUN INSIDE ANGULAR ZONE
+                this.zone.run(() => {
+
+                    // close modal
+                    this.showShareModal = false;
+
+                    // clear search
+                    this.searchUsername = '';
+
+                    // clear results
+                    this.foundUsers = [];
+
+                    // clear selected user
+                    this.selectedTargetUser = null;
+
+                    // clear searching state
+                    this.isSearchingUsers = false;
+
+                    // VERY IMPORTANT: recreate Set reference
+                    this.selectedItemIds = new Set<number>();
+
+                    // clear subject state
+                    this.searchSubject.next('');
+
+                    // force full UI refresh
+                    this.cdr.markForCheck();
+                    this.cdr.detectChanges();
+
+                });
+
+            },
+
+            error: () => {
+                this.toastr.error("Error sharing wishlist");
+            }
+
+        });
+
+    }
+
+    downloadSelectedPDF(): void {
+
+        if (this.selectedItemIds.size === 0) {
+            this.toastr.error("Please select items to download");
+            return;
+        }
+
+        const selectedItems = this.wishlistItems.filter(item =>
+            this.selectedItemIds.has(item.wishlist_id)
+        );
+
+        this.wishlistService.downloadPDF(selectedItems).subscribe({
+            next: (blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'wishlist.pdf';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            },
+            error: () => {
+                this.toastr.error("Error downloading PDF");
+            }
+        });
+
+    }
+
+
+    // ========================
+    // LOAD WISHLIST
+    // ========================
+
+    loadWishlist(): void {
+
+        if (!this.userId) return;
 
         this.isLoading = true;
 
         this.wishlistService.getWishlistByUser(this.userId).subscribe({
+
             next: (items) => {
 
                 this.wishlistItems = items.map(item => ({
+
                     ...item,
+
                     price: Number(item.price) || 0
+
                 }));
 
-                console.log('Wishlist Loaded:', this.wishlistItems);
+                this.isLoading = false;
+
+                this.cdr.detectChanges();
+
+            },
+
+            error: () => {
 
                 this.isLoading = false;
+
                 this.cdr.detectChanges();
-            },
-            error: (err) => {
-                console.error('Error loading wishlist:', err);
-                this.isLoading = false;
-                this.cdr.detectChanges();
+
             }
+
         });
+
     }
 
 
-    // ✅ Remove Item
+    // ========================
+    // REMOVE ITEM
+    // ========================
+
     removeItem(item: WishlistItem): void {
+
         if (!this.userId || !item.wishlist_id) return;
 
-        const confirmDelete = confirm(
-            'Are you sure you want to remove this item from your wishlist?'
-        );
+        if (!confirm("Remove item?")) return;
 
-        if (!confirmDelete) return;
 
-        this.wishlistService.removeFromWishlist(this.userId, item.wishlist_id).subscribe({
+        this.wishlistService.removeFromWishlist(
+            this.userId,
+            item.wishlist_id
+        ).subscribe({
+
             next: () => {
+
                 this.wishlistItems = this.wishlistItems.filter(
                     i => i.wishlist_id !== item.wishlist_id
                 );
-                alert('Item removed ❤️');
-            },
-            error: (err) => {
-                console.error('Error removing item:', err);
-                alert('Error removing item');
+
+                this.selectedItemIds.delete(item.wishlist_id);
+
+                this.cdr.detectChanges();
+
             }
+
         });
+
     }
 
-    // ✅ View Details Navigation
+
+    // ========================
+    // VIEW DETAILS
+    // ========================
+
     viewDetails(item: WishlistItem): void {
+
         const id = item.screen_id || item.h_id || item.s_id;
 
-        if (!id) {
-            console.warn('Invalid item id');
-            return;
-        }
+        if (!id) return;
 
-        // Create routeType separately (do NOT change item.itemType)
         const routeType =
             item.itemType === 'screen'
                 ? 'digital_screen'
                 : item.itemType;
 
-        this.router.navigate(['/screenBoardDescrpt', id, routeType]);
+        this.router.navigate([
+            '/screenBoardDescrpt',
+            id,
+            routeType
+        ]);
+
     }
 
 
-    // ✅ Type Badge Label
     getTypeLabel(type: string): string {
-        const labels: { [key: string]: string } = {
+
+        const labels: any = {
+
             hoarding: 'Hoarding',
+
             screen: 'Digital Screen',
+
             society: 'Society Marketing'
+
         };
 
         return labels[type] || type;
-    }
-}
 
+    }
+
+}

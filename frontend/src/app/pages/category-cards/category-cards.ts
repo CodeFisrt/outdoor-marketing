@@ -31,7 +31,7 @@ export class CategoryCards implements OnInit {
             robots: 'INDEX, FOLLOW',
         });
     }
-    categories: CategoryCard[] = [
+   categories: CategoryCard[] = [
         {
             title: 'Hoarding',
             description: 'Large format outdoor billboards',

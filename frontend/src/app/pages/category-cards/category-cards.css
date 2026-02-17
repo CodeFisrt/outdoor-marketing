@@ -83,14 +83,6 @@
 
 /* ==================== PREMIUM CARDS GRID ==================== */
 
-.premium-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  /* FORCE 3 columns */
-  gap: 40px;
-  margin-top: 48px;
-  align-items: stretch;
-}
 
 /* ==================== CARD SIZE ==================== */
 .premium-card {
@@ -265,17 +257,19 @@
 }
 
 .cta-circle {
-  width: 56px;
-  height: 56px;
-  background: rgba(255, 255, 255, 0.95);
+  /* width: 56px;
+  height: 56px; */
+  width: 40px;
+  height: 40px;
+  /* background: rgba(255, 255, 255, 0.95); */
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1a1a2e;
+  color: #e6e6eb;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), inset 0 -2px 8px rgba(0, 0, 0, 0.05);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  /* border: 2px solid rgba(255, 255, 255, 0.5); */
 }
 
 .premium-card:hover .cta-circle {
@@ -352,10 +346,7 @@
     font-size: 40px;
   }
 
-  .premium-cards-grid {
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 28px;
-  }
+
 
   .premium-card {
     height: 360px;
@@ -376,10 +367,6 @@
     font-size: 16px;
   }
 
-  .premium-cards-grid {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 24px;
-  }
 
   .premium-card {
     height: 340px;
@@ -426,11 +413,6 @@
   .premium-subtitle {
     font-size: 15px;
     padding: 0 12px;
-  }
-
-  .premium-cards-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
   }
 
   .premium-card {
@@ -510,13 +492,23 @@
   }
 }
 
-.category-icon {
-  font-size: 32px;
-  color: white;
+
+/* ================= FLEX LAYOUT ================= */
+
+/* .premium-cards-grid {
   display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  flex-wrap: wrap;
+  justify-content: center; 
+  gap: 40px;
+  margin-top: 48px;
+  height: 50%;
+  width: 100%;
+} */
+
+/* Card width for 3 per row */
+/* .premium-card {
+  flex: 0 1 calc(33.333% - 40px);
+} */
 
 .premium-cards-grid {
   display: flex;
@@ -528,10 +520,14 @@
 
 .premium-card {
   /* flex: 0 1 calc(36% - 40px); wider */
-  height: 300px;
-  flex: 0 1 45%;
-  /* increase width */
-  aspect-ratio: 16 / 9;
-  /* wide billboard style */
-  /* shorter */
+  height: 300px;  
+  flex: 0 1 45%;   /* increase width */
+  aspect-ratio: 16 / 9;  /* wide billboard style */          /* shorter */
+}
+.category-icon {
+  font-size: 32px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

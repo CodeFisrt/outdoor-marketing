@@ -36,4 +36,21 @@ export class WishlistService {
     removeFromWishlist(userId: string | number, itemId: number): Observable<any> {
         return this.http.delete(`${this.baseUrl}/${userId}/${itemId}`);
     }
+
+    // ✅ Search users for sharing
+    searchUsers(query: string): Observable<any[]> {
+        return this.http.get<any[]>(`http://localhost:8080/users/search?query=${query}`);
+    }
+
+    // ✅ Share wishlist items
+    shareWishlistItems(payload: any): Observable<any> {
+        return this.http.post(`${this.baseUrl}/share`, payload);
+    }
+
+    // ✅ Download wishlist PDF
+    downloadPDF(items: any[]): Observable<Blob> {
+        return this.http.post(`${this.baseUrl}/download-pdf`, { items }, {
+            responseType: 'blob'
+        });
+    }
 }
