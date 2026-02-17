@@ -170,8 +170,10 @@ export class Header implements OnInit {
       this.router.navigateByUrl('/dashboard/overview');
     } else if (role === 'agency') {
       this.router.navigateByUrl('/agency-dashboard');
-    } else if (role === 'screenowner') {
+    } else if (role === 'mbu') {
       this.router.navigateByUrl('/screen-owner-dashboard');
+    } else if (role === 'client') {
+      this.router.navigateByUrl('/client-dashboard');
     } else {
       this.router.navigateByUrl('/guest-dashboard');
     }

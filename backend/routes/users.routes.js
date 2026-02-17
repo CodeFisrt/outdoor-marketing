@@ -6,10 +6,12 @@ module.exports = function registerUserRoutes(app, db, bcrypt, jwt, JWT_SECRET) {
   app.get("/Users", adminAuth, (req, res) => {
     db.query(
       `SELECT userId, userName, userEmail, role, status,
-              agencyName, agencyPhone, agencyCity,
-              ownerCompanyName, ownerPhone, ownerAddress, ownerCity,
-              guestPhone, guestCity
-       FROM users
+       agencyName, agencyPhone, agencyCity,
+       ownerCompanyName, ownerPhone, ownerAddress, ownerCity,
+       guestPhone, guestCity,
+       clientCompanyName, clientPhone, clientEmail
+FROM users
+
        ORDER BY userId DESC`,
       (err, results) => {
         if (err) return res.status(500).send(err);
@@ -23,10 +25,12 @@ module.exports = function registerUserRoutes(app, db, bcrypt, jwt, JWT_SECRET) {
     const { id } = req.params;
     db.query(
       `SELECT userId, userName, userEmail, role, status,
-              agencyName, agencyPhone, agencyCity,
-              ownerCompanyName, ownerPhone, ownerAddress, ownerCity,
-              guestPhone, guestCity
-       FROM users WHERE userId = ? LIMIT 1`,
+       agencyName, agencyPhone, agencyCity,
+       ownerCompanyName, ownerPhone, ownerAddress, ownerCity,
+       guestPhone, guestCity,
+       clientCompanyName, clientPhone, clientEmail
+FROM users
+ WHERE userId = ? LIMIT 1`,
       [id],
       (err, results) => {
         if (err) return res.status(500).send(err);
@@ -40,42 +44,39 @@ module.exports = function registerUserRoutes(app, db, bcrypt, jwt, JWT_SECRET) {
   // POST /Users/register (ADMIN ONLY)
   app.post("/Users/register", adminAuth, async (req, res) => {
     try {
-      const data = req.body;
-
       const {
         userName,
         userEmail,
         password,
         role,
         status,
-
         agencyName,
         agencyPhone,
         agencyCity,
-
         ownerCompanyName,
         ownerPhone,
         ownerAddress,
         ownerCity,
-
         guestPhone,
         guestCity,
-      } = data;
+        clientCompanyName,
+        clientPhone,
+        clientEmail
+      } = req.body;
 
       if (!userName || !userEmail || !password || !role) {
         return res.status(400).json({ message: "Required fields missing" });
       }
 
-      // ✅ strong password (min 8, upper, lower, number, special)
-      const strong = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+      const strong =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+
       if (!strong.test(password)) {
         return res.status(400).json({
-          message:
-            "Weak password. Use min 8 chars + 1 Upper + 1 Lower + 1 Number + 1 Special",
+          message: "Weak password"
         });
       }
 
-      // ✅ check email
       db.query(
         "SELECT userId FROM users WHERE userEmail=? LIMIT 1",
         [userEmail],
@@ -86,38 +87,39 @@ module.exports = function registerUserRoutes(app, db, bcrypt, jwt, JWT_SECRET) {
 
           const hash = await bcrypt.hash(password, 10);
 
-          // ✅ IMPORTANT FIX: your DB requires `password` (NOT NULL)
-          // so we save hash into BOTH `password` and `passwordHash`
           const sql = `
-  INSERT INTO users
-  (userName, userEmail, password, passwordHash, role, status,
-   agencyName, agencyPhone, agencyCity,
-   ownerCompanyName, ownerPhone, ownerAddress, ownerCity,
-   guestPhone, guestCity)
-  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-`;
+          INSERT INTO users
+          (userName, userEmail, password, role, status,
+           agencyName, agencyPhone, agencyCity,
+           ownerCompanyName, ownerPhone, ownerAddress, ownerCity,
+           guestPhone, guestCity,
+           clientCompanyName, clientPhone, clientEmail)
+          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        `;
 
-const values = [
-  userName,
-  userEmail,
-  hash,
-  hash,
-  role,
-  status || "active",
-  agencyName || null,
-  agencyPhone || null,
-  agencyCity || null,
-  ownerCompanyName || null,
-  ownerPhone || null,
-  ownerAddress || null,
-  ownerCity || null,
-  guestPhone || null,
-  guestCity || null,
-];
-
+          const values = [
+            userName,
+            userEmail,
+            hash,
+            role,
+            status || "active",
+            agencyName || null,
+            agencyPhone || null,
+            agencyCity || null,
+            ownerCompanyName || null,
+            ownerPhone || null,
+            ownerAddress || null,
+            ownerCity || null,
+            guestPhone || null,
+            guestCity || null,
+            clientCompanyName || null,
+            clientPhone || null,
+            clientEmail || null
+          ];
 
           db.query(sql, values, (err2, result) => {
             if (err2) return res.status(500).send(err2);
+
             res.status(201).json({
               message: "User created",
               userId: result.insertId,
@@ -130,99 +132,91 @@ const values = [
     }
   });
 
+
   // ✅ ADMIN update user
   app.put("/Users/:id", adminAuth, async (req, res) => {
     try {
       const { id } = req.params;
-      const data = req.body;
 
       const {
         userName,
         userEmail,
         role,
         status,
-
         agencyName,
         agencyPhone,
         agencyCity,
-
         ownerCompanyName,
         ownerPhone,
         ownerAddress,
         ownerCity,
-
         guestPhone,
         guestCity,
+        clientCompanyName,
+        clientPhone,
+        clientEmail,
+        password
+      } = req.body;
 
-        password, // optional (if admin wants to reset)
-      } = data;
-
-      let passwordHash = null;
+      let hashToUpdate = null;
 
       if (password) {
-        const strong =
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
-        if (!strong.test(password)) {
-          return res.status(400).json({
-            message:
-              "Weak password. Use min 8 chars + 1 Upper + 1 Lower + 1 Number + 1 Special",
-          });
-        }
-        passwordHash = await bcrypt.hash(password, 10);
+        hashToUpdate = await bcrypt.hash(password, 10);
       }
 
-      // ✅ IMPORTANT FIX: if password reset happens, update BOTH columns
       const sql = `
-        UPDATE users SET
-          userName=?,
-          userEmail=?,
-          role=?,
-          status=?,
-          agencyName=?,
-          agencyPhone=?,
-          agencyCity=?,
-          ownerCompanyName=?,
-          ownerPhone=?,
-          ownerAddress=?,
-          ownerCity=?,
-          guestPhone=?,
-          guestCity=?,
-          password=COALESCE(?, password),
-          passwordHash=COALESCE(?, passwordHash)
-        WHERE userId=?
-      `;
+      UPDATE users SET
+        userName=?,
+        userEmail=?,
+        role=?,
+        status=?,
+        agencyName=?,
+        agencyPhone=?,
+        agencyCity=?,
+        ownerCompanyName=?,
+        ownerPhone=?,
+        ownerAddress=?,
+        ownerCity=?,
+        guestPhone=?,
+        guestCity=?,
+        clientCompanyName=?,
+        clientPhone=?,
+        clientEmail=?,
+        password=COALESCE(?, password)
+      WHERE userId=?
+    `;
 
       const values = [
         userName,
         userEmail,
         role,
         status,
-
         agencyName || null,
         agencyPhone || null,
         agencyCity || null,
-
         ownerCompanyName || null,
         ownerPhone || null,
         ownerAddress || null,
         ownerCity || null,
-
         guestPhone || null,
         guestCity || null,
-
-        passwordHash, // for password
-        passwordHash, // for passwordHash
-        id,
+        clientCompanyName || null,
+        clientPhone || null,
+        clientEmail || null,
+        hashToUpdate,
+        id
       ];
 
       db.query(sql, values, (err) => {
         if (err) return res.status(500).send(err);
         res.json({ message: "User updated" });
       });
+
     } catch (e) {
       res.status(500).json({ message: e.message });
     }
   });
+
 
   // ✅ ADMIN delete user
   app.delete("/Users/:id", adminAuth, (req, res) => {
@@ -257,9 +251,8 @@ const values = [
           return res.status(403).json({ message: "Account is blocked" });
         }
 
-        // ✅ use passwordHash if available, fallback to old password column
-        const hashToCheck = user.passwordHash || user.password;
-        const isMatch = await bcrypt.compare(password, hashToCheck);
+        // ✅ check bcrypt hash from `password` column
+        const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
           return res.status(400).json({ message: "Invalid credentials" });
@@ -313,11 +306,10 @@ const values = [
 
         const hash = await bcrypt.hash(password, 10);
 
-        // ✅ IMPORTANT FIX: DB requires `password` (NOT NULL)
         db.query(
-          `INSERT INTO users (userName, userEmail, password, passwordHash, role, status)
-           VALUES (?,?,?,?, 'user', 'active')`,
-          [userName, userEmail, hash, hash],
+          `INSERT INTO users (userName, userEmail, password, role, status)
+           VALUES (?,?,?,'user', 'active')`,
+          [userName, userEmail, hash],
           (err2) => {
             if (err2) return res.status(500).send(err2);
             res.json({ message: "User registered successfully" });
@@ -327,3 +319,8 @@ const values = [
     );
   });
 };
+
+
+
+
+

@@ -67,7 +67,7 @@ module.exports = function registerInventoryRoutes(app, db) {
           WHEN status = 'available' THEN 70
           ELSE 50
         END as trafficScore,
-        NULL as imageUrls,
+        image as imageUrls,
         NULL as videoFeedUrl,
         NULL as facingDirection,
         NULL as lastInspectionDate,
@@ -101,7 +101,7 @@ module.exports = function registerInventoryRoutes(app, db) {
           WHEN InternetConnectivity = 'Yes' THEN 80
           ELSE 60
         END as trafficScore,
-        NULL as imageUrls,
+       image as imageUrls,
         NULL as videoFeedUrl,
         NULL as facingDirection,
         OnboardingDate as lastInspectionDate,
@@ -133,7 +133,7 @@ module.exports = function registerInventoryRoutes(app, db) {
       WHEN featured = 1 THEN 80
       ELSE 60
     END as trafficScore,
-    NULL as imageUrls,
+    image as imageUrls,
     NULL as videoFeedUrl,
     NULL as facingDirection,
     NULL as lastInspectionDate,
@@ -255,6 +255,34 @@ module.exports = function registerInventoryRoutes(app, db) {
       }
 
       // Format as GeoJSON features
+      // const features = filtered.map((item) => ({
+      //   type: "Feature",
+      //   geometry: {
+      //     type: "Point",
+      //     coordinates: [Number(item.longitude), Number(item.latitude)],
+      //   },
+      //   properties: {
+      //     inventoryId: item.inventoryId,
+      //     mediaType: item.mediaType,
+      //     name: item.name,
+      //     location: item.location,
+      //     city: item.city,
+      //     area: item.area,
+      //     landmark: item.landmark,
+      //     size: item.size,
+      //     availabilityStatus: item.availabilityStatus,
+      //     isDigital: Boolean(item.isDigital),
+      //     rentalCost: item.rentalCost,
+      //     trafficScore: item.trafficScore,
+      //     imageUrls: item.imageUrls ? JSON.parse(item.imageUrls) : [],
+      //     videoFeedUrl: item.videoFeedUrl,
+      //     facingDirection: item.facingDirection,
+      //     lastInspectionDate: item.lastInspectionDate,
+      //     ownerName: item.ownerName,
+      //     contactNumber: item.contactNumber,
+      //   },
+      // }));
+
       const features = filtered.map((item) => ({
         type: "Feature",
         geometry: {
@@ -274,7 +302,7 @@ module.exports = function registerInventoryRoutes(app, db) {
           isDigital: Boolean(item.isDigital),
           rentalCost: item.rentalCost,
           trafficScore: item.trafficScore,
-          imageUrls: item.imageUrls ? JSON.parse(item.imageUrls) : [],
+          imageUrls: parseImages(item.imageUrls), // ✅ FIXED
           videoFeedUrl: item.videoFeedUrl,
           facingDirection: item.facingDirection,
           lastInspectionDate: item.lastInspectionDate,
@@ -282,6 +310,7 @@ module.exports = function registerInventoryRoutes(app, db) {
           contactNumber: item.contactNumber,
         },
       }));
+
 
       res.json({
         type: "FeatureCollection",
@@ -409,6 +438,7 @@ module.exports = function registerInventoryRoutes(app, db) {
           longitude: h.longitude,
           rentalCost: h.rental_cost,
           trafficScore: h.featured ? 85 : h.status === "available" ? 70 : 50,
+          imageUrls: parseImages(h.image),   // ✅ ADD THIS
           ownerName: h.owner_name,
           contactNumber: h.contact_number,
         });
@@ -440,6 +470,7 @@ module.exports = function registerInventoryRoutes(app, db) {
               longitude: s.Longitude,
               rentalCost: s.RentalCost,
               trafficScore: s.featured ? 90 : s.Status === "available" ? 75 : 60,
+              imageUrls: parseImages(s.image),   // ✅ ADD THIS
               ownerName: s.OwnerName,
               contactNumber: s.ContactNumber,
             });
@@ -471,6 +502,7 @@ module.exports = function registerInventoryRoutes(app, db) {
                   longitude: s.s_long,
                   rentalCost: s.actual_cost,
                   trafficScore: s.featured ? 80 : 60,
+                  imageUrls: parseImages(s.image),   // ✅ ADD THIS
                   ownerName: s.s_contact_person_name,
                   contactNumber: s.s_contact_num,
                 });
@@ -716,3 +748,29 @@ module.exports = function registerInventoryRoutes(app, db) {
   });
 };
 
+// ✅ SAFE IMAGE PARSER
+function parseImages(imageField) {
+  if (!imageField) return [];
+
+  try {
+    // If already array
+    if (Array.isArray(imageField)) {
+      return imageField;
+    }
+
+    // If JSON string like '["a.jpg"]'
+    if (typeof imageField === "string" && imageField.trim().startsWith("[")) {
+      return JSON.parse(imageField);
+    }
+
+    // If single image string like "a.jpg"
+    if (typeof imageField === "string") {
+      return [imageField];
+    }
+
+    return [];
+  } catch (err) {
+    console.error("Image parse error:", err);
+    return [];
+  }
+}

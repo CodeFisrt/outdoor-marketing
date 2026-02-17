@@ -1,17 +1,24 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({ providedIn: 'root' })
 export class UserApiService {
   private baseUrl = 'http://localhost:8080';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: any
+  ) { }
 
   private getAdminTokenHeaders() {
-    const token = localStorage.getItem('adminToken');
+    let token = '';
+    if (isPlatformBrowser(this.platformId)) {
+      token = localStorage.getItem('adminToken') || '';
+    }
     return {
       headers: new HttpHeaders({
-        Authorization: `Bearer ${token || ''}`,
+        Authorization: `Bearer ${token}`,
       }),
     };
   }

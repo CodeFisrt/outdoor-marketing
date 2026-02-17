@@ -32,8 +32,10 @@ import { InventoryMap } from './pages/inventory-map/inventory-map';
 
 import { UsersList } from './pages/user-management/users-list/users-list';
 import { AddUserForm } from './pages/user-management/add-user-form/add-user-form';
-import { roleGuard } from './guards/role.guard';
 import { authGuard } from './guards/auth.guard';
+import { roleGuard } from './guards/role.guard';
+import { ClientDashboard } from './pages/dashboards/client-dashboard/client-dashboard';
+
 
 // 👇 New DashboardOverview component for default dashboard page
 
@@ -62,9 +64,30 @@ export const routes: Routes = [
     component: InventoryMap,
     // Allow all authenticated users to view, but booking requires agency/admin role
   },
-  { path: 'agency-dashboard', component: AgencyDashboard, canActivate: [authGuard], },
-  { path: 'screen-owner-dashboard', component: ScreenOwnerDashboard, canActivate: [authGuard], },
-  { path: 'guest-dashboard', component: GuestDashboard, canActivate: [authGuard], },
+  {
+    path: 'agency-dashboard',
+    component: AgencyDashboard,
+    canActivate: [authGuard, roleGuard],
+    data: { expectedRoles: ['agency', 'admin'] }
+  },
+  {
+    path: 'screen-owner-dashboard',
+    component: ScreenOwnerDashboard,
+    canActivate: [authGuard, roleGuard],
+    data: { expectedRoles: ['mbu', 'admin'] }
+  },
+  {
+    path: 'guest-dashboard',
+    component: GuestDashboard,
+    canActivate: [authGuard, roleGuard],
+    data: { expectedRoles: ['guest', 'admin'] }
+  },
+  {
+    path: 'client-dashboard',
+    component: ClientDashboard,
+    canActivate: [authGuard, roleGuard],
+    data: { expectedRoles: ['client', 'admin'] }
+  },
 
 
   // ✅ Dashboard Layout with children

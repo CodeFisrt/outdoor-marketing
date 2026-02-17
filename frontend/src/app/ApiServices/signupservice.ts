@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,10 @@ export class Signupservice {
   private signInUrl = "http://localhost:8080/Users";
   private loggedIn = false;
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: any
+  ) { }
 
   SignUp(data: any) {
     return this.http.post(this.apiUrl, data);
@@ -28,11 +32,17 @@ export class Signupservice {
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('role');
+    if (isPlatformBrowser(this.platformId)) {
+      return !!localStorage.getItem('role');
+    }
+    return false;
   }
 
   hasRole(role: string): boolean {
-    return localStorage.getItem('role') === role;
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('role') === role;
+    }
+    return false;
   }
 
   canDownloadPdf(): boolean {
