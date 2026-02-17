@@ -33,7 +33,7 @@ export class AddUserForm {
     private route: ActivatedRoute,
     private toastr: ToastrService,
     private userApi: UserApiService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.userForm = this.fb.group(
@@ -58,6 +58,11 @@ export class AddUserForm {
         ownerPhone: [''],
         ownerAddress: [''],
         ownerCity: [''],
+
+        // Client 
+        clientCompanyName: [''],
+        clientPhone: [''],
+        clientEmail: ['', Validators.email],
 
         // guest
         guestPhone: [''],
@@ -119,7 +124,12 @@ export class AddUserForm {
 
           // guest
           guestPhone: u.guestPhone || '',
-          guestCity: u.guestCity || ''
+          guestCity: u.guestCity || '',
+
+          // ✅ CLIENT (NEW)
+          clientCompanyName: u.clientCompanyName || '',
+          clientPhone: u.clientPhone || '',
+          clientEmail: u.clientEmail || ''
         });
 
         // ✅ re-apply role validators so fields show required correctly
@@ -181,8 +191,9 @@ export class AddUserForm {
 
   private applyRoleValidators(role: string) {
     const roleFields = [
-      'agencyName','agencyPhone','agencyCity',
-      'ownerCompanyName','ownerPhone','ownerAddress','ownerCity'
+      'agencyName', 'agencyPhone', 'agencyCity',
+      'ownerCompanyName', 'ownerPhone', 'ownerAddress', 'ownerCity',
+      'clientCompanyName', 'clientPhone', 'clientEmail'
     ];
 
     // clear previous role validators
@@ -204,11 +215,17 @@ export class AddUserForm {
       this.userForm.get('agencyCity')?.setValidators([Validators.required]);
     }
 
-    if (role === 'screenOwner') {
+    if (role === 'mbu') {
       this.userForm.get('ownerCompanyName')?.setValidators([Validators.required]);
       this.userForm.get('ownerPhone')?.setValidators([Validators.required]);
       this.userForm.get('ownerAddress')?.setValidators([Validators.required]);
       this.userForm.get('ownerCity')?.setValidators([Validators.required]);
+    }
+
+    if (role === 'client') {
+      this.userForm.get('clientCompanyName')?.setValidators([Validators.required]);
+      this.userForm.get('clientPhone')?.setValidators([Validators.required]);
+      this.userForm.get('clientEmail')?.setValidators([Validators.required, Validators.email]);
     }
 
     roleFields.forEach(f => this.userForm.get(f)?.updateValueAndValidity({ emitEvent: false }));

@@ -8,10 +8,19 @@
 
 
  -->
-<app-header *ngIf="showLayout()" />
+<!-- <app-header *ngIf="showLayout()" />
 
 <main class="main">
   <router-outlet></router-outlet>
 </main>
 
-<app-footer *ngIf="showLayout()" />
+<app-footer *ngIf="showLayout()" /> -->
+
+
+<app-header *ngIf="showLayout()"></app-header>
+
+<main class="main">
+  <router-outlet></router-outlet>
+</main>
+
+<app-footer *ngIf="showFooter()"></app-footer>

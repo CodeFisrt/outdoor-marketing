@@ -539,6 +539,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
    * First image URL from backend for the details panel (imageUrls[0]).
    * Returns null if none, so the template can show a placeholder.
    */
+
   getDetailsImageUrl(item: InventoryItem): string | null {
     const urls = item?.imageUrls;
 
@@ -546,15 +547,13 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       const fileName = urls[0]?.trim();
       if (!fileName) return null;
 
-      // If backend ever sends full URL, use it
       if (fileName.startsWith('http')) return fileName;
-
-      // Otherwise build path to uploads folder
       return this.imageBaseUrl + fileName;
     }
 
     return null;
   }
+
 
 
   getDailyTraffic(item: InventoryItem): string {
