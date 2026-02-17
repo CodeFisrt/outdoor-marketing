@@ -69,6 +69,7 @@ export class CategoryCards implements OnInit {
         }
     ];
 
+
     @Output() categorySelected = new EventEmitter<string>();
 
     onCardClick(category: CategoryCard) {

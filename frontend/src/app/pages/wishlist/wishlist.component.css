@@ -1,0 +1,363 @@
+/* =========================
+   CONTAINER
+========================= */
+
+.wishlist-container {
+    min-height: 100vh;
+    padding-bottom: 40px;
+}
+
+.wishlist-title {
+    font-weight: 800;
+    font-size: 28px;
+    margin-bottom: 4px;
+}
+
+.wishlist-subtitle {
+    color: #777;
+    font-size: 14px;
+}
+
+
+/* =========================
+   GRID FIX
+========================= */
+
+.row.g-4 {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.col-md-6.col-lg-4 {
+    display: flex;
+}
+
+
+/* =========================
+   CARD FIX
+========================= */
+
+.wishlist-card {
+    position: relative;
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.wishlist-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+.wishlist-card.selected {
+    border: 2px solid #1976d2;
+    background-color: rgba(25, 118, 210, 0.03);
+}
+
+
+/* =========================
+   IMAGE FIX
+========================= */
+
+.card-image-wrap {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* =========================
+   IMAGE OVERLAY
+========================= */
+
+.image-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.btn-remove {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    padding: 6px 10px;
+    color: red;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.btn-remove:hover {
+    background: red;
+    color: white;
+}
+
+
+/* =========================
+   TYPE BADGE
+========================= */
+
+/* =========================
+   MOVE BADGE SLIGHTLY RIGHT
+========================= */
+
+.type-badge {
+    position: absolute;
+    top: 12px;
+    left: 50px;
+    /* moved right so no overlap with checkbox */
+    z-index: 1;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 20px;
+    color: #fff;
+}
+
+.type-badge.screen {
+    background: #00bcd4;
+}
+
+.type-badge.hoarding {
+    background: #ff9800;
+}
+
+.type-badge.society {
+    background: #4caf50;
+}
+
+
+/* =========================
+   CARD BODY
+========================= */
+
+.card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.card-text.location {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+
+/* =========================
+   CARD FOOTER
+========================= */
+
+.card-footer-custom {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price {
+    font-weight: 700;
+    color: #1976d2;
+}
+
+.btn-view {
+    background: #1976d2;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.btn-view:hover {
+    background: #1565c0;
+}
+
+
+/* =========================
+   CHECKBOX FIX
+========================= */
+
+.selection-overlay {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 1;
+
+    /* Add background so it doesn't overlap visually */
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 6px;
+    padding: 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Checkbox size and alignment */
+.selection-overlay input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: #1976d2;
+}
+
+
+/* =========================
+   SELECT ALL
+========================= */
+
+.select-all-wrap {
+    margin-top: 8px;
+}
+
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.empty-wishlist {
+    padding-top: 60px;
+}
+
+.empty-icon {
+    font-size: 48px;
+    color: #ccc;
+}
+
+
+/* =========================
+   SHARE BUTTON
+========================= */
+
+.btn-share-main {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    transition: all 0.3s;
+}
+
+.btn-share-main:hover:not(:disabled) {
+    background: #1565c0;
+}
+
+.btn-share-main:disabled {
+    background: #e0e0e0;
+    color: #999;
+}
+
+
+/* =========================
+   MODAL OVERLAY
+========================= */
+
+.share-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.share-modal {
+    background: white;
+    width: 500px;
+    max-width: 95%;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+
+/* =========================
+   MODAL HEADER
+========================= */
+
+.modal-header {
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-body {
+    padding: 16px;
+}
+
+.modal-footer {
+    padding: 16px;
+    border-top: 1px solid #eee;
+}
+
+
+/* =========================
+   USER SEARCH
+========================= */
+
+.search-box-wrap input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.user-results {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.user-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.user-item:hover {
+    background: #f5f5f5;
+}
+
+.user-item.active {
+    background: #e3f2fd;
+}
+
+
+/* =========================
+   RESPONSIVE FIX
+========================= */
+
+@media (max-width: 768px) {
+
+    .card-image-wrap {
+        height: 180px;
+    }
+
+    .wishlist-title {
+        font-size: 22px;
+    }
+
+}

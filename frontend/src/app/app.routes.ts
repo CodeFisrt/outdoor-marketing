@@ -12,7 +12,7 @@ import { WallPainting } from './Services/wall-painting/wall-painting';
 import { SignIn } from './pages/sign-in/sign-in';
 import { SignUp } from './pages/sign-up/sign-up';
 import { Dashboard } from './pages/dashboards/dashboard/dashboard';
-import { AgencyDashboard} from './pages/dashboards/agency-dashboard/agency-dashboard';
+import { AgencyDashboard } from './pages/dashboards/agency-dashboard/agency-dashboard';
 import { ScreenOwnerDashboard } from './pages/dashboards/screen-owner-dashboard/screen-owner-dashboard';
 import { GuestDashboard } from './pages/dashboards/guest-dashboard/guest-dashboard';
 import { ScreenForm } from './Services Forms/screen-form/screen-form';
@@ -89,11 +89,13 @@ export const routes: Routes = [
       { path: 'vehicle-Ads-Form/:id', component: VehicleAdsForm },
       { path: 'wall-Paints-Form/:id', component: WallpaintsFrom },
       { path: 'hoarding-form/:id', component: HoardingFrom },
-      { path: 'users-list', component: UsersList},
-      { path: 'users/add', component: AddUserForm},
+      { path: 'users-list', component: UsersList },
+      { path: 'users/add', component: AddUserForm },
+      { path: 'wishlist', loadComponent: () => import('./pages/wishlist/wishlist.component').then(m => m.WishlistComponent) }
 
     ]
   },
+  { path: 'wishlist', loadComponent: () => import('./pages/wishlist/wishlist.component').then(m => m.WishlistComponent) },
 
   // ✅ Forms (standalone)
 

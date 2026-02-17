@@ -14,13 +14,8 @@
 
     <!-- Premium Cards Grid -->
     <div class="premium-cards-grid">
-      <article
-        *ngFor="let category of categories; let i = index"
-        class="premium-card"
-        (click)="onCardClick(category)"
-        [attr.data-index]="i"
-        [attr.data-category]="category.title"
-      >
+      <article *ngFor="let category of categories; let i = index" class="premium-card" (click)="onCardClick(category)"
+        [attr.data-index]="i" [attr.data-category]="category.title">
         <!-- Card Background Image -->
         <div class="card-bg-wrapper">
           <img [src]="category.image" [alt]="category.title" class="card-bg-image" loading="lazy" />

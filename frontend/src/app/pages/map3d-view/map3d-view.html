@@ -1,17 +1,19 @@
 <div class="map3d-container">
-  <!-- Toolbar -->
   <div class="map-toolbar">
-    <button class="btn btn-sm btn-outline-primary" (click)="resetView()" title="Reset View">
-      🔄 Reset
-    </button>
-    <button class="btn btn-sm btn-outline-secondary" (click)="rotateLeft()" title="Rotate Left">
-      ⬅️
-    </button>
-    <button class="btn btn-sm btn-outline-secondary" (click)="rotateRight()" title="Rotate Right">
-      ➡️
-    </button>
+    <button (click)="resetView()">🔄 Reset</button>
+
+    <button (click)="rotateLeft()">⬅️</button>
+    <button (click)="rotateRight()">➡️</button>
+
+    <button (click)="zoomClose()">🔍 Close</button>
+    <button (click)="zoomMedium()">🔎 Medium</button>
+    <button (click)="zoomArea()">🌍 Area</button>
+
+    <button (click)="setDriverView()">🚗 Driver</button>
+    <button (click)="setPedestrianView()">🚶 Pedestrian</button>
+    <button (click)="setTopView()">🛰 Top</button>
+    <button (click)="setDroneView()">🚁 Drone</button>
   </div>
 
-  <!-- Map Container -->
   <div id="map3d" class="map3d"></div>
 </div>

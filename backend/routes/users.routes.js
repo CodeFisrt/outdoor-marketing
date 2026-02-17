@@ -97,23 +97,23 @@ module.exports = function registerUserRoutes(app, db, bcrypt, jwt, JWT_SECRET) {
   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 `;
 
-const values = [
-  userName,
-  userEmail,
-  hash,
-  hash,
-  role,
-  status || "active",
-  agencyName || null,
-  agencyPhone || null,
-  agencyCity || null,
-  ownerCompanyName || null,
-  ownerPhone || null,
-  ownerAddress || null,
-  ownerCity || null,
-  guestPhone || null,
-  guestCity || null,
-];
+          const values = [
+            userName,
+            userEmail,
+            hash,
+            hash,
+            role,
+            status || "active",
+            agencyName || null,
+            agencyPhone || null,
+            agencyCity || null,
+            ownerCompanyName || null,
+            ownerPhone || null,
+            ownerAddress || null,
+            ownerCity || null,
+            guestPhone || null,
+            guestCity || null,
+          ];
 
 
           db.query(sql, values, (err2, result) => {
@@ -325,5 +325,24 @@ const values = [
         );
       }
     );
+  });
+  // ✅ Search users (for wishlist sharing)
+  app.get("/users/search", (req, res) => {
+    const { query } = req.query;
+    if (!query) {
+      return res.json([]);
+    }
+
+    const sql = `
+      SELECT userId, userName, userEmail
+      FROM users
+      WHERE userName LIKE ?
+      LIMIT 10
+    `;
+
+    db.query(sql, [`%${query}%`], (err, results) => {
+      if (err) return res.status(500).send(err);
+      res.json(results);
+    });
   });
 };

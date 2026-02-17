@@ -88,12 +88,13 @@
 
 
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID, HostListener } from '@angular/core';
 import { Router, RouterLink, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
+  standalone: true,
   imports: [RouterLink, CommonModule],
   templateUrl: './header.html',
   styleUrl: './header.css'
@@ -102,11 +103,12 @@ export class Header implements OnInit {
 
   isLoggedIn = false;
   adminName = '';
+  showProfileMenu = false;
 
   constructor(
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: any
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
@@ -144,7 +146,21 @@ export class Header implements OnInit {
     }
   }
 
-  // ✅ ADDED: role wise dashboard open
+  toggleProfileMenu() {
+    this.showProfileMenu = !this.showProfileMenu;
+  }
+
+  // close dropdown when clicking outside
+  @HostListener('document:click', ['$event'])
+  clickOutside(event: Event) {
+    const clickedInside = (event.target as HTMLElement)
+      .closest('.profile-wrapper');
+
+    if (!clickedInside) {
+      this.showProfileMenu = false;
+    }
+  }
+
   goToDashboard() {
     if (!isPlatformBrowser(this.platformId)) return;
 
@@ -159,6 +175,18 @@ export class Header implements OnInit {
     } else {
       this.router.navigateByUrl('/guest-dashboard');
     }
+
+    this.showProfileMenu = false;
+  }
+
+  goToWishlist() {
+    this.router.navigateByUrl('/wishlist');
+    this.showProfileMenu = false;
+  }
+
+  goToSettings() {
+    this.router.navigateByUrl('/settings');
+    this.showProfileMenu = false;
   }
 
   logout() {
@@ -167,6 +195,7 @@ export class Header implements OnInit {
     localStorage.clear();
     this.isLoggedIn = false;
     this.adminName = '';
+    this.showProfileMenu = false;
     this.router.navigateByUrl('/home');
   }
 }

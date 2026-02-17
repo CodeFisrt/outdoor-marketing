@@ -46,11 +46,11 @@
         <i class="bi bi-envelope-paper"></i> My Requests
       </a>
 
-      <div class="side-footer">
+      <!-- <div class="side-footer">
         <a class="side-item" href="javascript:void(0)" (click)="logout()">
           <i class="bi bi-box-arrow-right"></i> Logout
         </a>
-      </div>
+      </div> -->
     </div>
 
     <!-- CONTENT -->
@@ -123,8 +123,7 @@
                     <td>{{ s.size }}</td>
                     <td>{{ s.pricePerDay }}</td>
                     <td>
-                      <span class="badge-soft"
-                        [ngClass]="{
+                      <span class="badge-soft" [ngClass]="{
                           'badge-green': s.status === 'Open',
                           'badge-yellow': s.status === 'Limited'
                         }">
@@ -153,8 +152,7 @@
                     <td class="fw-semibold">{{ r.screen }}</td>
                     <td>{{ r.date }}</td>
                     <td>
-                      <span class="badge-soft"
-                        [ngClass]="{
+                      <span class="badge-soft" [ngClass]="{
                           'badge-green': r.status === 'Approved',
                           'badge-yellow': r.status === 'Pending',
                           'badge-red': r.status === 'Rejected'
