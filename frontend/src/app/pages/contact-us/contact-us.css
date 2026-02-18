@@ -1,5 +1,5 @@
-.get-touch-section {
-  /* background-image: url('/assets/worldimgs.png'); */
+/* .get-touch-section {
+
       background-image: url("https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg");
 
   background-size: cover;
@@ -9,7 +9,6 @@
   padding: 80px 0;
 }
 
-/* Text styles */
 .touch-title {
     font-size: 56px;
     font-weight: 300;
@@ -33,9 +32,147 @@
     text-decoration: none;
 }
 .contact-form-section h2 span {
-    color: #0d6efd; /* Primary Bootstrap color */
+    color: #0d6efd; 
 }
 .contact-form-section .form-control:focus {
     border-color: #0d6efd;
     box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
+} */
+
+/* ================= GET IN TOUCH SECTION ================= */
+
+.get-touch-section {
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  padding: 80px 20px;   /* added side padding */
+  position: relative;
+}
+
+/* Optional: Add overlay for better readability */
+.get-touch-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.85); /* soft overlay */
+}
+
+.get-touch-section > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* ================= TITLE ================= */
+
+.touch-title {
+  font-size: 56px;
+  font-weight: 300;
+  color: #2b2f33;
+  line-height: 1.2;
+}
+
+.touch-title span {
+  color: #9b6b43;
+  font-weight: 400;
+}
+
+/* ================= TEXT ================= */
+
+.touch-text {
+  font-size: 16px;
+  color: #5f6b73;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.touch-text a {
+  color: #1a73e8;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.touch-text a:hover {
+  text-decoration: underline;
+}
+
+/* ================= CONTACT FORM ================= */
+
+.contact-form-section h2 span {
+  color: #0d6efd;
+}
+
+.contact-form-section .form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
+}
+
+/* ================= RESPONSIVE BREAKPOINTS ================= */
+
+/* Large Tablet */
+@media (max-width: 992px) {
+  .touch-title {
+    font-size: 44px;
+  }
+
+  .get-touch-section {
+    padding: 70px 20px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .touch-title {
+    font-size: 36px;
+  }
+
+  .touch-text {
+    font-size: 15px;
+  }
+
+  .get-touch-section {
+    padding: 60px 15px;
+    text-align: center;
+  }
+
+  .touch-text {
+    margin: 0 auto;
+  }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+  .touch-title {
+    font-size: 28px;
+  }
+
+  .touch-text {
+    font-size: 14px;
+  }
+
+  .get-touch-section {
+    padding: 50px 15px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 400px) {
+  .touch-title {
+    font-size: 24px;
+  }
+
+  .touch-text {
+    font-size: 13px;
+  }
+}
+
+/* ================= GLOBAL SAFETY ================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
 }
