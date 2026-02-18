@@ -1,0 +1,5 @@
+.ourwork-card .card-img-top {
+   height: 400px;
+  width: 100%;         /* Increase this value as needed */
+  object-fit: cover;      /* Prevent image stretching */
+}
