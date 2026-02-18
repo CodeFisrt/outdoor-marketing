@@ -22,11 +22,11 @@
           {{ b.State }}, {{ b.District }}, {{ b.Tehsil }}, {{ b.Village }}
         </p>
 
-        <p class="exact-location"><i class="bi bi-geo-alt"></i> {{ b.location }}</p>
+        <p class="exact-location"><i class="bi bi-geo-alt"></i> {{ b.Location || b.location || b.v_area ||b.s_address ||b.b_address || b.address }}</p>
 
         <div class="price-size">
           <span>📐 {{ b.size }}</span>
-          <span class="price">₹{{ b.rental_cost ? b.rental_cost : b.v_cost }}</span>
+          <span class="price">₹{{ (b.rental_cost ||b.RentalCost || b.v_cost || b.actual_cost || b.b_cost || b.actual_cost) | maskPrice}}</span>
         </div>
 
         <button class="view-btn" (click)="viewMore(b)">View More</button>

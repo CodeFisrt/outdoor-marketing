@@ -3,12 +3,13 @@ import { CommonModule, NgFor } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Router, RouterLink , RouterModule} from '@angular/router';
 import { Featuredservice } from '../../ApiServices/CallApis/featuredservice';
+import { MaskPricePipe } from "../../mask-pipes/mask-price-pipe";
 
 
 @Component({
   selector: 'app-featured-cards',
   standalone: true,
-  imports: [CommonModule, NgFor, HttpClientModule, RouterLink, RouterModule],
+  imports: [CommonModule, NgFor, HttpClientModule, RouterLink, RouterModule, MaskPricePipe],
   templateUrl: './featured-cards.html',
   styleUrls: ['./featured-cards.css']
 })
