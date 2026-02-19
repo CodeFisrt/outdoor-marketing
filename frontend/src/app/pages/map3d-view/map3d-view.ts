@@ -1,4 +1,3 @@
-// da0a475f090c618128d9ae25
 import {
   Component,
   AfterViewInit,
@@ -9,6 +8,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 declare const google: any;
 
@@ -23,17 +23,17 @@ export class Map3dView implements AfterViewInit, OnDestroy {
 
   lat!: number;
   lng!: number;
-  map: any;
-  marker: any;
   panorama: any;
   routeSub!: Subscription;
-  visibilityCircle: any;
-  roadLine: any;
 
   constructor(
     private route: ActivatedRoute,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
+
+  // =====================================
+  // INIT
+  // =====================================
 
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
@@ -41,126 +41,93 @@ export class Map3dView implements AfterViewInit, OnDestroy {
     this.routeSub = this.route.paramMap.subscribe(params => {
       this.lat = Number(params.get('lat'));
       this.lng = Number(params.get('lng'));
-      this.waitForGoogle();
+      this.loadGoogleMapsScript();
     });
-
-    window.addEventListener('keydown', (e) => this.handleKey(e));
   }
 
-  waitForGoogle() {
+  // =====================================
+  // MODERN SCRIPT LOADER (NO WARNING)
+  // =====================================
+
+  loadGoogleMapsScript(): void {
+
+    // If already loaded
     if (typeof google !== 'undefined' && google.maps) {
-      this.initMap();
-    } else setTimeout(() => this.waitForGoogle(), 100);
+      this.initStreetView();
+      return;
+    }
+
+    // Attach callback globally
+    (window as any).initMap = () => {
+      this.initStreetView();
+    };
+
+    const script = document.createElement('script');
+
+    script.src =
+      `https://maps.googleapis.com/maps/api/js` +
+      `?key=${environment.googleMapsApiKey}` +
+      `&callback=initMap` +
+      `&loading=async`;
+
+    script.async = true;
+    script.defer = true;
+
+    document.head.appendChild(script);
   }
 
-  async initMap() {
-    const center = { lat: this.lat, lng: this.lng };
-    const mapDiv = document.getElementById('map3d');
-    if (!mapDiv) return;
+  // =====================================
+  // STREET VIEW INIT
+  // =====================================
 
-    this.map = new google.maps.Map(mapDiv, {
-      center,
-      zoom: 22,
-      tilt: 75,
-      heading: 40,
-      mapId: 'da0a475f090c618128d9ae25',
+  initStreetView(): void {
 
-      // ⭐ DEFAULT SATELLITE
-      mapTypeId: 'satellite',
+    if (!this.lat || !this.lng) return;
 
-      // 📍 MAP TYPE CONTROL RIGHT SIDE
-      mapTypeControl: true,
-      mapTypeControlOptions: {
-        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-        position: google.maps.ControlPosition.TOP_RIGHT,
-        mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain']
-      },
+    const container = document.getElementById('streetView');
+    if (!container) return;
 
-      streetViewControl: true,
-      streetViewControlOptions: {
-        position: google.maps.ControlPosition.RIGHT_TOP
-      },
+    const location = { lat: this.lat, lng: this.lng };
 
-      rotateControl: true,
-      scaleControl: true,
-      gestureHandling: "greedy"
-    });
+    const streetViewService = new google.maps.StreetViewService();
 
-    // Marker
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-    this.marker = new AdvancedMarkerElement({
-      map: this.map,
-      position: center,
-      title: "Hoarding Location"
-    });
+    streetViewService.getPanorama(
+      { location, radius: 50 },
+      (data: any, status: any) => {
 
-    // Street View
-    this.panorama = new google.maps.StreetViewPanorama(
-      document.createElement("div"),
-      { position: center }
-    );
-    this.map.setStreetView(this.panorama);
+        if (status === 'OK') {
 
-    // Visibility radius
-    this.visibilityCircle = new google.maps.Circle({
-      map: this.map,
-      center,
-      radius: 80,
-      strokeColor: "#00ffcc",
-      fillColor: "#00ffcc",
-      fillOpacity: 0.15
-    });
+          this.panorama = new google.maps.StreetViewPanorama(container, {
+            pano: data.location.pano,
+            pov: {
+              heading: 180,
+              pitch: 15
+            },
+            zoom: 1,
+            fullscreenControl: true,
+            motionTracking: false,
+            addressControl: false,
+            showRoadLabels: true
+          });
 
-    // Direction line
-    this.roadLine = new google.maps.Polyline({
-      map: this.map,
-      path: [center, { lat: center.lat + 0.0003, lng: center.lng }],
-      strokeColor: "#ffcc00",
-      strokeWeight: 3
-    });
+        } else {
 
-    this.autoStreetViewBestAngle(center);
-  }
-
-  autoStreetViewBestAngle(center: any) {
-    const sv = new google.maps.StreetViewService();
-    sv.getPanorama({ location: center, radius: 50 }, (data: any, status: any) => {
-      if (status === 'OK') {
-        this.panorama.setPano(data.location.pano);
-        this.panorama.setPov({ heading: 40, pitch: 0 });
-        this.panorama.setVisible(true);
+          container.innerHTML = `
+            <div style="color:white;display:flex;justify-content:center;align-items:center;height:100%;background:#000;">
+              Street View not available for this location
+            </div>
+          `;
+        }
       }
-    });
+    );
   }
 
-  animateCamera(zoom: number, tilt: number, heading: number) {
-    this.map.moveCamera({ zoom, tilt, heading });
-  }
-
-  setTopView() { this.animateCamera(20, 0, 0); }
-  setDriverView() { this.animateCamera(22, 65, 40); }
-  setPedestrianView() { this.animateCamera(21, 75, 90); }
-  setDroneView() { this.animateCamera(18, 80, 180); }
-
-  zoomClose() { this.map.setZoom(22); }
-  zoomMedium() { this.map.setZoom(20); }
-  zoomArea() { this.map.setZoom(17); }
-
-  rotateLeft() { this.map.moveCamera({ heading: (this.map.getHeading() || 0) - 20 }); }
-  rotateRight() { this.map.moveCamera({ heading: (this.map.getHeading() || 0) + 20 }); }
-
-  resetView() {
-    this.map.moveCamera({ center: { lat: this.lat, lng: this.lng }, zoom: 22, tilt: 75, heading: 40 });
-  }
-
-  handleKey(e: KeyboardEvent) {
-    if (e.key === 'ArrowLeft') this.rotateLeft();
-    if (e.key === 'ArrowRight') this.rotateRight();
-    if (e.key === 'ArrowUp') this.zoomClose();
-    if (e.key === 'ArrowDown') this.zoomArea();
-  }
+  // =====================================
+  // DESTROY
+  // =====================================
 
   ngOnDestroy(): void {
     this.routeSub?.unsubscribe();
   }
+
 }

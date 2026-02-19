@@ -1,0 +1,119 @@
+.text-gradient {
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+}
+
+.bg-soft-primary {
+    background-color: rgba(99, 102, 241, 0.1);
+}
+
+.bg-soft-success {
+    background-color: rgba(34, 197, 94, 0.1);
+}
+
+.bg-soft-warning {
+    background-color: rgba(234, 179, 8, 0.1);
+}
+
+.bg-soft-info {
+    background-color: rgba(6, 182, 212, 0.1);
+}
+
+.sidebar {
+    width: 260px;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar-link {
+    border-radius: 8px;
+    margin: 4px 0;
+    transition: all 0.2s;
+}
+
+.nav-link.active {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-left: 4px solid #6366f1;
+}
+
+.hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.btn-white {
+    background: white;
+    color: #6366f1;
+    font-weight: 600;
+    border: none;
+    transition: all 0.2s;
+}
+
+.btn-white:hover {
+    background: #f8fafc;
+    transform: scale(1.02);
+}
+
+.stat-card {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.icon-shape {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header {
+    height: 70px;
+}
+
+.search-box .form-control:focus {
+    box-shadow: none;
+    border-color: #dee2e6;
+}
+
+/* Custom Table Styles */
+.table thead th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    font-weight: 700;
+    color: #64748b;
+    padding: 1rem;
+}
+
+.table tbody td {
+    padding: 1rem;
+    font-size: 0.875rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 80px;
+    }
+
+    .sidebar h5,
+    .sidebar span,
+    .sidebar .btn span {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+}

@@ -23,13 +23,14 @@ import { timeout, finalize, debounceTime, distinctUntilChanged } from 'rxjs/oper
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import { WishlistService } from '../../ApiServices/CallApis/wishlist-service';
 import { Subject } from 'rxjs';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 
 
 
 @Component({
   selector: 'app-inventory-map',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ToastrModule],
   templateUrl: './inventory-map.html',
   styleUrls: ['./inventory-map.css']
 })
@@ -60,6 +61,8 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       google.maps.event.trigger(this.map, 'resize');
     }
   };
+
+  searchMarker: any = null;
 
   private searchSubject = new Subject<string>();
 
@@ -98,6 +101,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private ngZone: NgZone,
+    private toastr: ToastrService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
@@ -319,6 +323,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.searchCity && this.searchCity.trim()) {
       const query = this.searchCity.toLowerCase().trim();
+
       filtered = filtered.filter(f =>
         (f.properties.city || '').toLowerCase().includes(query) ||
         (f.properties.area || '').toLowerCase().includes(query) ||
@@ -328,23 +333,21 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
 
     this.filteredInventory = filtered;
 
-    // Apply specific category limits (Top 300)
+    // Apply category filters
     this.filteredHoardings = filtered
       .filter((f: any) => f.properties.mediaType === 'hoarding')
-      .sort((a: any, b: any) => (b.properties.rentalCost || 0) - (a.properties.rentalCost || 0))
       .slice(0, 300);
 
     this.filteredScreens = filtered
-      .filter((f: any) => f.properties.mediaType === 'digital_screen' || f.properties.mediaType === 'led_screen')
-      .sort((a: any, b: any) => (b.properties.rentalCost || 0) - (a.properties.rentalCost || 0))
+      .filter((f: any) =>
+        f.properties.mediaType === 'digital_screen' ||
+        f.properties.mediaType === 'led_screen')
       .slice(0, 300);
 
     this.filteredSocieties = filtered
       .filter((f: any) => f.properties.mediaType === 'society')
-      .sort((a: any, b: any) => (b.properties.actual_cost || 0) - (a.properties.actual_cost || 0))
       .slice(0, 300);
 
-    // Combine for general map display
     this.filteredInventory = [
       ...this.filteredHoardings,
       ...this.filteredScreens,
@@ -353,19 +356,29 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
 
     this.updateMarkers();
 
-    // If we have search results, we might want to focus on them
+    // ✅ If inventory found → fit bounds normally
     if (this.searchCity && this.filteredInventory.length > 0 && this.map) {
+
       const bounds = new google.maps.LatLngBounds();
+
       this.filteredInventory.forEach(f => {
         const [lng, lat] = f.geometry.coordinates;
         bounds.extend({ lat, lng });
       });
+
       this.map.fitBounds(bounds);
-      // Don't zoom in too far
+
       const listener = google.maps.event.addListener(this.map, "idle", () => {
-        if (this.map && this.map.getZoom()! > 12) this.map.setZoom(12);
+        if (this.map && this.map.getZoom()! > 12) {
+          this.map.setZoom(12);
+        }
         google.maps.event.removeListener(listener);
       });
+
+    }
+    // ✅ If NOT found → use Google Geocoder fallback
+    else if (this.searchCity && this.filteredInventory.length === 0) {
+      this.centerMapToCity(this.searchCity);
     }
 
     this.tryOpenPanelFromQueryParams();
@@ -376,6 +389,51 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
     this.searchSubject.next(value);
   }
 
+  async centerMapToCity(cityName: string) {
+
+    if (!this.map) return;
+
+    const geocoder = new google.maps.Geocoder();
+
+    geocoder.geocode({ address: cityName }, async (results, status) => {
+
+      if (status === 'OK' && results && results.length > 0) {
+
+        const location = results[0].geometry.location;
+
+        // center map
+        this.map!.setCenter(location);
+        this.map!.setZoom(12);
+
+        // remove old search marker
+        if (this.searchMarker) {
+          this.searchMarker.map = null;
+          this.searchMarker = null;
+        }
+
+        // use AdvancedMarkerElement
+        const { AdvancedMarkerElement } =
+          await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
+
+        // create new marker
+        this.searchMarker = new AdvancedMarkerElement({
+          map: this.map,
+          position: location,
+          title: cityName
+        });
+        this.toastr.error("Unfortunately ! , currently we don't have any inventory in this location.");
+
+      } else {
+
+        console.warn('City not found in Google Maps:', cityName);
+
+        this.toastr.error("Location found, but no inventory available.");
+
+      }
+
+    });
+
+  }
 
 
   /**
@@ -539,6 +597,7 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
    * First image URL from backend for the details panel (imageUrls[0]).
    * Returns null if none, so the template can show a placeholder.
    */
+
   getDetailsImageUrl(item: InventoryItem): string | null {
     const urls = item?.imageUrls;
 
@@ -546,15 +605,13 @@ export class InventoryMap implements OnInit, AfterViewInit, OnDestroy {
       const fileName = urls[0]?.trim();
       if (!fileName) return null;
 
-      // If backend ever sends full URL, use it
       if (fileName.startsWith('http')) return fileName;
-
-      // Otherwise build path to uploads folder
       return this.imageBaseUrl + fileName;
     }
 
     return null;
   }
+
 
 
   getDailyTraffic(item: InventoryItem): string {

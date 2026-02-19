@@ -233,8 +233,75 @@ router.post("/download-pdf", async (req, res) => {
         const logoPath = path.join(__dirname, "../assets/logo.png");
 
         if (fs.existsSync(logoPath)) {
-            doc.image(logoPath, 30, 15, { width: 120 });
+
+            const logoX = 30;
+            const logoY = 15;
+
+            const logoWidth = 100;
+            const logoHeight = 33;
+
+            const padding = 4;
+
+            const boxX = logoX - padding;
+            const boxY = logoY - padding;
+
+            const boxWidth = logoWidth + (padding * 2);
+            const boxHeight = logoHeight + (padding * 2);
+
+            // ✅ Shadow (depth effect)
+            doc
+                .save()
+                .fillColor("#000000")
+                .opacity(0.25)
+                .roundedRect(boxX + 2, boxY + 2, boxWidth, boxHeight, 4)
+                .fill()
+                .restore();
+
+
+            // ✅ Main solid black background
+            doc
+                .save()
+                .fillColor("#000000")
+                .opacity(1)
+                .roundedRect(boxX, boxY, boxWidth, boxHeight, 4)
+                .fill()
+                .restore();
+
+
+            // ✅ Outer white border
+            doc
+                .save()
+                .lineWidth(1.2)
+                .strokeColor("#FFFFFF")
+                .roundedRect(boxX, boxY, boxWidth, boxHeight, 4)
+                .stroke()
+                .restore();
+
+
+            // ✅ Inner subtle border (premium feel)
+            doc
+                .save()
+                .lineWidth(0.5)
+                .strokeColor("#2a2a2a")
+                .roundedRect(boxX + 1, boxY + 1, boxWidth - 2, boxHeight - 2, 3)
+                .stroke()
+                .restore();
+
+
+            // ✅ Draw logo
+            doc.image(
+                logoPath,
+                logoX,
+                logoY,
+                {
+                    width: logoWidth,
+                    height: logoHeight
+                }
+            );
+
         }
+
+
 
         // Move cursor below logo so title doesn't overlap
         doc.moveDown(2);

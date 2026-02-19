@@ -20,19 +20,20 @@ import { Router, RouterLink } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
 
-import { Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
 
 import {
     debounceTime,
     distinctUntilChanged,
     switchMap
 } from 'rxjs/operators';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 
 
 @Component({
     selector: 'app-wishlist',
     standalone: true,
-    imports: [CommonModule, NgIf, NgFor, RouterLink, FormsModule],
+    imports: [CommonModule, NgIf, NgFor, RouterLink, FormsModule, ToastrModule],
     templateUrl: './wishlist.component.html',
     styleUrls: ['./wishlist.component.css']
 })
@@ -63,6 +64,7 @@ export class WishlistComponent implements OnInit {
         private router: Router,
         private cdr: ChangeDetectorRef,
         private zone: NgZone,
+        private toastr: ToastrService,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
@@ -75,7 +77,7 @@ export class WishlistComponent implements OnInit {
 
         if (!storedUserId) {
 
-            alert('Please login to view your wishlist');
+            this.toastr.error('Please login to view your wishlist');
 
             this.router.navigate(['/signin']);
 
@@ -108,7 +110,8 @@ export class WishlistComponent implements OnInit {
 
                     this.foundUsers = [];
 
-                    return [];
+                    return of([]);   // ✅ FIXED
+
                 }
 
                 this.isSearchingUsers = true;
@@ -119,7 +122,9 @@ export class WishlistComponent implements OnInit {
 
         ).subscribe({
 
-            next: (users: any) => {
+            next: (users: any[]) => {
+
+                console.log("Users found:", users);
 
                 this.foundUsers = users;
 
@@ -129,7 +134,9 @@ export class WishlistComponent implements OnInit {
 
             },
 
-            error: () => {
+            error: (err) => {
+
+                console.error("Search error:", err);
 
                 this.isSearchingUsers = false;
 
@@ -230,7 +237,7 @@ export class WishlistComponent implements OnInit {
 
         if (this.selectedItemIds.size === 0) {
 
-            alert("Please select items to share");
+            this.toastr.error("Please select items to share");
 
             return;
         }
@@ -242,78 +249,97 @@ export class WishlistComponent implements OnInit {
 
     closeModal(): void {
 
-        this.showShareModal = false;
+        this.zone.run(() => {
 
-        this.searchUsername = '';
+            this.showShareModal = false;
 
-        this.foundUsers = [];
+            this.searchUsername = '';
 
-        this.selectedTargetUser = null;
+            this.foundUsers = [];
+
+            this.selectedTargetUser = null;
+
+            this.isSearchingUsers = false;
+
+            this.searchSubject.next('');
+
+            this.cdr.markForCheck();
+            this.cdr.detectChanges();
+
+        });
 
     }
-
 
     confirmShare(): void {
 
         if (!this.userId || !this.selectedTargetUser) return;
 
-
         const selectedItems = this.wishlistItems.filter(item =>
             this.selectedItemIds.has(item.wishlist_id)
         );
 
-
         const itemsToShare = selectedItems.map(item => ({
-
             screen_id: item.screen_id || null,
-
             h_id: item.h_id || null,
-
             s_id: item.s_id || null
-
         }));
 
-
         const payload = {
-
             fromUserId: this.userId,
-
             toUserId: this.selectedTargetUser.userId,
-
             items: itemsToShare
-
         };
-
 
         this.wishlistService.shareWishlistItems(payload).subscribe({
 
             next: (res) => {
 
-                alert(res.message || "Shared successfully");
+                this.toastr.success(res.message || "Shared successfully");
 
-                this.closeModal();
+                // ✅ RUN INSIDE ANGULAR ZONE
+                this.zone.run(() => {
 
-                this.selectedItemIds.clear();
+                    // close modal
+                    this.showShareModal = false;
 
-                this.cdr.detectChanges();
+                    // clear search
+                    this.searchUsername = '';
+
+                    // clear results
+                    this.foundUsers = [];
+
+                    // clear selected user
+                    this.selectedTargetUser = null;
+
+                    // clear searching state
+                    this.isSearchingUsers = false;
+
+                    // VERY IMPORTANT: recreate Set reference
+                    this.selectedItemIds = new Set<number>();
+
+                    // clear subject state
+                    this.searchSubject.next('');
+
+                    // force full UI refresh
+                    this.cdr.markForCheck();
+                    this.cdr.detectChanges();
+
+                });
 
             },
 
             error: () => {
-
-                alert("Error sharing wishlist");
-
+                this.toastr.error("Error sharing wishlist");
             }
 
         });
 
     }
 
-
     downloadSelectedPDF(): void {
 
         if (this.selectedItemIds.size === 0) {
-            alert("Please select items to download");
+            this.toastr.error("Please select items to download");
             return;
         }
 
@@ -333,7 +359,7 @@ export class WishlistComponent implements OnInit {
                 window.URL.revokeObjectURL(url);
             },
             error: () => {
-                alert("Error downloading PDF");
+                this.toastr.error("Error downloading PDF");
             }
         });
 

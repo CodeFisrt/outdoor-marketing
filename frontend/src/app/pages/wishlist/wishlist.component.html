@@ -2,7 +2,9 @@
     <div class="container py-5">
         <div class="row mb-4 animate__animated animate__fadeInDown align-items-center">
             <div class="col-md-8 text-start">
-                <h2 class="wishlist-title">My Wishlist <i class="bi bi-heart-fill text-danger"></i></h2>
+                <h2 class="wishlist-title">My Wishlist
+                    <!-- <i class="bi bi-heart-fill text-danger"></i> -->
+                </h2>
                 <p class="wishlist-subtitle">Manage your favorite advertising locations in one place</p>
 
                 <!-- SELECT ALL CHECKBOX -->
@@ -91,8 +93,9 @@
 
                 <div class="search-box-wrap">
                     <i class="bi bi-search"></i>
-                    <input type="text" [(ngModel)]="searchUsername" (ngModelChange)="onUserSearchChange($event)"
-                        placeholder="Search user by username...">
+                    <input #searchInput type="text" [(ngModel)]="searchUsername"
+                        (ngModelChange)="onUserSearchChange($event)" placeholder="Search user by username...">
+
                 </div>
 
                 <div *ngIf="isSearchingUsers" class="text-center py-2">
@@ -103,8 +106,8 @@
                     <div class="user-item" *ngFor="let user of foundUsers"
                         [class.active]="selectedTargetUser?.userId === user.userId" (click)="selectUser(user)">
                         <div class="user-info">
-                            <span class="name">{{ user.userName }}</span>
-                            <span class="email">{{ user.userEmail }}</span>
+                            <span class="name me-2">{{ user.userName }}</span>
+                            <span class="email">({{ user.userEmail }})</span>
                         </div>
                         <i class="bi bi-check-circle-fill" *ngIf="selectedTargetUser?.userId === user.userId"></i>
                     </div>
