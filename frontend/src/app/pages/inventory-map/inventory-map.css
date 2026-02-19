@@ -1,4 +1,4 @@
-/* Main Container */
+/* 
 .inventory-map-container {
   position: relative;
   width: 100%;
@@ -11,7 +11,7 @@
   flex-direction: column;
 }
 
-/* Top Navigation Bar */
+
 .map-navbar {
   position: absolute;
   top: 0;
@@ -52,7 +52,7 @@
   gap: 12px;
 }
 
-/* Search Box */
+
 .search-box {
   display: flex;
   align-items: center;
@@ -129,10 +129,7 @@
 
 
 
-/* Left Sidebar */
 
-
-/* Map Legend */
 .map-legend {
   position: absolute;
   bottom: 20px;
@@ -166,7 +163,7 @@
 
 
 
-/* Split layout: Map (2/3) + Details panel (1/3) */
+
 .map-layout {
   position: absolute;
   top: 60px;
@@ -179,7 +176,7 @@
   flex: 1;
   display: flex;
   min-height: 0;
-  /* IMPORTANT for flex children */
+
 }
 
 
@@ -188,7 +185,7 @@
   flex: 1;
   min-width: 0;
   min-height: 400px;
-  /* ensure map area has size so MapLibre can render */
+ 
   position: relative;
   transition: flex 0.3s ease-in-out;
 }
@@ -434,7 +431,7 @@
   transform: translateY(-1px);
 }
 
-/* Map Wrapper (inside map-pane) */
+
 .map-pane .map-wrapper {
   position: absolute;
   top: 0;
@@ -461,7 +458,7 @@
 
 
 
-/* Loading Overlay */
+
 .loading-overlay {
   position: absolute;
   top: 0;
@@ -497,7 +494,7 @@
   font-size: 14px;
 }
 
-/* ===== HIGH CONTRAST POPUP STYLES ===== */
+
 :global(.inventory-popup) {
   z-index: 5000 !important;
   max-width: 380px !important;
@@ -516,13 +513,12 @@
     0 0 25px rgba(0, 212, 255, 0.25);
 }
 
-/* Tip/Arrow of the popup */
+
 :global(.inventory-popup .maplibregl-popup-tip) {
   border-top-color: #00d4ff !important;
   border-bottom-color: #00d4ff !important;
 }
 
-/* Close Button */
 :global(.inventory-popup .maplibregl-popup-close-button) {
   color: #fff;
   font-size: 24px;
@@ -539,13 +535,13 @@
   color: white;
 }
 
-/* Content Container */
+
 .popup-content {
   padding: 0;
   min-width: 340px;
 }
 
-/* Header */
+
 .popup-header {
   background: linear-gradient(90deg, #00d4ff, #0077ff);
   padding: 16px 20px;
@@ -565,7 +561,7 @@
 }
 
 
-/* Body */
+
 .popup-body {
   padding: 18px 20px;
   background: #0f172a;
@@ -590,7 +586,7 @@
 }
 
 
-/* Highlights */
+
 .traffic-score {
   background: linear-gradient(90deg, #00ff88, #00d4ff);
   color: #000;
@@ -610,9 +606,9 @@
 }
 
 
-/* Analytics Section Override inside HTML */
+
 #analytics-123,
-/* fallback */
+
 [id^="analytics-"] {
   margin-top: 12px;
   padding: 12px;
@@ -624,11 +620,6 @@
   color: #cbd5e1;
 }
 
-/* .popup-btn:active {
-  transform: scale(0.98);
-} */
-
-/* Footer */
 .popup-footer {
   padding: 14px 18px;
   background: #05070f;
@@ -668,7 +659,7 @@
 }
 
 
-/* Marker Styles */
+
 :global(.inventory-marker) {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
@@ -697,7 +688,7 @@
   background-color: #ff4444 !important;
 }
 
-/* Scrollbar Styling */
+
 .sidebar::-webkit-scrollbar {
   width: 6px;
 }
@@ -715,7 +706,7 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Booking Modal */
+
 .booking-modal {
   position: fixed;
   top: 0;
@@ -905,7 +896,7 @@
   font-weight: 600;
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
   .sidebar {
     width: 280px;
@@ -915,7 +906,7 @@
     left: 280px;
   }
 
-  /* Details panel: full-screen overlay on mobile */
+  
   .details-panel-wrapper.open {
     position: fixed;
     top: 0;
@@ -937,5 +928,338 @@
   .booking-modal-content {
     width: 95%;
     max-height: 90vh;
+  }
+} */
+
+/* ========================================= */
+/* GLOBAL RESET */
+/* ========================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* ========================================= */
+/* MAIN CONTAINER */
+/* ========================================= */
+
+.inventory-map-container {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #151515;
+  color: #0e0e0e;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================================= */
+/* NAVBAR */
+/* ========================================= */
+
+.map-navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: rgba(10, 14, 39, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 10;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #00d4ff;
+  margin: 0;
+}
+
+.navbar-subtitle {
+  font-size: 14px;
+  color: #888;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ========================================= */
+/* SEARCH BOX */
+/* ========================================= */
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 6px 14px;
+  width: 300px;
+  transition: all 0.3s ease;
+}
+
+.search-box:focus-within {
+  border-color: #00d4ff;
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
+  width: 360px;
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ========================================= */
+/* MAP LAYOUT */
+/* ========================================= */
+
+.map-layout {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  min-height: calc(100dvh - 60px);
+}
+
+.map-pane {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+
+.map-pane .map-wrapper,
+.inventory-map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ========================================= */
+/* DETAILS PANEL */
+/* ========================================= */
+
+.details-panel-wrapper {
+  flex: 0 0 0;
+  overflow: hidden;
+  transition: flex 0.3s ease;
+}
+
+.details-panel-wrapper.open {
+  flex: 0 0 33%;
+}
+
+.map-layout.panel-open .map-pane {
+  flex: 0 0 67%;
+}
+
+.details-panel {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(18,22,42,0.98), rgba(10,14,39,0.99));
+  border-left: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+
+.details-panel.open {
+  transform: translateX(0);
+}
+
+.details-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+}
+
+/* ========================================= */
+/* MAP LEGEND */
+/* ========================================= */
+
+.map-legend {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  gap: 16px;
+  padding: 10px 14px;
+  background: rgba(10, 14, 39, 0.9);
+  border-radius: 8px;
+  font-size: 12px;
+  color: #b0b0b0;
+  z-index: 1000;
+}
+
+/* ========================================= */
+/* POPUP RESPONSIVE FIX */
+/* ========================================= */
+
+.popup-content {
+  padding: 0;
+  min-width: 320px;
+  max-width: 90vw;
+}
+
+/* ========================================= */
+/* BOOKING MODAL */
+/* ========================================= */
+
+.booking-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+}
+
+.booking-modal-content {
+  background: rgba(10, 14, 39, 0.98);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  color: #e0e0e0;
+  padding: 20px;
+}
+
+/* ========================================= */
+/* RESPONSIVE BREAKPOINTS */
+/* ========================================= */
+
+/* Large Tablet */
+@media (max-width: 1024px) {
+
+  .search-box {
+    width: 220px;
+  }
+
+  .search-box:focus-within {
+    width: 260px;
+  }
+
+  .details-panel-wrapper.open {
+    flex: 0 0 40%;
+  }
+
+  .map-layout.panel-open .map-pane {
+    flex: 0 0 60%;
+  }
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+
+  .map-navbar {
+    height: 56px;
+    padding: 0 14px;
+  }
+
+  .navbar-subtitle {
+    display: none;
+  }
+
+  .search-box {
+    width: 160px;
+  }
+
+  .search-box:focus-within {
+    width: 200px;
+  }
+
+  .map-layout {
+    top: 56px;
+  }
+
+  /* Panel full screen */
+  .details-panel-wrapper.open {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    flex: none;
+    z-index: 3000;
+  }
+
+  .details-panel {
+    width: 100%;
+  }
+
+  /* Legend center */
+  .map-legend {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+
+  .navbar-logo {
+    font-size: 16px;
+  }
+
+  .search-box {
+    width: 120px;
+  }
+
+  .details-panel-body {
+    padding: 12px;
+  }
+
+  .booking-modal-content {
+    width: 95%;
+  }
+}
+
+/* Small Devices */
+@media (max-width: 400px) {
+
+  .search-box {
+    display: none;
+  }
+
+  .map-legend {
+    font-size: 10px;
   }
 }

@@ -1,0 +1,40 @@
+/* .ourwork-card .card-img-top {
+   height: 400px;
+  width: 100%;         
+  object-fit: cover;      
+} */
+
+.ourwork-card .card-img-top {
+  width: 100%;
+  height: 400px;        /* Desktop */
+  object-fit: cover;
+  display: block;
+}
+
+/* Large Laptop */
+@media (max-width: 1200px) {
+  .ourwork-card .card-img-top {
+    height: 350px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+  .ourwork-card .card-img-top {
+    height: 300px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .ourwork-card .card-img-top {
+    height: 250px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 576px) {
+  .ourwork-card .card-img-top {
+    height: 200px;
+  }
+}

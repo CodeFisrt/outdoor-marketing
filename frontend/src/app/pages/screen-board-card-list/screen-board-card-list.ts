@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { MaskPricePipe } from "../../mask-pipes/mask-price-pipe";
 
 @Component({
   selector: 'app-screen-board-card-list',
-  imports: [CommonModule,RouterLink],
+  imports: [CommonModule, RouterLink, MaskPricePipe],
   templateUrl: './screen-board-card-list.html',
   styleUrl: './screen-board-card-list.css'
 })

@@ -29,33 +29,36 @@
                     Fill out the form below and we will get back to you as soon as possible.
                 </p>
 
-                <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="border border-2 p-md-5" >
+                <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="border border-2 p-md-5">
                     <div class="row g-3">
-                        <!-- Name -->
+                     
                         <div class="col-md-6">
                             <label for="name" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" id="name" formControlName="full_name" placeholder="Enter your name" required>
+                            <input type="text" class="form-control" id="name" formControlName="full_name"
+                                placeholder="Enter your name" required>
                         </div>
 
-                        <!-- Email -->
+                        
                         <div class="col-md-6">
                             <label for="email" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="email" formControlName="email" placeholder="Enter your email" required>
+                            <input type="email" class="form-control" id="email" formControlName="email"
+                                placeholder="Enter your email" required>
                         </div>
 
-                        <!-- Subject -->
+                       
                         <div class="col-12">
                             <label for="subject" class="form-label">Subject</label>
-                            <input type="text" class="form-control" id="subject" formControlName="subject"  placeholder="Subject" required>
+                            <input type="text" class="form-control" id="subject" formControlName="subject"
+                                placeholder="Subject" required>
                         </div>
 
-                        <!-- Message -->
                         <div class="col-12">
                             <label for="message" class="form-label">Message</label>
-                            <textarea class="form-control" id="message" rows="5" formControlName="message" placeholder="Type your message here..." required></textarea>
+                            <textarea class="form-control" id="message" rows="5" formControlName="message"
+                                placeholder="Type your message here..." required></textarea>
                         </div>
 
-                        <!-- Submit Button -->
+
                         <div class="col-12 text-center">
                             <button type="submit" class="btn btn-primary btn-lg mt-3">Send Message</button>
                         </div>

@@ -38,7 +38,7 @@
                 
 
  {{ h.size }}</span>
-              <span class="price">₹{{ h.rental_cost }}</span>
+              <span class="price">₹{{ h.rental_cost | maskPrice }}</span>
             </div>
             <div>
               <button class="view-btn" (click)="viewMore(h, 'hoardings')">View More</button>
@@ -86,7 +86,7 @@
 
 
  {{ s.Resolution }}</span>
-              <span class="price">₹{{ s.RentalCost }}</span>
+              <span class="price">₹{{ s.RentalCost | maskPrice }}</span>
             </div>
             <div>
               <button class="view-btn" (click)="viewMore(s, 'outdoormarketingscreens')">

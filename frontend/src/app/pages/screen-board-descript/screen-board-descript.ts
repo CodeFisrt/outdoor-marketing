@@ -4,12 +4,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Search } from '../../SearchServices/search';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { MaskPricePipe } from "../../mask-pipes/mask-price-pipe";
 
 
 @Component({
   selector: 'app-screen-board-descript',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MaskPricePipe],
   templateUrl: './screen-board-descript.html',
   styleUrl: './screen-board-descript.css'
 })
