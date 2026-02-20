@@ -64,6 +64,10 @@ const registerAllRoutes = require("./routes/registerAll");
 const wishlistRoutes = require("./routes/wishlist.routes");
 app.use("/wishlist", wishlistRoutes);
 
+// Bidding Routes
+const biddingRoutes = require("./routes/bidding.routes");
+app.use("/bids", biddingRoutes);
+
 // deps for users login/register exactly like your code
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -79,6 +83,13 @@ io.on("connection", (socket) => {
   socket.on("join-inventory", () => {
     socket.join("inventory-updates");
     console.log(`Client ${socket.id} joined inventory-updates room`);
+  });
+
+  // Join specific product room for bidding
+  socket.on("join-product-room", ({ product_type, product_id }) => {
+    const roomName = `product_${product_type}_${product_id}`;
+    socket.join(roomName);
+    console.log(`Client ${socket.id} joined room: ${roomName}`);
   });
 
   // Handle status updates

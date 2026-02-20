@@ -254,7 +254,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   overflow-x: hidden;
 }
 
@@ -265,8 +266,16 @@ html, body {
     opacity: 0;
     transform: translateY(-5px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.main-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 99999 !important;
+  /* Very high */
 }
