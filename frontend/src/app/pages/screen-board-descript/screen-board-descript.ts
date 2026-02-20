@@ -5,6 +5,7 @@ import { Search } from '../../SearchServices/search';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MaskPricePipe } from "../../mask-pipes/mask-price-pipe";
+import { BiddingService, Bid } from '../../ApiServices/CallApis/bidding-service';
 
 
 @Component({
@@ -46,12 +47,21 @@ export class ScreenBoardDescript implements OnInit {
     repeatService: 'No' // 'Yes' | 'No'
   };
 
+  // 💰 Bidding Data
+  bids: Bid[] = [];
+  nextBidAmount: number = 0;
+  highestBidAmount: number = 0;
+  userId: string | null = null;
+  productType: 'hoarding' | 'society' | 'screen' = 'hoarding';
+  productId: number = 0;
+
   constructor(
     private route: ActivatedRoute,
     private searchService: Search,
     private cdr: ChangeDetectorRef,
     private router: Router,
     private sanitizer: DomSanitizer,
+    private biddingService: BiddingService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
@@ -70,7 +80,96 @@ export class ScreenBoardDescript implements OnInit {
       const type = params.get('service_type');
 
       if (id && type) {
+        this.productId = id;
+        this.productType = this.getBidProductType(type) as any;
         this.loadBoardDetails(type, id);
+        this.setupBidding(this.productType, id);
+      }
+    });
+  }
+
+  getBidProductType(type: string): string {
+    const rawType = type.toLowerCase();
+    if (rawType === 'hoarding' || rawType === 'hoardings') return 'hoarding';
+    if (rawType === 'society' || rawType === 'society_marketing') return 'society';
+    if (rawType === 'digital_screen' || rawType === 'led_screen' || rawType === 'screen' || rawType === 'outdoormarketingscreens') return 'screen';
+    return type;
+  }
+
+  setupBidding(type: string, id: number) {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    this.userId = localStorage.getItem('userId');
+
+    // Join room
+    this.biddingService.joinProductRoom(type, id);
+
+    // Fetch initial bids
+    this.biddingService.getBids(type, id).subscribe({
+      next: (bids) => {
+        this.bids = bids;
+        this.updateHighestBid();
+        this.cdr.detectChanges();
+      }
+    });
+
+    // Listen for new bids
+    this.biddingService.getNewBidObservable().subscribe((bid) => {
+      if (bid.product_type === type && bid.product_id.toString() === id.toString()) {
+        // Add to list and sort
+        this.bids.unshift(bid);
+        this.bids.sort((a, b) => b.amount - a.amount);
+        this.updateHighestBid();
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  updateHighestBid() {
+
+    if (this.bids.length > 0) {
+      this.highestBidAmount = Number(this.bids[0].amount) || 0;
+      const roundedAmount = Math.round(this.highestBidAmount);
+      this.nextBidAmount = roundedAmount + 100;
+    } else {
+      const basePrice = this.board
+        ? parseFloat(String(this.board.price).replace(/[^0-9.]/g, ''))
+        : 0;
+      this.highestBidAmount = 0;
+      this.nextBidAmount = basePrice > 0
+        ? Math.round(basePrice)
+        : 100;
+    }
+  }
+
+  placeBid() {
+    if (!this.isLoggedIn) {
+      alert("Please login to place a bid.");
+      this.router.navigate(['/signin']);
+      return;
+    }
+
+    if (!this.userId) return;
+
+    if (this.nextBidAmount < this.highestBidAmount + 100) {
+      alert(`Minimum next bid must be ${this.highestBidAmount + 100}`);
+      return;
+    }
+
+    const bid: Bid = {
+      product_type: this.productType,
+      product_id: this.productId,
+      user_id: this.userId,
+      amount: this.nextBidAmount
+    };
+
+    this.biddingService.placeBid(bid).subscribe({
+      next: (res) => {
+        alert("Bid placed successfully!");
+        // Room broadcast will update the list
+      },
+      error: (err) => {
+        alert(err.error?.message || "Failed to place bid");
       }
     });
   }
